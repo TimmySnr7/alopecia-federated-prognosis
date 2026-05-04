@@ -59,6 +59,10 @@ def main() -> None:
         "val_count": len(filter_split(records, "val")),
         "test_count": len(filter_split(records, "test")),
         "datasets_present": sorted({record.dataset_key for record in records}),
+        "view_counts": {
+            view: sum(1 for record in records if record.image_view == view)
+            for view in sorted({record.image_view for record in records})
+        },
         "records_with_severity_proxy": sum(
             1 for record in records if record.severity_proxy_value
         ),
