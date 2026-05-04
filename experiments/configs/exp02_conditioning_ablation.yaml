@@ -1,0 +1,13 @@
+name: exp02_conditioning_ablation
+seed: 42
+mode: ablation
+dataset:
+  split: public_pooled
+  resolution: 256
+model:
+  architecture: latent_diffusion
+  conditioning: [cross_attention, film, concat, clip_embeddings]
+training:
+  epochs: 5
+evaluation:
+  metrics: [lpips, domain_fid, ece]

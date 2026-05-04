@@ -1,0 +1,13 @@
+name: exp03_simulated_federation
+seed: 42
+mode: federated
+dataset:
+  split: simulated_clients
+  client_count: 4
+  resolution: 256
+federation:
+  strategy: fedavg
+  rounds: 100
+  dp_enabled: true
+evaluation:
+  metrics: [lpips, domain_fid, ece, epsilon_accounting]

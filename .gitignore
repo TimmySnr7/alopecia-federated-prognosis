@@ -1,0 +1,32 @@
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Environments
+.venv/
+venv/
+
+# Notebooks
+.ipynb_checkpoints/
+
+# OS / editor
+.DS_Store
+.vscode/
+
+# Data and experiment artefacts
+data/raw/
+data/interim/
+experiments/results/**
+!experiments/results/README.md
+
+# Build
+build/
+dist/
+*.egg-info/
+
+# DVC
+.dvc/
+.dvcignore

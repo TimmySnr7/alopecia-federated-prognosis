@@ -1,0 +1,8 @@
+name: exp04_fairness_audit
+seed: 42
+mode: evaluation
+dataset:
+  split: stratified_public
+evaluation:
+  metrics: [subgroup_gap, bootstrap_confidence_interval, ece, lpips]
+  subgroups: [fitzpatrick, sex, fitzpatrick_x_sex]

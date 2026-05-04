@@ -1,0 +1,14 @@
+name: exp01_centralised_baseline
+seed: 42
+mode: centralised
+dataset:
+  split: public_pooled
+  resolution: 256
+model:
+  architecture: latent_diffusion
+  conditioning: cross_attention
+training:
+  epochs: 10
+  batch_size: 4
+evaluation:
+  metrics: [lpips, domain_fid, ece, brier_score]
