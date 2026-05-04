@@ -84,6 +84,14 @@ python experiments/scripts/train_severity_baseline.py \
   --class-weighting
 ```
 
+For the first conditional generative-batch smoke test:
+
+```bash
+python experiments/scripts/smoke_test_exp01_generative_batch.py \
+  ~/datasets/alopecia_public/manifests/exp01_working_train.csv \
+  --batch-size 4
+```
+
 ## Student Contribution Model
 
 Each directory in `student_projects/` is a sandbox with its own README and handover

@@ -111,3 +111,45 @@ class ManifestImageDataset(Dataset[dict[str, Any]]):
             "image_view": sample.image_view,
             "split": sample.split,
         }
+
+
+class ConditionalManifestDataset(Dataset[dict[str, Any]]):
+    """Return images with severity-conditioning fields for generative scaffolds."""
+
+    def __init__(
+        self,
+        manifest_path: str | Path,
+        image_size: int = 256,
+        max_samples: int | None = None,
+    ) -> None:
+        self.base_dataset = ManifestImageDataset(
+            manifest_path=manifest_path,
+            image_size=image_size,
+            augment=False,
+            max_samples=max_samples,
+        )
+        self.samples = self.base_dataset.samples
+        self.class_values = sorted({sample.severity_proxy_value for sample in self.samples})
+        self.class_to_index = {value: index for index, value in enumerate(self.class_values)}
+
+    def __len__(self) -> int:
+        return len(self.base_dataset)
+
+    def __getitem__(self, index: int) -> dict[str, Any]:
+        item = self.base_dataset[index]
+        severity_value = int(item["severity"].item())
+        severity_index = self.class_to_index[severity_value]
+        one_hot = torch.zeros(len(self.class_values), dtype=torch.float32)
+        one_hot[severity_index] = 1.0
+
+        return {
+            "image": item["image"],
+            "current_severity": item["severity"],
+            "target_severity": item["severity"],
+            "severity_one_hot": one_hot,
+            "dataset_key": item["dataset_key"],
+            "image_path": item["image_path"],
+            "label_schema": item["label_schema"],
+            "image_view": item["image_view"],
+            "split": item["split"],
+        }
