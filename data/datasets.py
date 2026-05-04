@@ -120,6 +120,7 @@ class ConditionalManifestDataset(Dataset[dict[str, Any]]):
         self,
         manifest_path: str | Path,
         image_size: int = 256,
+        class_values: list[int] | None = None,
         max_samples: int | None = None,
     ) -> None:
         self.base_dataset = ManifestImageDataset(
@@ -129,7 +130,9 @@ class ConditionalManifestDataset(Dataset[dict[str, Any]]):
             max_samples=max_samples,
         )
         self.samples = self.base_dataset.samples
-        self.class_values = sorted({sample.severity_proxy_value for sample in self.samples})
+        self.class_values = class_values or sorted(
+            {sample.severity_proxy_value for sample in self.samples}
+        )
         self.class_to_index = {value: index for index, value in enumerate(self.class_values)}
 
     def __len__(self) -> int:

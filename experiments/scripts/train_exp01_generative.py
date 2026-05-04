@@ -33,11 +33,13 @@ def _build_loader(
     image_size: int,
     batch_size: int,
     shuffle: bool,
+    class_values: list[int] | None,
     max_samples: int | None,
 ) -> DataLoader:
     dataset = ConditionalManifestDataset(
         manifest_path=manifest_path,
         image_size=image_size,
+        class_values=class_values,
         max_samples=max_samples,
     )
     return DataLoader(dataset, batch_size=batch_size, shuffle=shuffle)
@@ -100,17 +102,20 @@ def main() -> None:
         image_size=image_size,
         batch_size=args.batch_size,
         shuffle=True,
+        class_values=None,
         max_samples=args.max_train_samples,
     )
+    train_class_values = train_loader.dataset.class_values
     val_loader = _build_loader(
         manifest_path=args.val_manifest,
         image_size=image_size,
         batch_size=args.batch_size,
         shuffle=False,
+        class_values=train_class_values,
         max_samples=args.max_val_samples,
     )
 
-    condition_dim = len(train_loader.dataset.class_values)
+    condition_dim = len(train_class_values)
     model_config = LatentDiffusionConfig(
         image_resolution=image_size,
         conditioning_strategy=conditioning_strategy,
@@ -159,7 +164,7 @@ def main() -> None:
         "device": str(device),
         "image_size": image_size,
         "conditioning_strategy": conditioning_strategy,
-        "condition_classes": train_loader.dataset.class_values,
+        "condition_classes": train_class_values,
         "train_sample_count": len(train_loader.dataset),
         "val_sample_count": len(val_loader.dataset),
         "history": history,
