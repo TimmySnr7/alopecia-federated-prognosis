@@ -72,6 +72,10 @@ def _extract_stage_token(path: Path) -> str:
     if match:
         return match.group(2)
 
+    for part in reversed(path.parts):
+        if re.fullmatch(r"[1-7]", part):
+            return part
+
     digit_match = re.search(r"(?<!\d)([1-7])(?!\d)", path.stem.lower())
     if digit_match:
         return digit_match.group(1)
@@ -89,6 +93,32 @@ def _normalise_stage_value(token: str) -> str:
     if token.isdigit():
         return token
     return str(ROMAN_STAGE_MAP.get(token.lower(), ""))
+
+
+def _load_tapakah68_labels(dataset_dir: Path) -> dict[str, str]:
+    metadata_path = dataset_dir / "bald_people.csv"
+    if not metadata_path.exists():
+        return {}
+
+    labels: dict[str, str] = {}
+    with metadata_path.open(newline="") as handle:
+        reader = csv.DictReader(handle)
+        if "images" not in reader.fieldnames or "type" not in reader.fieldnames:
+            return {}
+
+        for row in reader:
+            image_rel = str(row["images"]).strip()
+            type_value = str(row["type"]).strip().lower()
+            match = re.search(r"type[_-]?(\d+)", type_value)
+            if image_rel and match:
+                labels[image_rel] = match.group(1)
+    return labels
+
+
+def _load_dataset_specific_labels(dataset_key: str, dataset_dir: Path) -> dict[str, str]:
+    if dataset_key == "tapakah68_bald_people":
+        return _load_tapakah68_labels(dataset_dir)
+    return {}
 
 
 def _assign_splits(records: list[ManifestRecord], seed: int) -> list[ManifestRecord]:
@@ -153,8 +183,10 @@ def build_exp01_records(
             continue
 
         label_schema = entry["label_schema"]["primary"]
+        dataset_specific_labels = _load_dataset_specific_labels(dataset_key, dataset_dir)
         for image_path in _iter_image_paths(dataset_dir):
-            token = _extract_stage_token(image_path)
+            relative_path = image_path.relative_to(dataset_dir).as_posix()
+            token = dataset_specific_labels.get(relative_path, _extract_stage_token(image_path))
             records.append(
                 ManifestRecord(
                     dataset_key=dataset_key,
