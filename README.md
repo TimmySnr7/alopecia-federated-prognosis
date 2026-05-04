@@ -92,6 +92,17 @@ python experiments/scripts/smoke_test_exp01_generative_batch.py \
   --batch-size 4
 ```
 
+For the first centralised generative training scaffold:
+
+```bash
+python experiments/scripts/train_exp01_generative.py \
+  experiments/configs/exp01_centralised_baseline.yaml \
+  ~/datasets/alopecia_public/manifests/exp01_working_train.csv \
+  ~/datasets/alopecia_public/manifests/exp01_working_val.csv \
+  --epochs 3 \
+  --batch-size 4
+```
+
 ## Student Contribution Model
 
 Each directory in `student_projects/` is a sandbox with its own README and handover
