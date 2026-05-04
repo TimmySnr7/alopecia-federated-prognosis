@@ -5,6 +5,7 @@
 - `top_only_v1`
 - `top_priority_v1`
 - `top_priority_v2`
+- `working_v3`
 
 ## Summary judgement
 
@@ -17,6 +18,10 @@ validation signal.
 `top_priority_v2` is the current best baseline because pretrained features,
 augmentation, and class weighting improve stability sufficiently to justify
 formalising the result.
+
+`working_v3` becomes the final classification-side checkpoint because it keeps
+the stronger recipe while adding richer class-level evaluation on the formal
+`exp01_working` subset.
 
 ## Why `top_priority_v2` wins
 
