@@ -1,0 +1,92 @@
+datasets:
+  unidatapro_men_hair_loss:
+    title: "UniDataPro men hair-loss dataset"
+    source_type: huggingface
+    url: "https://huggingface.co/datasets/UniDataPro/men-hair-loss-dataset"
+    licence: "Check upstream dataset card before use"
+    role_in_exp01: training
+    subtype_focus: aga
+    label_schema:
+      primary: norwood_stage
+      secondary: null
+    approximate_n: unknown_pending_audit
+    skin_tone_coverage: unknown_pending_audit
+    key_limitation: "Public dataset card needs audit for demographic balance and label provenance."
+  unidatapro_women_hair_loss:
+    title: "UniDataPro women hair-loss dataset"
+    source_type: huggingface
+    url: "https://huggingface.co/datasets/UniDataPro/women-hair-loss-dataset"
+    licence: "Check upstream dataset card before use"
+    role_in_exp01: training
+    subtype_focus: female_pattern_hair_loss_proxy
+    label_schema:
+      primary: ludwig_stage
+      secondary: null
+    approximate_n: unknown_pending_audit
+    skin_tone_coverage: unknown_pending_audit
+    key_limitation: "Requires label harmonisation with Norwood-style staging before pooled training."
+  unidpro_hair_loss_male_norwood_scale:
+    title: "Hair loss male Norwood scale"
+    source_type: kaggle
+    url: "https://www.kaggle.com/datasets/unidpro/hair-loss-male-norwood-scale"
+    licence: "Check Kaggle terms and dataset-specific terms before use"
+    role_in_exp01: training
+    subtype_focus: aga
+    label_schema:
+      primary: norwood_stage
+      secondary: null
+    approximate_n: 2400
+    skin_tone_coverage: unknown_pending_audit
+    key_limitation: "Likely biased toward web-scraped top-view examples with uneven acquisition conditions."
+  tapakah68_bald_people:
+    title: "Dataset of bald people"
+    source_type: kaggle
+    url: "https://www.kaggle.com/datasets/tapakah68/dataset-of-bald-people"
+    licence: "Check Kaggle terms and dataset-specific terms before use"
+    role_in_exp01: training
+    subtype_focus: aga_proxy
+    label_schema:
+      primary: norwood_scale_proxy
+      secondary: null
+    approximate_n: 5000
+    skin_tone_coverage: unknown_pending_audit
+    key_limitation: "Proxy labels and broad web variability may reduce label cleanliness."
+  fitzpatrick17k:
+    title: "Fitzpatrick17k"
+    source_type: public
+    url: "https://github.com/mattgroh/fitzpatrick17k"
+    licence: "Check upstream repository and publication terms before use"
+    role_in_exp01: audit_only
+    subtype_focus: dermatology_broad
+    label_schema:
+      primary: fitzpatrick_skin_type
+      secondary: diagnosis
+    approximate_n: 17000
+    skin_tone_coverage: broad_by_design
+    key_limitation: "Not scalp- or alopecia-specific, so unsuitable as a primary prognosis training set."
+  ddi:
+    title: "Diverse Dermatology Images"
+    source_type: public
+    url: "https://ddi-dataset.github.io/index.html"
+    licence: "Check upstream dataset access and use terms before use"
+    role_in_exp01: audit_only
+    subtype_focus: dermatology_broad
+    label_schema:
+      primary: skin_condition
+      secondary: skin_tone_annotation
+    approximate_n: unknown_pending_audit
+    skin_tone_coverage: diversity_focused
+    key_limitation: "Useful for fairness auditing but not a direct alopecia prognosis training source."
+  skincare:
+    title: "SkinCaRe multimodal dermatology dataset"
+    source_type: huggingface
+    url: "https://huggingface.co/datasets/yuhos16/SkinCaRe"
+    licence: "Check upstream dataset card before use"
+    role_in_exp01: metadata_reference
+    subtype_focus: hair_and_skin_conditions
+    label_schema:
+      primary: caption_and_condition_metadata
+      secondary: dermatologist_caption
+    approximate_n: unknown_pending_audit
+    skin_tone_coverage: unknown_pending_audit
+    key_limitation: "Multimodal richness is useful later, but labels are too heterogeneous for the first narrow baseline."

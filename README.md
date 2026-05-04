@@ -30,9 +30,11 @@ pip install -e .
 ## Typical Workflow
 
 1. Add or update an experiment configuration in `experiments/configs/`.
-2. Run the appropriate driver in `experiments/scripts/`.
-3. Save generated artefacts to `experiments/results/` using DVC or Git LFS.
-4. Generate reusable reports and thesis assets under `evaluation/reports/` and `thesis_outputs/`.
+2. Confirm dataset entries and licence notes in `data/dataset_registry.yaml`.
+3. Record protocol assumptions or audit notes under `docs/` before the first run.
+4. Run the appropriate driver in `experiments/scripts/`.
+5. Save generated artefacts to `experiments/results/` using DVC or Git LFS.
+6. Generate reusable reports and thesis assets under `evaluation/reports/` and `thesis_outputs/`.
 
 ## Student Contribution Model
 
