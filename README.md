@@ -71,6 +71,19 @@ python experiments/scripts/train_severity_baseline.py \
   --batch-size 4
 ```
 
+For a slightly stronger early baseline on the larger top-priority subset:
+
+```bash
+python experiments/scripts/train_severity_baseline.py \
+  ~/datasets/alopecia_public/manifests/exp01_top_priority_train.csv \
+  ~/datasets/alopecia_public/manifests/exp01_top_priority_val.csv \
+  --epochs 10 \
+  --batch-size 4 \
+  --pretrained \
+  --augment \
+  --class-weighting
+```
+
 ## Student Contribution Model
 
 Each directory in `student_projects/` is a sandbox with its own README and handover

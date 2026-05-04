@@ -30,11 +30,13 @@ def _build_loader(
     image_size: int,
     batch_size: int,
     shuffle: bool,
+    augment: bool,
     max_samples: int | None,
 ) -> DataLoader:
     dataset = ManifestImageDataset(
         manifest_path=manifest_path,
         image_size=image_size,
+        augment=augment,
         max_samples=max_samples,
     )
     return DataLoader(dataset, batch_size=batch_size, shuffle=shuffle)
@@ -43,6 +45,16 @@ def _build_loader(
 def _remap_labels(severity_tensor: torch.Tensor, label_map: dict[int, int]) -> torch.Tensor:
     remapped = [label_map[int(value)] for value in severity_tensor.tolist()]
     return torch.tensor(remapped, dtype=torch.long, device=severity_tensor.device)
+
+
+def _class_weight_tensor(train_labels: list[int], label_map: dict[int, int], device: torch.device) -> torch.Tensor:
+    counts = Counter(train_labels)
+    total = sum(counts.values())
+    weights = []
+    for original_label, mapped_label in sorted(label_map.items(), key=lambda item: item[1]):
+        count = counts[original_label]
+        weights.append(total / (len(label_map) * count))
+    return torch.tensor(weights, dtype=torch.float32, device=device)
 
 
 def _run_epoch(
@@ -93,6 +105,9 @@ def main() -> None:
     parser.add_argument("--batch-size", type=int, default=4)
     parser.add_argument("--epochs", type=int, default=3)
     parser.add_argument("--lr", type=float, default=1e-3)
+    parser.add_argument("--pretrained", action="store_true")
+    parser.add_argument("--augment", action="store_true")
+    parser.add_argument("--class-weighting", action="store_true")
     parser.add_argument("--max-train-samples", type=int, default=None)
     parser.add_argument("--max-val-samples", type=int, default=None)
     parser.add_argument("--output-json", type=Path, default=None)
@@ -103,6 +118,7 @@ def main() -> None:
         image_size=args.image_size,
         batch_size=args.batch_size,
         shuffle=True,
+        augment=args.augment,
         max_samples=args.max_train_samples,
     )
     val_loader = _build_loader(
@@ -110,6 +126,7 @@ def main() -> None:
         image_size=args.image_size,
         batch_size=args.batch_size,
         shuffle=False,
+        augment=False,
         max_samples=args.max_val_samples,
     )
 
@@ -117,13 +134,16 @@ def main() -> None:
     label_map = _infer_label_map(train_labels)
     class_count = len(label_map)
 
-    config = NorwoodClassifierConfig(class_count=class_count)
+    config = NorwoodClassifierConfig(class_count=class_count, pretrained=args.pretrained)
     model = build_baseline_classifier(config)
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     model.to(device)
 
     optimizer = Adam(model.parameters(), lr=args.lr)
-    criterion = nn.CrossEntropyLoss()
+    class_weights = (
+        _class_weight_tensor(train_labels, label_map, device) if args.class_weighting else None
+    )
+    criterion = nn.CrossEntropyLoss(weight=class_weights)
 
     history: list[dict[str, float]] = []
     for epoch in range(1, args.epochs + 1):
@@ -158,6 +178,9 @@ def main() -> None:
         "train_manifest": str(args.train_manifest),
         "val_manifest": str(args.val_manifest),
         "device": str(device),
+        "pretrained": args.pretrained,
+        "augment": args.augment,
+        "class_weighting": args.class_weighting,
         "train_sample_count": len(train_loader.dataset),
         "val_sample_count": len(val_loader.dataset),
         "label_map": label_map,

@@ -3,12 +3,13 @@
 from dataclasses import dataclass
 
 from torch import nn
-from torchvision.models import resnet18
+from torchvision.models import ResNet18_Weights, resnet18
 
 @dataclass
 class NorwoodClassifierConfig:
     backbone: str = "resnet18"
     class_count: int = 7
+    pretrained: bool = False
 
 
 def baseline_tag(config: NorwoodClassifierConfig) -> str:
@@ -20,6 +21,7 @@ def build_baseline_classifier(config: NorwoodClassifierConfig) -> nn.Module:
     if config.backbone != "resnet18":
         raise ValueError(f"Unsupported backbone: {config.backbone}")
 
-    model = resnet18(weights=None)
+    weights = ResNet18_Weights.DEFAULT if config.pretrained else None
+    model = resnet18(weights=weights)
     model.fc = nn.Linear(model.fc.in_features, config.class_count)
     return model

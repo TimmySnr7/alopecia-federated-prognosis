@@ -11,7 +11,14 @@ from PIL import Image
 import torch
 from torch import Tensor
 from torch.utils.data import Dataset
-from torchvision.transforms import Compose, InterpolationMode, Resize, ToTensor
+from torchvision.transforms import (
+    ColorJitter,
+    Compose,
+    InterpolationMode,
+    RandomHorizontalFlip,
+    Resize,
+    ToTensor,
+)
 
 
 @dataclass(frozen=True)
@@ -25,13 +32,19 @@ class ManifestSample:
     split: str
 
 
-def _default_transform(image_size: int) -> Compose:
-    return Compose(
-        [
-            Resize((image_size, image_size), interpolation=InterpolationMode.BILINEAR),
-            ToTensor(),
-        ]
-    )
+def _build_transform(image_size: int, augment: bool) -> Compose:
+    transforms = [
+        Resize((image_size, image_size), interpolation=InterpolationMode.BILINEAR),
+    ]
+    if augment:
+        transforms.extend(
+            [
+                RandomHorizontalFlip(p=0.5),
+                ColorJitter(brightness=0.1, contrast=0.1, saturation=0.05),
+            ]
+        )
+    transforms.append(ToTensor())
+    return Compose(transforms)
 
 
 class ManifestImageDataset(Dataset[dict[str, Any]]):
@@ -41,10 +54,11 @@ class ManifestImageDataset(Dataset[dict[str, Any]]):
         self,
         manifest_path: str | Path,
         image_size: int = 256,
+        augment: bool = False,
         max_samples: int | None = None,
     ) -> None:
         self.manifest_path = Path(manifest_path)
-        self.transform = _default_transform(image_size)
+        self.transform = _build_transform(image_size=image_size, augment=augment)
         self.samples = self._load_samples(max_samples=max_samples)
 
     def _load_samples(self, max_samples: int | None) -> list[ManifestSample]:
