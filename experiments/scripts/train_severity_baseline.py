@@ -8,6 +8,7 @@ import json
 from pathlib import Path
 from typing import Iterable
 
+from sklearn.metrics import classification_report, confusion_matrix, f1_score
 import torch
 from torch import nn
 from torch.optim import Adam
@@ -71,6 +72,8 @@ def _run_epoch(
     total_loss = 0.0
     total_correct = 0
     total_examples = 0
+    all_predictions: list[int] = []
+    all_labels: list[int] = []
 
     for batch in loader:
         images = batch["image"].to(device)
@@ -90,11 +93,13 @@ def _run_epoch(
         total_loss += loss.item() * images.size(0)
         total_correct += int((predictions == labels).sum().item())
         total_examples += images.size(0)
+        all_predictions.extend(predictions.detach().cpu().tolist())
+        all_labels.extend(labels.detach().cpu().tolist())
 
     if total_examples == 0:
-        return 0.0, 0.0
+        return 0.0, 0.0, [], []
 
-    return total_loss / total_examples, total_correct / total_examples
+    return total_loss / total_examples, total_correct / total_examples, all_labels, all_predictions
 
 
 def main() -> None:
@@ -144,10 +149,13 @@ def main() -> None:
         _class_weight_tensor(train_labels, label_map, device) if args.class_weighting else None
     )
     criterion = nn.CrossEntropyLoss(weight=class_weights)
+    inverse_label_map = {mapped: original for original, mapped in label_map.items()}
 
     history: list[dict[str, float]] = []
+    final_val_labels: list[int] = []
+    final_val_predictions: list[int] = []
     for epoch in range(1, args.epochs + 1):
-        train_loss, train_acc = _run_epoch(
+        train_loss, train_acc, _, _ = _run_epoch(
             model=model,
             loader=train_loader,
             optimizer=optimizer,
@@ -155,7 +163,7 @@ def main() -> None:
             device=device,
             label_map=label_map,
         )
-        val_loss, val_acc = _run_epoch(
+        val_loss, val_acc, val_labels, val_predictions = _run_epoch(
             model=model,
             loader=val_loader,
             optimizer=None,
@@ -163,6 +171,8 @@ def main() -> None:
             device=device,
             label_map=label_map,
         )
+        final_val_labels = val_labels
+        final_val_predictions = val_predictions
 
         epoch_summary = {
             "epoch": epoch,
@@ -173,6 +183,30 @@ def main() -> None:
         }
         history.append(epoch_summary)
         print(json.dumps(epoch_summary))
+
+    ordered_labels = sorted(inverse_label_map.keys())
+    val_macro_f1 = (
+        f1_score(final_val_labels, final_val_predictions, average="macro", zero_division=0)
+        if final_val_labels
+        else 0.0
+    )
+    val_confusion = (
+        confusion_matrix(final_val_labels, final_val_predictions, labels=ordered_labels).tolist()
+        if final_val_labels
+        else []
+    )
+    val_classification_report = (
+        classification_report(
+            final_val_labels,
+            final_val_predictions,
+            labels=ordered_labels,
+            target_names=[str(inverse_label_map[label]) for label in ordered_labels],
+            zero_division=0,
+            output_dict=True,
+        )
+        if final_val_labels
+        else {}
+    )
 
     summary = {
         "train_manifest": str(args.train_manifest),
@@ -185,6 +219,9 @@ def main() -> None:
         "val_sample_count": len(val_loader.dataset),
         "label_map": label_map,
         "train_label_distribution": dict(sorted(Counter(train_labels).items())),
+        "val_macro_f1": val_macro_f1,
+        "val_confusion_matrix": val_confusion,
+        "val_classification_report": val_classification_report,
         "history": history,
     }
     print(json.dumps(summary, indent=2))
