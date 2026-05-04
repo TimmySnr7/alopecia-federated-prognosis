@@ -48,9 +48,22 @@ expectations. Nothing moves into the core codebase until it has:
 
 - `CONTRIBUTING.md` defines coding, review, and handover rules.
 - `.github/workflows/ci.yml` provides a lightweight CI entry point.
-- Branch protection should be enabled on `main` once the repository is published on GitHub.
+- Branch protection is enabled on `main` for safer collaboration.
 
 ## Citation
 
-If you reuse this repository structure or code, cite the associated PhD proposal and future
-project publications.
+If you reuse this repository structure, code, or experimental design, please cite the
+repository metadata in [CITATION.cff](./CITATION.cff). A simple BibTeX entry is:
+
+```bibtex
+@software{musharu_alopecia_federated_prognosis_2026,
+  author = {Musharu, Timothy},
+  title = {Alopecia Federated Prognosis},
+  year = {2026},
+  url = {https://github.com/TimmySnr7/alopecia-federated-prognosis},
+  license = {Apache-2.0}
+}
+```
+
+Where appropriate, also cite the associated PhD proposal, preprints, and future publications
+that emerge from the repository.
