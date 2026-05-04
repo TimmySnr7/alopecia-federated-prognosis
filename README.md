@@ -53,6 +53,14 @@ This writes:
 - `~/datasets/alopecia_public/manifests/exp01_val.csv`
 - `~/datasets/alopecia_public/manifests/exp01_test.csv`
 
+For a first loader smoke test on the cleaner top-view subset:
+
+```bash
+python experiments/scripts/smoke_test_exp01_loader.py \
+  ~/datasets/alopecia_public/manifests/exp01_top_only_train.csv \
+  --batch-size 4
+```
+
 ## Student Contribution Model
 
 Each directory in `student_projects/` is a sandbox with its own README and handover
