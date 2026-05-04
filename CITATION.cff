@@ -1,0 +1,21 @@
+cff-version: 1.2.0
+message: "If you use this repository, please cite it using the metadata below."
+title: "Alopecia Federated Prognosis"
+type: software
+authors:
+  - family-names: "Musharu"
+    given-names: "Timothy"
+repository-code: "https://github.com/TimmySnr7/alopecia-federated-prognosis"
+url: "https://github.com/TimmySnr7/alopecia-federated-prognosis"
+license: "Apache-2.0"
+abstract: >-
+  Research workspace for federated multimodal alopecia prognosis, including
+  latent diffusion, simulated federation, evaluation tooling, governance
+  artefacts, and student-safe research sandboxes.
+keywords:
+  - alopecia
+  - federated learning
+  - diffusion models
+  - dermatology AI
+  - medical imaging
+  - privacy-preserving machine learning
