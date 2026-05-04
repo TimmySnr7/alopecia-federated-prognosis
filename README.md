@@ -61,6 +61,16 @@ python experiments/scripts/smoke_test_exp01_loader.py \
   --batch-size 4
 ```
 
+For a first trainable severity baseline smoke test:
+
+```bash
+python experiments/scripts/train_severity_baseline.py \
+  ~/datasets/alopecia_public/manifests/exp01_top_only_train.csv \
+  ~/datasets/alopecia_public/manifests/exp01_top_only_val.csv \
+  --epochs 3 \
+  --batch-size 4
+```
+
 ## Student Contribution Model
 
 Each directory in `student_projects/` is a sandbox with its own README and handover
