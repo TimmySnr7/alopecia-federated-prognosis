@@ -36,6 +36,23 @@ pip install -e .
 5. Save generated artefacts to `experiments/results/` using DVC or Git LFS.
 6. Generate reusable reports and thesis assets under `evaluation/reports/` and `thesis_outputs/`.
 
+## Experiment 1 Data Manifests
+
+For `exp01`, keep raw public datasets outside Git and build pooled manifests from
+an external data root:
+
+```bash
+python experiments/scripts/build_exp01_manifest.py \
+  experiments/configs/exp01_centralised_baseline.yaml \
+  --data-root ~/datasets/alopecia_public
+```
+
+This writes:
+- `~/datasets/alopecia_public/metadata/exp01_master_index.csv`
+- `~/datasets/alopecia_public/manifests/exp01_train.csv`
+- `~/datasets/alopecia_public/manifests/exp01_val.csv`
+- `~/datasets/alopecia_public/manifests/exp01_test.csv`
+
 ## Student Contribution Model
 
 Each directory in `student_projects/` is a sandbox with its own README and handover

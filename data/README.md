@@ -15,6 +15,18 @@ The canonical public-dataset registry for the first proof-of-concept lives in
 `data/dataset_registry.yaml`. Every experiment config should refer to datasets
 by registry key rather than by informal name only.
 
+## Recommended External Layout
+
+Keep raw public data outside the repository, for example:
+
+- `~/datasets/alopecia_public/raw/`
+- `~/datasets/alopecia_public/processed/`
+- `~/datasets/alopecia_public/metadata/`
+- `~/datasets/alopecia_public/manifests/`
+
+The `exp01` manifest builder expects raw datasets to sit under
+`raw/<dataset_registry_key>/`.
+
 ## Governance Rules
 
 - Record licences, dataset URLs, and access conditions before use.

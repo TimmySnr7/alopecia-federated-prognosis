@@ -28,3 +28,11 @@ def test_exp01_has_required_protocol_fields() -> None:
     included = config["dataset"]["included"]
     for dataset_key in included:
         assert dataset_key in registry["datasets"]
+
+
+def test_exp01_registry_keys_are_unique() -> None:
+    repo_root = Path(__file__).resolve().parents[1]
+    registry_path = repo_root / "data" / "dataset_registry.yaml"
+    registry = yaml.safe_load(registry_path.read_text())
+    keys = list(registry["datasets"].keys())
+    assert len(keys) == len(set(keys))
