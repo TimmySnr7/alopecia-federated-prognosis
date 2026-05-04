@@ -21,6 +21,9 @@ data/raw/
 data/interim/
 experiments/results/**
 !experiments/results/README.md
+!experiments/results/exp01/
+!experiments/results/exp01/**/*.md
+!experiments/results/exp01/**/*.json
 
 # Build
 build/
