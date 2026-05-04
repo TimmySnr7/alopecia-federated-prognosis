@@ -49,6 +49,7 @@ expectations. Nothing moves into the core codebase until it has:
 - `CONTRIBUTING.md` defines coding, review, and handover rules.
 - `.github/workflows/ci.yml` provides a lightweight CI entry point.
 - Branch protection is enabled on `main` for safer collaboration.
+- `ROADMAP.md` tracks the phased build-out of the research programme.
 
 ## Citation
 
