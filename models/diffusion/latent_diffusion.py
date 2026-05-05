@@ -4,6 +4,7 @@ from dataclasses import dataclass
 
 import torch
 from torch import nn
+import torch.nn.functional as F
 
 
 @dataclass
@@ -21,31 +22,52 @@ def build_model_name(config: LatentDiffusionConfig) -> str:
     return f"ldm-{config.image_resolution}-{config.conditioning_strategy}"
 
 
+class FiLMBlock(nn.Module):
+    """A small convolutional block with feature-wise affine conditioning."""
+
+    def __init__(self, in_channels: int, out_channels: int, condition_dim: int) -> None:
+        super().__init__()
+        self.conv = nn.Conv2d(in_channels, out_channels, kernel_size=3, padding=1)
+        self.norm = nn.GroupNorm(num_groups=8, num_channels=out_channels)
+        self.to_scale = nn.Linear(condition_dim, out_channels)
+        self.to_shift = nn.Linear(condition_dim, out_channels)
+
+    def forward(self, x: torch.Tensor, condition: torch.Tensor) -> torch.Tensor:
+        h = self.conv(x)
+        h = self.norm(h)
+        scale = self.to_scale(condition).unsqueeze(-1).unsqueeze(-1)
+        shift = self.to_shift(condition).unsqueeze(-1).unsqueeze(-1)
+        h = h * (1.0 + scale) + shift
+        return F.relu(h, inplace=True)
+
+
 class ConditionalLatentScaffold(nn.Module):
-    """Tiny conditional denoising scaffold for early Experiment 1 training."""
+    """Conditional denoising scaffold with multi-layer FiLM conditioning."""
 
     def __init__(self, config: LatentDiffusionConfig) -> None:
         super().__init__()
-        self.condition_projection = nn.Linear(config.condition_dim, config.hidden_channels)
-        self.encoder = nn.Sequential(
-            nn.Conv2d(3 + config.hidden_channels, 64, kernel_size=3, padding=1),
+        self.condition_embedding = nn.Sequential(
+            nn.Linear(config.condition_dim, config.hidden_channels),
             nn.ReLU(inplace=True),
-            nn.Conv2d(64, 64, kernel_size=4, stride=2, padding=1),
-            nn.ReLU(inplace=True),
-            nn.Conv2d(64, 64, kernel_size=3, padding=1),
-            nn.ReLU(inplace=True),
-            nn.Conv2d(64, config.hidden_channels, kernel_size=3, padding=1),
+            nn.Linear(config.hidden_channels, config.hidden_channels),
             nn.ReLU(inplace=True),
         )
-        self.bottleneck = nn.Sequential(
-            nn.Conv2d(config.hidden_channels, config.hidden_channels, kernel_size=3, padding=1),
-            nn.ReLU(inplace=True),
-            nn.Conv2d(config.hidden_channels, config.hidden_channels, kernel_size=3, padding=1),
-            nn.ReLU(inplace=True),
+        self.input_proj = nn.Conv2d(3, 32, kernel_size=3, padding=1)
+        self.enc1 = FiLMBlock(32, 64, config.hidden_channels)
+        self.down = nn.Conv2d(64, 64, kernel_size=4, stride=2, padding=1)
+        self.enc2 = FiLMBlock(64, config.hidden_channels, config.hidden_channels)
+        self.bottleneck1 = FiLMBlock(
+            config.hidden_channels, config.hidden_channels, config.hidden_channels
         )
-        self.decoder = nn.Sequential(
-            nn.ConvTranspose2d(config.hidden_channels, 32, kernel_size=4, stride=2, padding=1),
-            nn.ReLU(inplace=True),
+        self.bottleneck2 = FiLMBlock(
+            config.hidden_channels, config.hidden_channels, config.hidden_channels
+        )
+        self.up = nn.ConvTranspose2d(
+            config.hidden_channels, config.hidden_channels, kernel_size=4, stride=2, padding=1
+        )
+        self.dec1 = FiLMBlock(config.hidden_channels, 64, config.hidden_channels)
+        self.dec2 = FiLMBlock(64, 32, config.hidden_channels)
+        self.output_head = nn.Sequential(
             nn.Conv2d(32, 16, kernel_size=3, padding=1),
             nn.ReLU(inplace=True),
             nn.Conv2d(16, 3, kernel_size=3, padding=1),
@@ -53,13 +75,17 @@ class ConditionalLatentScaffold(nn.Module):
         )
 
     def forward(self, image: torch.Tensor, severity_one_hot: torch.Tensor) -> torch.Tensor:
-        batch_size, _, height, width = image.shape
-        condition_map = self.condition_projection(severity_one_hot).view(batch_size, -1, 1, 1)
-        condition_map = condition_map.expand(-1, -1, height, width)
-        fused = torch.cat([image, condition_map], dim=1)
-        latent = self.encoder(fused)
-        latent = self.bottleneck(latent)
-        return self.decoder(latent)
+        condition = self.condition_embedding(severity_one_hot)
+        h = F.relu(self.input_proj(image), inplace=True)
+        h = self.enc1(h, condition)
+        h = F.relu(self.down(h), inplace=True)
+        h = self.enc2(h, condition)
+        h = self.bottleneck1(h, condition)
+        h = self.bottleneck2(h, condition)
+        h = F.relu(self.up(h), inplace=True)
+        h = self.dec1(h, condition)
+        h = self.dec2(h, condition)
+        return self.output_head(h)
 
 
 def build_scaffold_model(config: LatentDiffusionConfig) -> nn.Module:
