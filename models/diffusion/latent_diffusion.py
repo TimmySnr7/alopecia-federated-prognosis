@@ -13,6 +13,7 @@ class LatentDiffusionConfig:
     conditioning_strategy: str = "cross_attention"
     condition_dim: int = 7
     hidden_channels: int = 32
+    noise_std: float = 0.05
 
 
 def build_model_name(config: LatentDiffusionConfig) -> str:
@@ -21,7 +22,7 @@ def build_model_name(config: LatentDiffusionConfig) -> str:
 
 
 class ConditionalLatentScaffold(nn.Module):
-    """Tiny conditional image-to-image scaffold for early Experiment 1 training."""
+    """Tiny conditional denoising scaffold for early Experiment 1 training."""
 
     def __init__(self, config: LatentDiffusionConfig) -> None:
         super().__init__()
@@ -29,13 +30,21 @@ class ConditionalLatentScaffold(nn.Module):
         self.encoder = nn.Sequential(
             nn.Conv2d(3 + config.hidden_channels, 64, kernel_size=3, padding=1),
             nn.ReLU(inplace=True),
+            nn.Conv2d(64, 64, kernel_size=4, stride=2, padding=1),
+            nn.ReLU(inplace=True),
             nn.Conv2d(64, 64, kernel_size=3, padding=1),
             nn.ReLU(inplace=True),
-            nn.Conv2d(64, 32, kernel_size=3, padding=1),
+            nn.Conv2d(64, config.hidden_channels, kernel_size=3, padding=1),
+            nn.ReLU(inplace=True),
+        )
+        self.bottleneck = nn.Sequential(
+            nn.Conv2d(config.hidden_channels, config.hidden_channels, kernel_size=3, padding=1),
+            nn.ReLU(inplace=True),
+            nn.Conv2d(config.hidden_channels, config.hidden_channels, kernel_size=3, padding=1),
             nn.ReLU(inplace=True),
         )
         self.decoder = nn.Sequential(
-            nn.Conv2d(32, 32, kernel_size=3, padding=1),
+            nn.ConvTranspose2d(config.hidden_channels, 32, kernel_size=4, stride=2, padding=1),
             nn.ReLU(inplace=True),
             nn.Conv2d(32, 16, kernel_size=3, padding=1),
             nn.ReLU(inplace=True),
@@ -49,6 +58,7 @@ class ConditionalLatentScaffold(nn.Module):
         condition_map = condition_map.expand(-1, -1, height, width)
         fused = torch.cat([image, condition_map], dim=1)
         latent = self.encoder(fused)
+        latent = self.bottleneck(latent)
         return self.decoder(latent)
 
 
