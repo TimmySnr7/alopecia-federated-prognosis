@@ -20,6 +20,10 @@ from models.diffusion.latent_diffusion import (
     build_model_name,
     build_scaffold_model,
 )
+from models.severity_grading.norwood_classifier import (
+    NorwoodClassifierConfig,
+    build_baseline_classifier,
+)
 
 
 class HybridReconstructionLoss(nn.Module):
@@ -47,6 +51,28 @@ def _repo_root() -> Path:
 
 def _load_config(config_path: Path) -> dict:
     return yaml.safe_load(config_path.read_text())
+
+
+def _load_frozen_severity_scorer(
+    checkpoint_path: Path,
+    device: torch.device,
+) -> tuple[nn.Module, dict[int, int]]:
+    checkpoint = torch.load(checkpoint_path, map_location=device)
+    scorer_config = checkpoint["config"]
+    model = build_baseline_classifier(
+        NorwoodClassifierConfig(
+            backbone=scorer_config["backbone"],
+            class_count=scorer_config["class_count"],
+            pretrained=False,
+        )
+    )
+    model.load_state_dict(checkpoint["model_state_dict"])
+    model.to(device)
+    model.eval()
+    for parameter in model.parameters():
+        parameter.requires_grad_(False)
+    label_map = {int(label): int(index) for label, index in checkpoint["label_map"].items()}
+    return model, label_map
 
 
 def _build_loader(
@@ -78,6 +104,8 @@ def _run_epoch(
     device: torch.device,
     noise_std: float,
     severity_loss_weight: float,
+    severity_scorer: nn.Module | None,
+    severity_label_map: dict[int, int] | None,
 ) -> tuple[float, float, float, int]:
     training = optimizer is not None
     model.train(training)
@@ -91,6 +119,7 @@ def _run_epoch(
         images = batch["image"].to(device)
         severity_one_hot = batch["target_severity_one_hot"].to(device)
         target_indices = batch["target_severity_index"].to(device)
+        target_severity_values = batch["target_severity"].to(device)
         identity_targets = batch["is_identity_target"].to(device=device, dtype=torch.float32)
         noisy_images = torch.clamp(images + torch.randn_like(images) * noise_std, 0.0, 1.0)
 
@@ -106,7 +135,21 @@ def _run_epoch(
                 ).sum() / identity_targets.sum()
             else:
                 reconstruction_loss = reconstruction_per_example.mean() * 0.0
-            severity_loss = nn.functional.cross_entropy(severity_logits, target_indices)
+            if severity_scorer is not None and severity_label_map is not None:
+                scorer_logits = severity_scorer(reconstructions)
+                scorer_targets = torch.tensor(
+                    [
+                        severity_label_map[int(value)]
+                        for value in target_severity_values.detach().cpu().tolist()
+                    ],
+                    dtype=torch.long,
+                    device=device,
+                )
+                severity_loss = nn.functional.cross_entropy(scorer_logits, scorer_targets)
+                severity_predictions = scorer_logits.argmax(dim=1)
+            else:
+                severity_loss = nn.functional.cross_entropy(severity_logits, target_indices)
+                severity_predictions = severity_logits.argmax(dim=1)
             loss = reconstruction_loss + severity_loss_weight * severity_loss
 
             if training:
@@ -115,7 +158,10 @@ def _run_epoch(
 
         total_reconstruction_loss += reconstruction_loss.item() * images.size(0)
         total_severity_loss += severity_loss.item() * images.size(0)
-        total_correct += (severity_logits.argmax(dim=1) == target_indices).sum().item()
+        if severity_scorer is not None and severity_label_map is not None:
+            total_correct += (severity_predictions == scorer_targets).sum().item()
+        else:
+            total_correct += (severity_predictions == target_indices).sum().item()
         total_examples += images.size(0)
 
     mean_reconstruction_loss = total_reconstruction_loss / total_examples if total_examples else 0.0
@@ -191,6 +237,7 @@ def main() -> None:
     parser.add_argument("--max-val-samples", type=int, default=None)
     parser.add_argument("--sample-output-dir", type=Path, default=None)
     parser.add_argument("--checkpoint-path", type=Path, default=None)
+    parser.add_argument("--severity-scorer-checkpoint", type=Path, default=None)
     parser.add_argument("--output-json", type=Path, default=None)
     args = parser.parse_args()
 
@@ -235,6 +282,13 @@ def main() -> None:
     model = build_scaffold_model(model_config)
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     model.to(device)
+    severity_scorer = None
+    severity_label_map = None
+    if args.severity_scorer_checkpoint is not None:
+        severity_scorer, severity_label_map = _load_frozen_severity_scorer(
+            checkpoint_path=args.severity_scorer_checkpoint,
+            device=device,
+        )
 
     optimizer = AdamW(model.parameters(), lr=learning_rate)
     criterion = HybridReconstructionLoss()
@@ -249,6 +303,8 @@ def main() -> None:
             device=device,
             noise_std=noise_std,
             severity_loss_weight=severity_loss_weight,
+            severity_scorer=severity_scorer,
+            severity_label_map=severity_label_map,
         )
         val_reconstruction_loss, val_severity_loss, val_severity_accuracy, val_examples = _run_epoch(
             model=model,
@@ -258,6 +314,8 @@ def main() -> None:
             device=device,
             noise_std=noise_std,
             severity_loss_weight=severity_loss_weight,
+            severity_scorer=severity_scorer,
+            severity_label_map=severity_label_map,
         )
 
         epoch_summary = {
@@ -307,6 +365,9 @@ def main() -> None:
         "noise_std": noise_std,
         "train_target_mode": "sampled",
         "train_target_shift_probability": train_target_shift_probability,
+        "severity_guidance_source": (
+            str(args.severity_scorer_checkpoint) if args.severity_scorer_checkpoint else "internal_head"
+        ),
         "condition_classes": train_class_values,
         "train_sample_count": len(train_loader.dataset),
         "val_sample_count": len(val_loader.dataset),

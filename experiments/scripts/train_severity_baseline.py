@@ -115,6 +115,7 @@ def main() -> None:
     parser.add_argument("--class-weighting", action="store_true")
     parser.add_argument("--max-train-samples", type=int, default=None)
     parser.add_argument("--max-val-samples", type=int, default=None)
+    parser.add_argument("--checkpoint-path", type=Path, default=None)
     parser.add_argument("--output-json", type=Path, default=None)
     args = parser.parse_args()
 
@@ -212,6 +213,7 @@ def main() -> None:
         "train_manifest": str(args.train_manifest),
         "val_manifest": str(args.val_manifest),
         "device": str(device),
+        "image_size": args.image_size,
         "pretrained": args.pretrained,
         "augment": args.augment,
         "class_weighting": args.class_weighting,
@@ -225,6 +227,22 @@ def main() -> None:
         "history": history,
     }
     print(json.dumps(summary, indent=2))
+
+    if args.checkpoint_path is not None:
+        args.checkpoint_path.parent.mkdir(parents=True, exist_ok=True)
+        torch.save(
+            {
+                "model_state_dict": model.state_dict(),
+                "config": {
+                    "backbone": config.backbone,
+                    "class_count": config.class_count,
+                    "pretrained": config.pretrained,
+                },
+                "label_map": label_map,
+                "image_size": args.image_size,
+            },
+            args.checkpoint_path,
+        )
 
     if args.output_json is not None:
         args.output_json.parent.mkdir(parents=True, exist_ok=True)
