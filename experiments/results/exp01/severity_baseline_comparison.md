@@ -36,3 +36,6 @@ the stronger recipe while adding richer class-level evaluation on the formal
 This is still a feasibility-stage result under severe data limitations. It
 should be cited as an early baseline and pipeline milestone, not as a
 benchmark-quality predictive model.
+## Transition note
+
+The severity-baseline series established that the current public-data subset is trainable and that `exp01_working` is the right development subset. The next milestone is therefore the centralised generative scaffold recorded in `generative_scaffold_working_v1/`, which marks the transition from classification-side validation into the actual generative path.

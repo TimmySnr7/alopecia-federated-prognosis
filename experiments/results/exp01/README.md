@@ -12,3 +12,4 @@ Result packages should prefer:
 
 Large binaries, model checkpoints, or image-heavy outputs should be tracked with
 DVC or Git LFS instead of plain Git.
+- `generative_scaffold_working_v1/`: first successful centralised generative scaffold result for the formal working subset.

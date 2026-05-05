@@ -1,0 +1,36 @@
+{
+  "experiment": "exp01_centralised_baseline",
+  "description": "Centralised proxy-prognosis baseline for androgenetic alopecia using severity-conditioned latent diffusion on a curated public-data pool.\n",
+  "model_name": "ldm-256-cross_attention",
+  "train_manifest": "/home/tmushuru/datasets/alopecia_public/manifests/exp01_working_train.csv",
+  "val_manifest": "/home/tmushuru/datasets/alopecia_public/manifests/exp01_working_val.csv",
+  "device": "cuda",
+  "image_size": 256,
+  "conditioning_strategy": "cross_attention",
+  "condition_classes": [1, 2, 3, 4, 5, 6, 7],
+  "train_sample_count": 41,
+  "val_sample_count": 9,
+  "history": [
+    {
+      "epoch": 1,
+      "train_reconstruction_loss": 0.05978089316589076,
+      "val_reconstruction_loss": 0.04751899962623914,
+      "train_examples": 41,
+      "val_examples": 9
+    },
+    {
+      "epoch": 2,
+      "train_reconstruction_loss": 0.059435872406494325,
+      "val_reconstruction_loss": 0.047377195209264755,
+      "train_examples": 41,
+      "val_examples": 9
+    },
+    {
+      "epoch": 3,
+      "train_reconstruction_loss": 0.05883225689573986,
+      "val_reconstruction_loss": 0.046806020041306816,
+      "train_examples": 41,
+      "val_examples": 9
+    }
+  ]
+}
