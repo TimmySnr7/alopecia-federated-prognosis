@@ -200,8 +200,8 @@ def main() -> None:
     learning_rate = experiment_config["training"]["learning_rate"]
     conditioning_strategy = experiment_config["model"]["conditioning"]
     noise_std = 0.05
-    severity_loss_weight = 0.2
-    train_target_shift_probability = 0.5
+    severity_loss_weight = 1.0
+    train_target_shift_probability = 0.8
 
     train_loader = _build_loader(
         manifest_path=args.train_manifest,
