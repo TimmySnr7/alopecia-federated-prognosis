@@ -73,8 +73,19 @@ class ConditionalLatentScaffold(nn.Module):
             nn.Conv2d(16, 3, kernel_size=3, padding=1),
             nn.Sigmoid(),
         )
+        self.severity_head = nn.Sequential(
+            nn.Conv2d(3, 16, kernel_size=3, padding=1),
+            nn.ReLU(inplace=True),
+            nn.Conv2d(16, 32, kernel_size=4, stride=2, padding=1),
+            nn.ReLU(inplace=True),
+            nn.AdaptiveAvgPool2d(1),
+            nn.Flatten(),
+            nn.Linear(32, config.condition_dim),
+        )
 
-    def forward(self, image: torch.Tensor, severity_one_hot: torch.Tensor) -> torch.Tensor:
+    def forward(
+        self, image: torch.Tensor, severity_one_hot: torch.Tensor
+    ) -> tuple[torch.Tensor, torch.Tensor]:
         condition = self.condition_embedding(severity_one_hot)
         h = F.relu(self.input_proj(image), inplace=True)
         h = self.enc1(h, condition)
@@ -85,7 +96,9 @@ class ConditionalLatentScaffold(nn.Module):
         h = F.relu(self.up(h), inplace=True)
         h = self.dec1(h, condition)
         h = self.dec2(h, condition)
-        return self.output_head(h)
+        reconstruction = self.output_head(h)
+        severity_logits = self.severity_head(reconstruction)
+        return reconstruction, severity_logits
 
 
 def build_scaffold_model(config: LatentDiffusionConfig) -> nn.Module:

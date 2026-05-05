@@ -121,6 +121,8 @@ class ConditionalManifestDataset(Dataset[dict[str, Any]]):
         manifest_path: str | Path,
         image_size: int = 256,
         class_values: list[int] | None = None,
+        target_mode: str = "identity",
+        target_shift_probability: float = 0.5,
         max_samples: int | None = None,
     ) -> None:
         self.base_dataset = ManifestImageDataset(
@@ -134,22 +136,48 @@ class ConditionalManifestDataset(Dataset[dict[str, Any]]):
             {sample.severity_proxy_value for sample in self.samples}
         )
         self.class_to_index = {value: index for index, value in enumerate(self.class_values)}
+        self.target_mode = target_mode
+        self.target_shift_probability = target_shift_probability
 
     def __len__(self) -> int:
         return len(self.base_dataset)
 
     def __getitem__(self, index: int) -> dict[str, Any]:
         item = self.base_dataset[index]
-        severity_value = int(item["severity"].item())
-        severity_index = self.class_to_index[severity_value]
-        one_hot = torch.zeros(len(self.class_values), dtype=torch.float32)
-        one_hot[severity_index] = 1.0
+        current_severity_value = int(item["severity"].item())
+        target_severity_value = current_severity_value
+
+        if (
+            self.target_mode == "sampled"
+            and len(self.class_values) > 1
+            and torch.rand(1).item() < self.target_shift_probability
+        ):
+            alternate_values = [
+                value for value in self.class_values if value != current_severity_value
+            ]
+            sampled_index = torch.randint(0, len(alternate_values), (1,)).item()
+            target_severity_value = alternate_values[sampled_index]
+
+        current_index = self.class_to_index[current_severity_value]
+        target_index = self.class_to_index[target_severity_value]
+
+        current_one_hot = torch.zeros(len(self.class_values), dtype=torch.float32)
+        current_one_hot[current_index] = 1.0
+
+        target_one_hot = torch.zeros(len(self.class_values), dtype=torch.float32)
+        target_one_hot[target_index] = 1.0
+
+        is_identity_target = current_severity_value == target_severity_value
 
         return {
             "image": item["image"],
             "current_severity": item["severity"],
-            "target_severity": item["severity"],
-            "severity_one_hot": one_hot,
+            "target_severity": torch.tensor(target_severity_value, dtype=torch.long),
+            "target_severity_index": torch.tensor(target_index, dtype=torch.long),
+            "current_severity_one_hot": current_one_hot,
+            "target_severity_one_hot": target_one_hot,
+            "severity_one_hot": target_one_hot,
+            "is_identity_target": torch.tensor(is_identity_target, dtype=torch.bool),
             "dataset_key": item["dataset_key"],
             "image_path": item["image_path"],
             "label_schema": item["label_schema"],

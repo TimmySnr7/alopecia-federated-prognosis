@@ -32,10 +32,13 @@ class HybridReconstructionLoss(nn.Module):
         self.l1 = nn.L1Loss()
         self.mse = nn.MSELoss()
 
+    def per_example(self, prediction: torch.Tensor, target: torch.Tensor) -> torch.Tensor:
+        l1 = (prediction - target).abs().mean(dim=(1, 2, 3))
+        mse = ((prediction - target) ** 2).mean(dim=(1, 2, 3))
+        return self.l1_weight * l1 + self.mse_weight * mse
+
     def forward(self, prediction: torch.Tensor, target: torch.Tensor) -> torch.Tensor:
-        return self.l1_weight * self.l1(prediction, target) + self.mse_weight * self.mse(
-            prediction, target
-        )
+        return self.per_example(prediction, target).mean()
 
 
 def _repo_root() -> Path:
@@ -52,12 +55,16 @@ def _build_loader(
     batch_size: int,
     shuffle: bool,
     class_values: list[int] | None,
+    target_mode: str,
+    target_shift_probability: float,
     max_samples: int | None,
 ) -> DataLoader:
     dataset = ConditionalManifestDataset(
         manifest_path=manifest_path,
         image_size=image_size,
         class_values=class_values,
+        target_mode=target_mode,
+        target_shift_probability=target_shift_probability,
         max_samples=max_samples,
     )
     return DataLoader(dataset, batch_size=batch_size, shuffle=shuffle)
@@ -70,34 +77,51 @@ def _run_epoch(
     criterion: nn.Module,
     device: torch.device,
     noise_std: float,
-) -> tuple[float, int]:
+    severity_loss_weight: float,
+) -> tuple[float, float, float, int]:
     training = optimizer is not None
     model.train(training)
 
-    total_loss = 0.0
+    total_reconstruction_loss = 0.0
+    total_severity_loss = 0.0
+    total_correct = 0
     total_examples = 0
 
     for batch in loader:
         images = batch["image"].to(device)
-        severity_one_hot = batch["severity_one_hot"].to(device)
+        severity_one_hot = batch["target_severity_one_hot"].to(device)
+        target_indices = batch["target_severity_index"].to(device)
+        identity_targets = batch["is_identity_target"].to(device=device, dtype=torch.float32)
         noisy_images = torch.clamp(images + torch.randn_like(images) * noise_std, 0.0, 1.0)
 
         with torch.set_grad_enabled(training):
             if training:
                 optimizer.zero_grad()
 
-            reconstructions = model(noisy_images, severity_one_hot)
-            loss = criterion(reconstructions, images)
+            reconstructions, severity_logits = model(noisy_images, severity_one_hot)
+            reconstruction_per_example = criterion.per_example(reconstructions, images)
+            if identity_targets.sum().item() > 0:
+                reconstruction_loss = (
+                    reconstruction_per_example * identity_targets
+                ).sum() / identity_targets.sum()
+            else:
+                reconstruction_loss = reconstruction_per_example.mean() * 0.0
+            severity_loss = nn.functional.cross_entropy(severity_logits, target_indices)
+            loss = reconstruction_loss + severity_loss_weight * severity_loss
 
             if training:
                 loss.backward()
                 optimizer.step()
 
-        total_loss += loss.item() * images.size(0)
+        total_reconstruction_loss += reconstruction_loss.item() * images.size(0)
+        total_severity_loss += severity_loss.item() * images.size(0)
+        total_correct += (severity_logits.argmax(dim=1) == target_indices).sum().item()
         total_examples += images.size(0)
 
-    mean_loss = total_loss / total_examples if total_examples else 0.0
-    return mean_loss, total_examples
+    mean_reconstruction_loss = total_reconstruction_loss / total_examples if total_examples else 0.0
+    mean_severity_loss = total_severity_loss / total_examples if total_examples else 0.0
+    severity_accuracy = total_correct / total_examples if total_examples else 0.0
+    return mean_reconstruction_loss, mean_severity_loss, severity_accuracy, total_examples
 
 
 def _save_epoch_samples(
@@ -116,9 +140,9 @@ def _save_epoch_samples(
     model.eval()
     with torch.no_grad():
         images = batch["image"].to(device)
-        severity_one_hot = batch["severity_one_hot"].to(device)
+        severity_one_hot = batch["target_severity_one_hot"].to(device)
         noisy_images = torch.clamp(images + torch.randn_like(images) * noise_std, 0.0, 1.0)
-        reconstructions = model(noisy_images, severity_one_hot)
+        reconstructions, _ = model(noisy_images, severity_one_hot)
 
     sample_count = min(4, images.size(0))
     triptych = torch.cat(
@@ -176,6 +200,8 @@ def main() -> None:
     learning_rate = experiment_config["training"]["learning_rate"]
     conditioning_strategy = experiment_config["model"]["conditioning"]
     noise_std = 0.05
+    severity_loss_weight = 0.2
+    train_target_shift_probability = 0.5
 
     train_loader = _build_loader(
         manifest_path=args.train_manifest,
@@ -183,6 +209,8 @@ def main() -> None:
         batch_size=args.batch_size,
         shuffle=True,
         class_values=None,
+        target_mode="sampled",
+        target_shift_probability=train_target_shift_probability,
         max_samples=args.max_train_samples,
     )
     train_class_values = train_loader.dataset.class_values
@@ -192,6 +220,8 @@ def main() -> None:
         batch_size=args.batch_size,
         shuffle=False,
         class_values=train_class_values,
+        target_mode="identity",
+        target_shift_probability=0.0,
         max_samples=args.max_val_samples,
     )
 
@@ -211,27 +241,33 @@ def main() -> None:
 
     history: list[dict[str, float]] = []
     for epoch in range(1, args.epochs + 1):
-        train_loss, train_examples = _run_epoch(
+        train_reconstruction_loss, train_severity_loss, train_severity_accuracy, train_examples = _run_epoch(
             model=model,
             loader=train_loader,
             optimizer=optimizer,
             criterion=criterion,
             device=device,
             noise_std=noise_std,
+            severity_loss_weight=severity_loss_weight,
         )
-        val_loss, val_examples = _run_epoch(
+        val_reconstruction_loss, val_severity_loss, val_severity_accuracy, val_examples = _run_epoch(
             model=model,
             loader=val_loader,
             optimizer=None,
             criterion=criterion,
             device=device,
             noise_std=noise_std,
+            severity_loss_weight=severity_loss_weight,
         )
 
         epoch_summary = {
             "epoch": epoch,
-            "train_reconstruction_loss": train_loss,
-            "val_reconstruction_loss": val_loss,
+            "train_reconstruction_loss": train_reconstruction_loss,
+            "train_severity_loss": train_severity_loss,
+            "train_severity_accuracy": train_severity_accuracy,
+            "val_reconstruction_loss": val_reconstruction_loss,
+            "val_severity_loss": val_severity_loss,
+            "val_severity_accuracy": val_severity_accuracy,
             "train_examples": train_examples,
             "val_examples": val_examples,
         }
@@ -266,7 +302,11 @@ def main() -> None:
         "image_size": image_size,
         "conditioning_strategy": conditioning_strategy,
         "loss_name": "l1_plus_half_mse",
+        "severity_loss_name": "cross_entropy",
+        "severity_loss_weight": severity_loss_weight,
         "noise_std": noise_std,
+        "train_target_mode": "sampled",
+        "train_target_shift_probability": train_target_shift_probability,
         "condition_classes": train_class_values,
         "train_sample_count": len(train_loader.dataset),
         "val_sample_count": len(val_loader.dataset),

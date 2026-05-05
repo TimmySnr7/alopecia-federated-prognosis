@@ -69,7 +69,7 @@ def main() -> None:
         for target_class in condition_classes:
             one_hot = torch.zeros((1, len(condition_classes)), dtype=torch.float32, device=device)
             one_hot[0, condition_classes.index(target_class)] = 1.0
-            reconstruction = model(noisy_tensor, one_hot)
+            reconstruction, _ = model(noisy_tensor, one_hot)
             panels.append(_add_label(_to_pil(reconstruction[0]), f"target {target_class}"))
 
     width, height = panels[0].size
