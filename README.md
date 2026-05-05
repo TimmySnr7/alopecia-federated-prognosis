@@ -100,7 +100,17 @@ python experiments/scripts/train_exp01_generative.py \
   ~/datasets/alopecia_public/manifests/exp01_working_train.csv \
   ~/datasets/alopecia_public/manifests/exp01_working_val.csv \
   --epochs 3 \
-  --batch-size 4
+  --batch-size 4 \
+  --checkpoint-path ~/datasets/alopecia_public/metadata/exp01_working_generative_scaffold.ckpt
+```
+
+For a first conditioning-sensitivity sweep on one fixed image:
+
+```bash
+python experiments/scripts/run_exp01_severity_sweep.py \
+  ~/datasets/alopecia_public/metadata/exp01_working_generative_scaffold.ckpt \
+  /path/to/example_top_view.png \
+  --output-path ~/datasets/alopecia_public/metadata/exp01_working_severity_sweep.png
 ```
 
 ## Student Contribution Model

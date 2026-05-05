@@ -6,6 +6,7 @@ from argparse import ArgumentParser
 import json
 from pathlib import Path
 
+from PIL import Image, ImageDraw
 import torch
 from torch import nn
 from torch.optim import AdamW
@@ -131,6 +132,30 @@ def _save_epoch_samples(
     save_image(triptych, output_dir / f"epoch_{epoch:02d}_samples.png", nrow=sample_count)
 
 
+def _save_checkpoint(
+    model: nn.Module,
+    checkpoint_path: Path,
+    model_config: LatentDiffusionConfig,
+    condition_classes: list[int],
+) -> None:
+    checkpoint_path.parent.mkdir(parents=True, exist_ok=True)
+    torch.save(
+        {
+            "model_state_dict": model.state_dict(),
+            "model_config": {
+                "image_resolution": model_config.image_resolution,
+                "latent_channels": model_config.latent_channels,
+                "conditioning_strategy": model_config.conditioning_strategy,
+                "condition_dim": model_config.condition_dim,
+                "hidden_channels": model_config.hidden_channels,
+                "noise_std": model_config.noise_std,
+            },
+            "condition_classes": condition_classes,
+        },
+        checkpoint_path,
+    )
+
+
 def main() -> None:
     parser = ArgumentParser()
     parser.add_argument("config", type=Path, help="Path to exp01 configuration file.")
@@ -141,6 +166,7 @@ def main() -> None:
     parser.add_argument("--max-train-samples", type=int, default=None)
     parser.add_argument("--max-val-samples", type=int, default=None)
     parser.add_argument("--sample-output-dir", type=Path, default=None)
+    parser.add_argument("--checkpoint-path", type=Path, default=None)
     parser.add_argument("--output-json", type=Path, default=None)
     args = parser.parse_args()
 
@@ -222,6 +248,14 @@ def main() -> None:
                 epoch=epoch,
             )
 
+        if args.checkpoint_path is not None:
+            _save_checkpoint(
+                model=model,
+                checkpoint_path=args.checkpoint_path,
+                model_config=model_config,
+                condition_classes=train_class_values,
+            )
+
     summary = {
         "experiment": experiment_config["name"],
         "description": experiment_config["description"],
@@ -237,6 +271,7 @@ def main() -> None:
         "train_sample_count": len(train_loader.dataset),
         "val_sample_count": len(val_loader.dataset),
         "sample_output_dir": str(args.sample_output_dir) if args.sample_output_dir else None,
+        "checkpoint_path": str(args.checkpoint_path) if args.checkpoint_path else None,
         "history": history,
     }
     print(json.dumps(summary, indent=2))
