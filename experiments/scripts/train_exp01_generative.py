@@ -21,6 +21,22 @@ from models.diffusion.latent_diffusion import (
 )
 
 
+class HybridReconstructionLoss(nn.Module):
+    """Combine L1 and MSE losses to discourage blurry mean-image solutions."""
+
+    def __init__(self, l1_weight: float = 1.0, mse_weight: float = 0.5) -> None:
+        super().__init__()
+        self.l1_weight = l1_weight
+        self.mse_weight = mse_weight
+        self.l1 = nn.L1Loss()
+        self.mse = nn.MSELoss()
+
+    def forward(self, prediction: torch.Tensor, target: torch.Tensor) -> torch.Tensor:
+        return self.l1_weight * self.l1(prediction, target) + self.mse_weight * self.mse(
+            prediction, target
+        )
+
+
 def _repo_root() -> Path:
     return Path(__file__).resolve().parents[2]
 
@@ -165,7 +181,7 @@ def main() -> None:
     model.to(device)
 
     optimizer = AdamW(model.parameters(), lr=learning_rate)
-    criterion = nn.MSELoss()
+    criterion = HybridReconstructionLoss()
 
     history: list[dict[str, float]] = []
     for epoch in range(1, args.epochs + 1):
@@ -215,6 +231,7 @@ def main() -> None:
         "device": str(device),
         "image_size": image_size,
         "conditioning_strategy": conditioning_strategy,
+        "loss_name": "l1_plus_half_mse",
         "noise_std": noise_std,
         "condition_classes": train_class_values,
         "train_sample_count": len(train_loader.dataset),

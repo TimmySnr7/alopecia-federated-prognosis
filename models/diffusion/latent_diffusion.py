@@ -12,7 +12,7 @@ class LatentDiffusionConfig:
     latent_channels: int = 4
     conditioning_strategy: str = "cross_attention"
     condition_dim: int = 7
-    hidden_channels: int = 32
+    hidden_channels: int = 64
     noise_std: float = 0.05
 
 
