@@ -26,6 +26,7 @@ experiments/results/**
 !experiments/results/exp01/severity_baseline_working_v3/
 !experiments/results/exp01/generative_scaffold_working_v1/
 !experiments/results/exp01/generative_scaffold_working_v8/
+!experiments/results/exp01/generative_scaffold_working_v9/
 !experiments/results/exp01/**/*.md
 !experiments/results/exp01/**/*.json
 

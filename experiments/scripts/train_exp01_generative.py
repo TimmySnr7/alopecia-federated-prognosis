@@ -108,6 +108,7 @@ def _run_epoch(
     device: torch.device,
     noise_std: float,
     severity_loss_weight: float,
+    shifted_reconstruction_weight: float,
     severity_scorer: nn.Module | None,
     severity_label_map: dict[int, int] | None,
 ) -> tuple[float, float, float, int]:
@@ -125,6 +126,7 @@ def _run_epoch(
         target_indices = batch["target_severity_index"].to(device)
         target_severity_values = batch["target_severity"].to(device)
         identity_targets = batch["is_identity_target"].to(device=device, dtype=torch.float32)
+        shifted_targets = 1.0 - identity_targets
         noisy_images = torch.clamp(images + torch.randn_like(images) * noise_std, 0.0, 1.0)
 
         with torch.set_grad_enabled(training):
@@ -133,12 +135,21 @@ def _run_epoch(
 
             reconstructions, severity_logits = model(noisy_images, severity_one_hot)
             reconstruction_per_example = criterion.per_example(reconstructions, images)
+            identity_reconstruction_loss = reconstruction_per_example.mean() * 0.0
+            shifted_reconstruction_loss = reconstruction_per_example.mean() * 0.0
+
             if identity_targets.sum().item() > 0:
-                reconstruction_loss = (
+                identity_reconstruction_loss = (
                     reconstruction_per_example * identity_targets
                 ).sum() / identity_targets.sum()
-            else:
-                reconstruction_loss = reconstruction_per_example.mean() * 0.0
+            if shifted_targets.sum().item() > 0:
+                shifted_reconstruction_loss = (
+                    reconstruction_per_example * shifted_targets
+                ).sum() / shifted_targets.sum()
+            reconstruction_loss = (
+                identity_reconstruction_loss
+                + shifted_reconstruction_weight * shifted_reconstruction_loss
+            )
             if severity_scorer is not None and severity_label_map is not None:
                 scorer_logits = severity_scorer(reconstructions)
                 scorer_targets = torch.tensor(
@@ -149,7 +160,15 @@ def _run_epoch(
                     dtype=torch.long,
                     device=device,
                 )
-                severity_loss = nn.functional.cross_entropy(scorer_logits, scorer_targets)
+                per_example_severity_loss = nn.functional.cross_entropy(
+                    scorer_logits, scorer_targets, reduction="none"
+                )
+                if shifted_targets.sum().item() > 0:
+                    severity_loss = (
+                        per_example_severity_loss * shifted_targets
+                    ).sum() / shifted_targets.sum()
+                else:
+                    severity_loss = per_example_severity_loss.mean() * 0.0
                 severity_predictions = scorer_logits.argmax(dim=1)
             else:
                 severity_loss = nn.functional.cross_entropy(severity_logits, target_indices)
@@ -251,7 +270,8 @@ def main() -> None:
     learning_rate = experiment_config["training"]["learning_rate"]
     conditioning_strategy = experiment_config["model"]["conditioning"]
     noise_std = 0.05
-    severity_loss_weight = 1.0
+    severity_loss_weight = 0.3
+    shifted_reconstruction_weight = 0.15
     train_target_shift_probability = 0.8
     train_target_sampling_strategy = "adjacent"
     train_max_target_delta = 1
@@ -313,6 +333,7 @@ def main() -> None:
             device=device,
             noise_std=noise_std,
             severity_loss_weight=severity_loss_weight,
+            shifted_reconstruction_weight=shifted_reconstruction_weight,
             severity_scorer=severity_scorer,
             severity_label_map=severity_label_map,
         )
@@ -324,6 +345,7 @@ def main() -> None:
             device=device,
             noise_std=noise_std,
             severity_loss_weight=severity_loss_weight,
+            shifted_reconstruction_weight=shifted_reconstruction_weight,
             severity_scorer=severity_scorer,
             severity_label_map=severity_label_map,
         )
@@ -372,6 +394,7 @@ def main() -> None:
         "loss_name": "l1_plus_half_mse",
         "severity_loss_name": "cross_entropy",
         "severity_loss_weight": severity_loss_weight,
+        "shifted_reconstruction_weight": shifted_reconstruction_weight,
         "noise_std": noise_std,
         "train_target_mode": "sampled",
         "train_target_sampling_strategy": train_target_sampling_strategy,
