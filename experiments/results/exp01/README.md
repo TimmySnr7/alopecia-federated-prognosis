@@ -17,3 +17,4 @@ DVC or Git LFS instead of plain Git.
 - `generative_scaffold_working_v9/`: adjacent-shift frozen-guidance result showing better optimization but visually collapsed sweeps, motivating the rebalanced `v10` loss.
 - `generative_scaffold_working_v10/`: rebalanced guidance attempt that still collapsed visually, motivating the residual-prediction `v11` pivot.
 - `guided_edit_baseline_v2/`: first clearly meaningful, auditable target-control baseline using explicit scorer-guided residual editing rather than a learned generator.
+- `plausible_proxy_sweep_v1/`: first visual-plausibility-first proxy sweep with monotonic expected severity and small, mask-localized morphology-inspired edits.
