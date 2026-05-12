@@ -6,9 +6,10 @@ from argparse import ArgumentParser
 import json
 from pathlib import Path
 
-from PIL import Image, ImageDraw
+from PIL import Image, ImageDraw, ImageFilter
 import torch
 from torch import nn
+import torch.nn.functional as F
 from torchvision.transforms import Compose, InterpolationMode, Resize, ToPILImage, ToTensor
 
 from models.severity_grading.norwood_classifier import (
@@ -63,6 +64,25 @@ def _load_scorer(checkpoint_path: Path, device: torch.device) -> tuple[nn.Module
     return model, ordered_labels, image_size
 
 
+def _load_mask(
+    mask_path: Path,
+    image_size: int,
+    device: torch.device,
+    blur_radius: float,
+    threshold: float,
+) -> torch.Tensor:
+    mask_image = Image.open(mask_path).convert("L")
+    mask_image = mask_image.resize((image_size, image_size), resample=Image.Resampling.BILINEAR)
+    mask_tensor = ToTensor()(mask_image).unsqueeze(0).to(device)
+    mask_tensor = (mask_tensor >= threshold).float()
+
+    if blur_radius > 0:
+        pil_mask = _to_pil(mask_tensor[0].repeat(3, 1, 1)).convert("L")
+        pil_mask = pil_mask.filter(ImageFilter.GaussianBlur(radius=blur_radius))
+        mask_tensor = ToTensor()(pil_mask).unsqueeze(0).to(device)
+    return mask_tensor.clamp(0.0, 1.0)
+
+
 def _expected_severity(probabilities: torch.Tensor, labels: list[int]) -> float:
     label_tensor = torch.tensor(labels, dtype=torch.float32, device=probabilities.device)
     return float((probabilities * label_tensor).sum().item())
@@ -81,6 +101,11 @@ def _total_variation(tensor: torch.Tensor) -> torch.Tensor:
     return x_diff.abs().mean() + y_diff.abs().mean()
 
 
+def _channel_balance(tensor: torch.Tensor) -> torch.Tensor:
+    channel_mean = tensor.mean(dim=1, keepdim=True)
+    return (tensor - channel_mean).abs().mean()
+
+
 def _optimize_target(
     scorer: nn.Module,
     source_image: torch.Tensor,
@@ -89,23 +114,53 @@ def _optimize_target(
     steps: int,
     learning_rate: float,
     residual_scale: float,
+    residual_resolution: int,
+    mask: torch.Tensor | None,
     l2_weight: float,
     tv_weight: float,
+    color_balance_weight: float,
 ) -> tuple[torch.Tensor, dict[str, float | int]]:
-    residual = torch.zeros_like(source_image, requires_grad=True)
-    optimizer = torch.optim.Adam([residual], lr=learning_rate)
+    image_height, image_width = source_image.shape[-2:]
+    residual_shape = (
+        1,
+        3,
+        residual_resolution,
+        residual_resolution,
+    )
+    residual_parameter = torch.zeros(
+        residual_shape,
+        dtype=source_image.dtype,
+        device=source_image.device,
+        requires_grad=True,
+    )
+    optimizer = torch.optim.Adam([residual_parameter], lr=learning_rate)
     target_tensor = torch.tensor([target_index], dtype=torch.long, device=source_image.device)
 
     final_image = source_image.detach()
     final_logits = None
     for _ in range(steps):
         optimizer.zero_grad()
-        edited = torch.clamp(source_image + residual_scale * torch.tanh(residual), 0.0, 1.0)
+        residual = F.interpolate(
+            residual_parameter,
+            size=(image_height, image_width),
+            mode="bilinear",
+            align_corners=False,
+        )
+        if mask is not None:
+            residual = residual * mask
+        bounded_residual = torch.tanh(residual)
+        edited = torch.clamp(source_image + residual_scale * bounded_residual, 0.0, 1.0)
         logits = scorer(edited)
         target_loss = nn.functional.cross_entropy(logits, target_tensor)
         l2_loss = residual.pow(2).mean()
         tv_loss = _total_variation(residual)
-        loss = target_loss + l2_weight * l2_loss + tv_weight * tv_loss
+        color_balance_loss = _channel_balance(residual)
+        loss = (
+            target_loss
+            + l2_weight * l2_loss
+            + tv_weight * tv_loss
+            + color_balance_weight * color_balance_loss
+        )
         loss.backward()
         optimizer.step()
         final_image = edited.detach()
@@ -129,11 +184,16 @@ def main() -> None:
     parser.add_argument("image_path", type=Path)
     parser.add_argument("--panel-output-path", type=Path, required=True)
     parser.add_argument("--json-output-path", type=Path, required=True)
+    parser.add_argument("--mask-path", type=Path, default=None)
+    parser.add_argument("--mask-blur-radius", type=float, default=3.0)
+    parser.add_argument("--mask-threshold", type=float, default=0.5)
     parser.add_argument("--steps", type=int, default=200)
     parser.add_argument("--lr", type=float, default=0.05)
     parser.add_argument("--residual-scale", type=float, default=0.15)
+    parser.add_argument("--residual-resolution", type=int, default=64)
     parser.add_argument("--l2-weight", type=float, default=0.01)
     parser.add_argument("--tv-weight", type=float, default=0.02)
+    parser.add_argument("--color-balance-weight", type=float, default=0.0)
     args = parser.parse_args()
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -142,6 +202,17 @@ def main() -> None:
 
     image = Image.open(args.image_path).convert("RGB")
     source_tensor = transform(image).unsqueeze(0).to(device)
+    mask = (
+        _load_mask(
+            args.mask_path,
+            image_size=image_size,
+            device=device,
+            blur_radius=args.mask_blur_radius,
+            threshold=args.mask_threshold,
+        )
+        if args.mask_path is not None
+        else None
+    )
     panels = [_add_label(_to_pil(source_tensor[0]), ["input"])]
 
     target_summaries: list[dict[str, float | int]] = []
@@ -154,8 +225,11 @@ def main() -> None:
             steps=args.steps,
             learning_rate=args.lr,
             residual_scale=args.residual_scale,
+            residual_resolution=args.residual_resolution,
+            mask=mask,
             l2_weight=args.l2_weight,
             tv_weight=args.tv_weight,
+            color_balance_weight=args.color_balance_weight,
         )
         summary = {
             "target_severity": int(target_label),
@@ -178,11 +252,16 @@ def main() -> None:
     summary = {
         "scorer_checkpoint": str(args.scorer_checkpoint),
         "image_path": str(args.image_path),
+        "mask_path": str(args.mask_path) if args.mask_path else None,
+        "mask_blur_radius": args.mask_blur_radius,
+        "mask_threshold": args.mask_threshold,
         "steps": args.steps,
         "learning_rate": args.lr,
         "residual_scale": args.residual_scale,
+        "residual_resolution": args.residual_resolution,
         "l2_weight": args.l2_weight,
         "tv_weight": args.tv_weight,
+        "color_balance_weight": args.color_balance_weight,
         "targets": target_summaries,
         "expected_severity_monotonic_fraction": _monotonic_fraction(expected_values),
         "predicted_severity_monotonic_fraction": _monotonic_fraction(predicted_values),
