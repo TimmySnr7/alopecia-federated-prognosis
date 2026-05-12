@@ -1,0 +1,55 @@
+{
+  "scorer_checkpoint": "/home/tmushuru/datasets/alopecia_public/metadata/exp01_working_severity_baseline_v4.ckpt",
+  "image_path": "/home/tmushuru/datasets/alopecia_public/raw/unidatapro_men_hair_loss/4/top.png",
+  "steps": 150,
+  "learning_rate": 0.03,
+  "residual_scale": 0.08,
+  "l2_weight": 0.05,
+  "tv_weight": 0.1,
+  "targets": [
+    {
+      "target_severity": 1,
+      "predicted_severity": 1,
+      "predicted_confidence": 0.9985427856445312,
+      "expected_severity": 1.005828857421875
+    },
+    {
+      "target_severity": 2,
+      "predicted_severity": 2,
+      "predicted_confidence": 0.9973338842391968,
+      "expected_severity": 2.0085506439208984
+    },
+    {
+      "target_severity": 3,
+      "predicted_severity": 3,
+      "predicted_confidence": 0.9855226278305054,
+      "expected_severity": 3.0394070148468018
+    },
+    {
+      "target_severity": 4,
+      "predicted_severity": 4,
+      "predicted_confidence": 0.9979623556137085,
+      "expected_severity": 4.003574371337891
+    },
+    {
+      "target_severity": 5,
+      "predicted_severity": 5,
+      "predicted_confidence": 0.9896538853645325,
+      "expected_severity": 4.983557224273682
+    },
+    {
+      "target_severity": 6,
+      "predicted_severity": 6,
+      "predicted_confidence": 0.8888933062553406,
+      "expected_severity": 5.79979944229126
+    },
+    {
+      "target_severity": 7,
+      "predicted_severity": 7,
+      "predicted_confidence": 0.9983519315719604,
+      "expected_severity": 6.9947967529296875
+    }
+  ],
+  "expected_severity_monotonic_fraction": 1.0,
+  "predicted_severity_monotonic_fraction": 1.0
+}

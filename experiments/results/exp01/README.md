@@ -16,3 +16,4 @@ DVC or Git LFS instead of plain Git.
 - `generative_scaffold_working_v8/`: first external frozen-scorer guidance result, recorded as a diagnostic milestone before the adjacent-shift `v9` refinement.
 - `generative_scaffold_working_v9/`: adjacent-shift frozen-guidance result showing better optimization but visually collapsed sweeps, motivating the rebalanced `v10` loss.
 - `generative_scaffold_working_v10/`: rebalanced guidance attempt that still collapsed visually, motivating the residual-prediction `v11` pivot.
+- `guided_edit_baseline_v2/`: first clearly meaningful, auditable target-control baseline using explicit scorer-guided residual editing rather than a learned generator.
