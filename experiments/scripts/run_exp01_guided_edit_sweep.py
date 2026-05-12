@@ -5,6 +5,7 @@ from __future__ import annotations
 from argparse import ArgumentParser
 import json
 from pathlib import Path
+from typing import Literal
 
 from PIL import Image, ImageDraw, ImageFilter
 import torch
@@ -81,6 +82,41 @@ def _load_mask(
         pil_mask = pil_mask.filter(ImageFilter.GaussianBlur(radius=blur_radius))
         mask_tensor = ToTensor()(pil_mask).unsqueeze(0).to(device)
     return mask_tensor.clamp(0.0, 1.0)
+
+
+def _build_ellipse_mask(
+    ellipse: list[float],
+    image_size: int,
+    device: torch.device,
+    blur_radius: float,
+) -> torch.Tensor:
+    cx, cy, rx, ry = ellipse
+    mask_image = Image.new("L", (image_size, image_size), 0)
+    draw = ImageDraw.Draw(mask_image)
+    draw.ellipse(
+        (
+            int((cx - rx) * image_size),
+            int((cy - ry) * image_size),
+            int((cx + rx) * image_size),
+            int((cy + ry) * image_size),
+        ),
+        fill=255,
+    )
+    if blur_radius > 0:
+        mask_image = mask_image.filter(ImageFilter.GaussianBlur(radius=blur_radius))
+    return ToTensor()(mask_image).unsqueeze(0).to(device).clamp(0.0, 1.0)
+
+
+def _combine_masks(
+    file_mask: torch.Tensor | None,
+    ellipse_mask: torch.Tensor | None,
+    ellipse_mask_mode: Literal["replace", "intersect"],
+) -> torch.Tensor | None:
+    if ellipse_mask is None:
+        return file_mask
+    if file_mask is None or ellipse_mask_mode == "replace":
+        return ellipse_mask
+    return (file_mask * ellipse_mask).clamp(0.0, 1.0)
 
 
 def _expected_severity(probabilities: torch.Tensor, labels: list[int]) -> float:
@@ -230,6 +266,20 @@ def main() -> None:
     parser.add_argument("--mask-path", type=Path, default=None)
     parser.add_argument("--mask-blur-radius", type=float, default=3.0)
     parser.add_argument("--mask-threshold", type=float, default=0.5)
+    parser.add_argument(
+        "--ellipse-mask",
+        nargs=4,
+        type=float,
+        metavar=("CX", "CY", "RX", "RY"),
+        default=None,
+        help="Optional normalized ellipse mask in resized-image coordinates.",
+    )
+    parser.add_argument(
+        "--ellipse-mask-mode",
+        choices=["replace", "intersect"],
+        default="replace",
+        help="How to combine --ellipse-mask with --mask-path when both are provided.",
+    )
     parser.add_argument("--steps", type=int, default=200)
     parser.add_argument("--lr", type=float, default=0.05)
     parser.add_argument("--residual-scale", type=float, default=0.15)
@@ -247,7 +297,7 @@ def main() -> None:
 
     image = Image.open(args.image_path).convert("RGB")
     source_tensor = transform(image).unsqueeze(0).to(device)
-    mask = (
+    file_mask = (
         _load_mask(
             args.mask_path,
             image_size=image_size,
@@ -258,6 +308,17 @@ def main() -> None:
         if args.mask_path is not None
         else None
     )
+    ellipse_mask = (
+        _build_ellipse_mask(
+            args.ellipse_mask,
+            image_size=image_size,
+            device=device,
+            blur_radius=args.mask_blur_radius,
+        )
+        if args.ellipse_mask is not None
+        else None
+    )
+    mask = _combine_masks(file_mask, ellipse_mask, args.ellipse_mask_mode)
     panels = [_add_label(_to_pil(source_tensor[0]), ["input"])]
 
     target_summaries: list[dict[str, float | int]] = []
@@ -302,6 +363,8 @@ def main() -> None:
         "mask_path": str(args.mask_path) if args.mask_path else None,
         "mask_blur_radius": args.mask_blur_radius,
         "mask_threshold": args.mask_threshold,
+        "ellipse_mask": args.ellipse_mask,
+        "ellipse_mask_mode": args.ellipse_mask_mode,
         "steps": args.steps,
         "learning_rate": args.lr,
         "residual_scale": args.residual_scale,
