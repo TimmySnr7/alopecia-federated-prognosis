@@ -106,6 +106,33 @@ def _channel_balance(tensor: torch.Tensor) -> torch.Tensor:
     return (tensor - channel_mean).abs().mean()
 
 
+def _visual_delta_metrics(
+    source_image: torch.Tensor,
+    edited_image: torch.Tensor,
+    mask: torch.Tensor | None,
+) -> dict[str, float]:
+    delta = (edited_image - source_image).abs()
+    metrics = {
+        "mean_absolute_delta": float(delta.mean().item()),
+        "max_absolute_delta": float(delta.max().item()),
+        "channel_mean_delta_r": float((edited_image[:, 0] - source_image[:, 0]).mean().item()),
+        "channel_mean_delta_g": float((edited_image[:, 1] - source_image[:, 1]).mean().item()),
+        "channel_mean_delta_b": float((edited_image[:, 2] - source_image[:, 2]).mean().item()),
+    }
+    if mask is not None:
+        mask_area = float(mask.mean().item())
+        inverse_mask = 1.0 - mask
+        metrics["mask_area_fraction"] = mask_area
+        metrics["masked_mean_absolute_delta"] = float(
+            (delta * mask).sum().item() / (mask.sum().item() * delta.size(1) + 1e-8)
+        )
+        metrics["unmasked_mean_absolute_delta"] = float(
+            (delta * inverse_mask).sum().item()
+            / (inverse_mask.sum().item() * delta.size(1) + 1e-8)
+        )
+    return metrics
+
+
 def _optimize_target(
     scorer: nn.Module,
     source_image: torch.Tensor,
@@ -115,15 +142,18 @@ def _optimize_target(
     learning_rate: float,
     residual_scale: float,
     residual_resolution: int,
+    residual_mode: str,
     mask: torch.Tensor | None,
     l2_weight: float,
     tv_weight: float,
     color_balance_weight: float,
+    early_stop_confidence: float,
 ) -> tuple[torch.Tensor, dict[str, float | int]]:
     image_height, image_width = source_image.shape[-2:]
+    residual_channels = 1 if residual_mode == "luminance" else 3
     residual_shape = (
         1,
-        3,
+        residual_channels,
         residual_resolution,
         residual_resolution,
     )
@@ -138,7 +168,8 @@ def _optimize_target(
 
     final_image = source_image.detach()
     final_logits = None
-    for _ in range(steps):
+    optimization_steps = steps
+    for step in range(steps):
         optimizer.zero_grad()
         residual = F.interpolate(
             residual_parameter,
@@ -146,6 +177,8 @@ def _optimize_target(
             mode="bilinear",
             align_corners=False,
         )
+        if residual_mode == "luminance":
+            residual = residual.repeat(1, 3, 1, 1)
         if mask is not None:
             residual = residual * mask
         bounded_residual = torch.tanh(residual)
@@ -166,6 +199,14 @@ def _optimize_target(
         final_image = edited.detach()
         final_logits = logits.detach()
 
+        if early_stop_confidence > 0:
+            probabilities = torch.softmax(final_logits[0], dim=0)
+            predicted_index = int(probabilities.argmax().item())
+            confidence = float(probabilities[predicted_index].item())
+            if predicted_index == target_index and confidence >= early_stop_confidence:
+                optimization_steps = step + 1
+                break
+
     probabilities = torch.softmax(final_logits[0], dim=0)
     predicted_index = int(probabilities.argmax().item())
     predicted_label = int(labels[predicted_index])
@@ -175,6 +216,8 @@ def _optimize_target(
         "predicted_severity": predicted_label,
         "predicted_confidence": confidence,
         "expected_severity": expected,
+        "optimization_steps": optimization_steps,
+        **_visual_delta_metrics(source_image, final_image, mask),
     }
 
 
@@ -191,9 +234,11 @@ def main() -> None:
     parser.add_argument("--lr", type=float, default=0.05)
     parser.add_argument("--residual-scale", type=float, default=0.15)
     parser.add_argument("--residual-resolution", type=int, default=64)
+    parser.add_argument("--residual-mode", choices=["rgb", "luminance"], default="rgb")
     parser.add_argument("--l2-weight", type=float, default=0.01)
     parser.add_argument("--tv-weight", type=float, default=0.02)
     parser.add_argument("--color-balance-weight", type=float, default=0.0)
+    parser.add_argument("--early-stop-confidence", type=float, default=0.0)
     args = parser.parse_args()
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -226,10 +271,12 @@ def main() -> None:
             learning_rate=args.lr,
             residual_scale=args.residual_scale,
             residual_resolution=args.residual_resolution,
+            residual_mode=args.residual_mode,
             mask=mask,
             l2_weight=args.l2_weight,
             tv_weight=args.tv_weight,
             color_balance_weight=args.color_balance_weight,
+            early_stop_confidence=args.early_stop_confidence,
         )
         summary = {
             "target_severity": int(target_label),
@@ -259,9 +306,11 @@ def main() -> None:
         "learning_rate": args.lr,
         "residual_scale": args.residual_scale,
         "residual_resolution": args.residual_resolution,
+        "residual_mode": args.residual_mode,
         "l2_weight": args.l2_weight,
         "tv_weight": args.tv_weight,
         "color_balance_weight": args.color_balance_weight,
+        "early_stop_confidence": args.early_stop_confidence,
         "targets": target_summaries,
         "expected_severity_monotonic_fraction": _monotonic_fraction(expected_values),
         "predicted_severity_monotonic_fraction": _monotonic_fraction(predicted_values),
