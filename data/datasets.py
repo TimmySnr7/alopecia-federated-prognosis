@@ -122,7 +122,9 @@ class ConditionalManifestDataset(Dataset[dict[str, Any]]):
         image_size: int = 256,
         class_values: list[int] | None = None,
         target_mode: str = "identity",
+        target_sampling_strategy: str = "any",
         target_shift_probability: float = 0.5,
+        max_target_delta: int | None = None,
         max_samples: int | None = None,
     ) -> None:
         self.base_dataset = ManifestImageDataset(
@@ -137,7 +139,9 @@ class ConditionalManifestDataset(Dataset[dict[str, Any]]):
         )
         self.class_to_index = {value: index for index, value in enumerate(self.class_values)}
         self.target_mode = target_mode
+        self.target_sampling_strategy = target_sampling_strategy
         self.target_shift_probability = target_shift_probability
+        self.max_target_delta = max_target_delta
 
     def __len__(self) -> int:
         return len(self.base_dataset)
@@ -155,6 +159,14 @@ class ConditionalManifestDataset(Dataset[dict[str, Any]]):
             alternate_values = [
                 value for value in self.class_values if value != current_severity_value
             ]
+            if self.target_sampling_strategy == "adjacent" and self.max_target_delta is not None:
+                bounded_values = [
+                    value
+                    for value in alternate_values
+                    if abs(value - current_severity_value) <= self.max_target_delta
+                ]
+                if bounded_values:
+                    alternate_values = bounded_values
             sampled_index = torch.randint(0, len(alternate_values), (1,)).item()
             target_severity_value = alternate_values[sampled_index]
 

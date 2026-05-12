@@ -1,0 +1,46 @@
+{
+  "experiment": "exp01_centralised_baseline",
+  "description": "Centralised proxy-prognosis baseline for androgenetic alopecia using severity-conditioned latent diffusion on a curated public-data pool.\n",
+  "model_name": "ldm-256-cross_attention",
+  "train_manifest": "/home/tmushuru/datasets/alopecia_public/manifests/exp01_working_train.csv",
+  "val_manifest": "/home/tmushuru/datasets/alopecia_public/manifests/exp01_working_val.csv",
+  "device": "cuda",
+  "image_size": 256,
+  "conditioning_strategy": "cross_attention",
+  "loss_name": "l1_plus_half_mse",
+  "severity_loss_name": "cross_entropy",
+  "severity_loss_weight": 1.0,
+  "noise_std": 0.05,
+  "train_target_mode": "sampled",
+  "train_target_shift_probability": 0.8,
+  "severity_guidance_source": "/home/tmushuru/datasets/alopecia_public/metadata/exp01_working_severity_baseline_v4.ckpt",
+  "condition_classes": [1, 2, 3, 4, 5, 6, 7],
+  "train_sample_count": 41,
+  "val_sample_count": 9,
+  "sample_output_dir": "/home/tmushuru/datasets/alopecia_public/metadata/exp01_working_generative_samples_v8",
+  "checkpoint_path": "/home/tmushuru/datasets/alopecia_public/metadata/exp01_working_generative_scaffold_v8.ckpt",
+  "history": [
+    {
+      "epoch": 1,
+      "train_reconstruction_loss": 0.18771513642334356,
+      "train_severity_loss": 4.906202420955751,
+      "train_severity_accuracy": 0.0975609756097561,
+      "val_reconstruction_loss": 0.21583723525206247,
+      "val_severity_loss": 2.433974689907498,
+      "val_severity_accuracy": 0.3333333333333333,
+      "train_examples": 41,
+      "val_examples": 9
+    },
+    {
+      "epoch": 15,
+      "train_reconstruction_loss": 0.11993361246295092,
+      "train_severity_loss": 3.4242156656776985,
+      "train_severity_accuracy": 0.21951219512195122,
+      "val_reconstruction_loss": 0.24288913938734266,
+      "val_severity_loss": 2.2225454813904233,
+      "val_severity_accuracy": 0.2222222222222222,
+      "train_examples": 41,
+      "val_examples": 9
+    }
+  ]
+}

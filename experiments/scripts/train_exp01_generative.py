@@ -82,7 +82,9 @@ def _build_loader(
     shuffle: bool,
     class_values: list[int] | None,
     target_mode: str,
+    target_sampling_strategy: str,
     target_shift_probability: float,
+    max_target_delta: int | None,
     max_samples: int | None,
 ) -> DataLoader:
     dataset = ConditionalManifestDataset(
@@ -90,7 +92,9 @@ def _build_loader(
         image_size=image_size,
         class_values=class_values,
         target_mode=target_mode,
+        target_sampling_strategy=target_sampling_strategy,
         target_shift_probability=target_shift_probability,
+        max_target_delta=max_target_delta,
         max_samples=max_samples,
     )
     return DataLoader(dataset, batch_size=batch_size, shuffle=shuffle)
@@ -249,6 +253,8 @@ def main() -> None:
     noise_std = 0.05
     severity_loss_weight = 1.0
     train_target_shift_probability = 0.8
+    train_target_sampling_strategy = "adjacent"
+    train_max_target_delta = 1
 
     train_loader = _build_loader(
         manifest_path=args.train_manifest,
@@ -257,7 +263,9 @@ def main() -> None:
         shuffle=True,
         class_values=None,
         target_mode="sampled",
+        target_sampling_strategy=train_target_sampling_strategy,
         target_shift_probability=train_target_shift_probability,
+        max_target_delta=train_max_target_delta,
         max_samples=args.max_train_samples,
     )
     train_class_values = train_loader.dataset.class_values
@@ -268,7 +276,9 @@ def main() -> None:
         shuffle=False,
         class_values=train_class_values,
         target_mode="identity",
+        target_sampling_strategy="any",
         target_shift_probability=0.0,
+        max_target_delta=None,
         max_samples=args.max_val_samples,
     )
 
@@ -364,7 +374,9 @@ def main() -> None:
         "severity_loss_weight": severity_loss_weight,
         "noise_std": noise_std,
         "train_target_mode": "sampled",
+        "train_target_sampling_strategy": train_target_sampling_strategy,
         "train_target_shift_probability": train_target_shift_probability,
+        "train_max_target_delta": train_max_target_delta,
         "severity_guidance_source": (
             str(args.severity_scorer_checkpoint) if args.severity_scorer_checkpoint else "internal_head"
         ),

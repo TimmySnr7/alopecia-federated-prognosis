@@ -13,3 +13,4 @@ Result packages should prefer:
 Large binaries, model checkpoints, or image-heavy outputs should be tracked with
 DVC or Git LFS instead of plain Git.
 - `generative_scaffold_working_v1/`: first successful centralised generative scaffold result for the formal working subset.
+- `generative_scaffold_working_v8/`: first external frozen-scorer guidance result, recorded as a diagnostic milestone before the adjacent-shift `v9` refinement.
