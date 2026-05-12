@@ -15,6 +15,7 @@ class LatentDiffusionConfig:
     condition_dim: int = 7
     hidden_channels: int = 64
     noise_std: float = 0.05
+    residual_scale: float = 0.2
 
 
 def build_model_name(config: LatentDiffusionConfig) -> str:
@@ -46,6 +47,7 @@ class ConditionalLatentScaffold(nn.Module):
 
     def __init__(self, config: LatentDiffusionConfig) -> None:
         super().__init__()
+        self.residual_scale = config.residual_scale
         self.condition_embedding = nn.Sequential(
             nn.Linear(config.condition_dim, config.hidden_channels),
             nn.ReLU(inplace=True),
@@ -71,7 +73,7 @@ class ConditionalLatentScaffold(nn.Module):
             nn.Conv2d(32, 16, kernel_size=3, padding=1),
             nn.ReLU(inplace=True),
             nn.Conv2d(16, 3, kernel_size=3, padding=1),
-            nn.Sigmoid(),
+            nn.Tanh(),
         )
         self.severity_head = nn.Sequential(
             nn.Conv2d(3, 16, kernel_size=3, padding=1),
@@ -96,7 +98,8 @@ class ConditionalLatentScaffold(nn.Module):
         h = F.relu(self.up(h), inplace=True)
         h = self.dec1(h, condition)
         h = self.dec2(h, condition)
-        reconstruction = self.output_head(h)
+        residual = self.output_head(h)
+        reconstruction = torch.clamp(image + self.residual_scale * residual, 0.0, 1.0)
         severity_logits = self.severity_head(reconstruction)
         return reconstruction, severity_logits
 

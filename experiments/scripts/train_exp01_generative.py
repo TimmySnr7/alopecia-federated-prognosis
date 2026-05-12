@@ -119,6 +119,7 @@ def _run_epoch(
     total_severity_loss = 0.0
     total_correct = 0
     total_examples = 0
+    total_severity_examples = 0.0
 
     for batch in loader:
         images = batch["image"].to(device)
@@ -136,19 +137,19 @@ def _run_epoch(
             reconstructions, severity_logits = model(noisy_images, severity_one_hot)
             reconstruction_per_example = criterion.per_example(reconstructions, images)
             identity_reconstruction_loss = reconstruction_per_example.mean() * 0.0
-            shifted_reconstruction_loss = reconstruction_per_example.mean() * 0.0
+            shifted_identity_loss = reconstruction_per_example.mean() * 0.0
 
             if identity_targets.sum().item() > 0:
                 identity_reconstruction_loss = (
                     reconstruction_per_example * identity_targets
                 ).sum() / identity_targets.sum()
             if shifted_targets.sum().item() > 0:
-                shifted_reconstruction_loss = (
+                shifted_identity_loss = (
                     reconstruction_per_example * shifted_targets
                 ).sum() / shifted_targets.sum()
             reconstruction_loss = (
                 identity_reconstruction_loss
-                + shifted_reconstruction_weight * shifted_reconstruction_loss
+                + shifted_reconstruction_weight * shifted_identity_loss
             )
             if severity_scorer is not None and severity_label_map is not None:
                 scorer_logits = severity_scorer(reconstructions)
@@ -163,15 +164,17 @@ def _run_epoch(
                 per_example_severity_loss = nn.functional.cross_entropy(
                     scorer_logits, scorer_targets, reduction="none"
                 )
-                if shifted_targets.sum().item() > 0:
+                severity_mask = shifted_targets if training else torch.ones_like(shifted_targets)
+                if severity_mask.sum().item() > 0:
                     severity_loss = (
-                        per_example_severity_loss * shifted_targets
-                    ).sum() / shifted_targets.sum()
+                        per_example_severity_loss * severity_mask
+                    ).sum() / severity_mask.sum()
                 else:
                     severity_loss = per_example_severity_loss.mean() * 0.0
                 severity_predictions = scorer_logits.argmax(dim=1)
             else:
                 severity_loss = nn.functional.cross_entropy(severity_logits, target_indices)
+                severity_mask = torch.ones_like(shifted_targets)
                 severity_predictions = severity_logits.argmax(dim=1)
             loss = reconstruction_loss + severity_loss_weight * severity_loss
 
@@ -180,16 +183,24 @@ def _run_epoch(
                 optimizer.step()
 
         total_reconstruction_loss += reconstruction_loss.item() * images.size(0)
-        total_severity_loss += severity_loss.item() * images.size(0)
+        mask_count = float(severity_mask.sum().item())
+        total_severity_loss += severity_loss.item() * mask_count
         if severity_scorer is not None and severity_label_map is not None:
-            total_correct += (severity_predictions == scorer_targets).sum().item()
+            total_correct += (
+                ((severity_predictions == scorer_targets).float() * severity_mask).sum().item()
+            )
         else:
-            total_correct += (severity_predictions == target_indices).sum().item()
+            total_correct += (
+                ((severity_predictions == target_indices).float() * severity_mask).sum().item()
+            )
         total_examples += images.size(0)
+        total_severity_examples += mask_count
 
     mean_reconstruction_loss = total_reconstruction_loss / total_examples if total_examples else 0.0
-    mean_severity_loss = total_severity_loss / total_examples if total_examples else 0.0
-    severity_accuracy = total_correct / total_examples if total_examples else 0.0
+    mean_severity_loss = (
+        total_severity_loss / total_severity_examples if total_severity_examples else 0.0
+    )
+    severity_accuracy = total_correct / total_severity_examples if total_severity_examples else 0.0
     return mean_reconstruction_loss, mean_severity_loss, severity_accuracy, total_examples
 
 
@@ -271,7 +282,7 @@ def main() -> None:
     conditioning_strategy = experiment_config["model"]["conditioning"]
     noise_std = 0.05
     severity_loss_weight = 0.3
-    shifted_reconstruction_weight = 0.15
+    shifted_reconstruction_weight = 0.05
     train_target_shift_probability = 0.8
     train_target_sampling_strategy = "adjacent"
     train_max_target_delta = 1
@@ -400,6 +411,7 @@ def main() -> None:
         "train_target_sampling_strategy": train_target_sampling_strategy,
         "train_target_shift_probability": train_target_shift_probability,
         "train_max_target_delta": train_max_target_delta,
+        "residual_prediction": True,
         "severity_guidance_source": (
             str(args.severity_scorer_checkpoint) if args.severity_scorer_checkpoint else "internal_head"
         ),

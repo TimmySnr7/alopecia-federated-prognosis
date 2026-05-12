@@ -27,6 +27,7 @@ experiments/results/**
 !experiments/results/exp01/generative_scaffold_working_v1/
 !experiments/results/exp01/generative_scaffold_working_v8/
 !experiments/results/exp01/generative_scaffold_working_v9/
+!experiments/results/exp01/generative_scaffold_working_v10/
 !experiments/results/exp01/**/*.md
 !experiments/results/exp01/**/*.json
 

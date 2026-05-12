@@ -1,0 +1,49 @@
+{
+  "experiment": "exp01_centralised_baseline",
+  "description": "Centralised proxy-prognosis baseline for androgenetic alopecia using severity-conditioned latent diffusion on a curated public-data pool.\n",
+  "model_name": "ldm-256-cross_attention",
+  "train_manifest": "/home/tmushuru/datasets/alopecia_public/manifests/exp01_working_train.csv",
+  "val_manifest": "/home/tmushuru/datasets/alopecia_public/manifests/exp01_working_val.csv",
+  "device": "cuda",
+  "image_size": 256,
+  "conditioning_strategy": "cross_attention",
+  "loss_name": "l1_plus_half_mse",
+  "severity_loss_name": "cross_entropy",
+  "severity_loss_weight": 0.3,
+  "shifted_reconstruction_weight": 0.15,
+  "noise_std": 0.05,
+  "train_target_mode": "sampled",
+  "train_target_sampling_strategy": "adjacent",
+  "train_target_shift_probability": 0.8,
+  "train_max_target_delta": 1,
+  "severity_guidance_source": "/home/tmushuru/datasets/alopecia_public/metadata/exp01_working_severity_baseline_v4.ckpt",
+  "condition_classes": [1, 2, 3, 4, 5, 6, 7],
+  "train_sample_count": 41,
+  "val_sample_count": 9,
+  "sample_output_dir": "/home/tmushuru/datasets/alopecia_public/metadata/exp01_working_generative_samples_v10",
+  "checkpoint_path": "/home/tmushuru/datasets/alopecia_public/metadata/exp01_working_generative_scaffold_v10.ckpt",
+  "history": [
+    {
+      "epoch": 1,
+      "train_reconstruction_loss": 0.12509486987823393,
+      "train_severity_loss": 6.097283200519841,
+      "train_severity_accuracy": 0.12195121951219512,
+      "val_reconstruction_loss": 0.21255478428469765,
+      "val_severity_loss": 0.0,
+      "val_severity_accuracy": 0.2222222222222222,
+      "train_examples": 41,
+      "val_examples": 9
+    },
+    {
+      "epoch": 15,
+      "train_reconstruction_loss": 0.17509614003867638,
+      "train_severity_loss": 4.623344979635099,
+      "train_severity_accuracy": 0.14634146341463414,
+      "val_reconstruction_loss": 0.22139534023072985,
+      "val_severity_loss": 0.0,
+      "val_severity_accuracy": 0.2222222222222222,
+      "train_examples": 41,
+      "val_examples": 9
+    }
+  ]
+}
