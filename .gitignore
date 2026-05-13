@@ -30,8 +30,10 @@ experiments/results/**
 !experiments/results/exp01/generative_scaffold_working_v10/
 !experiments/results/exp01/guided_edit_baseline_v2/
 !experiments/results/exp01/plausible_proxy_sweep_v1/
+!experiments/results/exp01/proxy_batch_eval_v1/
 !experiments/results/exp01/**/*.md
 !experiments/results/exp01/**/*.json
+!experiments/results/exp01/**/*.csv
 
 # Build
 build/
