@@ -34,6 +34,12 @@ experiments/results/**
 !experiments/results/exp01/**/*.md
 !experiments/results/exp01/**/*.json
 !experiments/results/exp01/**/*.csv
+!experiments/results/exp02/
+!experiments/results/exp02/scorer_gate_v1/
+!experiments/results/exp02/source_aware_proxy_batch_v1/
+!experiments/results/exp02/**/*.md
+!experiments/results/exp02/**/*.json
+!experiments/results/exp02/**/*.csv
 
 # Build
 build/

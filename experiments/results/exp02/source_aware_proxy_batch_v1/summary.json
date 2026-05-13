@@ -1,0 +1,1683 @@
+{
+  "scorer_checkpoint": "/home/tmushuru/datasets/alopecia_public/metadata/exp01_working_severity_baseline_v4.ckpt",
+  "manifest_path": "/home/tmushuru/datasets/alopecia_public/metadata/exp01_working_index.csv",
+  "view": "top",
+  "device": "cuda",
+  "image_size": 256,
+  "condition_classes": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7
+  ],
+  "case_count": 15,
+  "auto_pass_count": 13,
+  "auto_pass_rate": 0.8666666666666667,
+  "mean_expected_severity_monotonic_fraction": 0.8888888888888888,
+  "mean_expected_severity_span": 1.956867249806722,
+  "criteria": {
+    "min_monotonic_fraction": 0.8,
+    "min_expected_span": 0.5,
+    "max_unmasked_delta": 0.01,
+    "mask_area_min": 0.2,
+    "mask_area_max": 0.75
+  },
+  "proxy_parameters": {
+    "ellipse_mask": [
+      0.5,
+      0.52,
+      0.36,
+      0.45
+    ],
+    "mask_preset_json": "experiments/configs/exp02_mask_presets.json",
+    "mask_blur_radius": 10.0,
+    "texture_blur_radius": 3.0,
+    "hair_enhancement_strength": 1.2,
+    "hair_suppression_strength": 1.5,
+    "smoothing_strength": 0.35,
+    "tone_shift_strength": 0.03
+  },
+  "cases_csv": "/home/tmushuru/datasets/alopecia_public/metadata/exp02_proxy_batch_eval_v1/cases.csv",
+  "contact_sheet": "/home/tmushuru/datasets/alopecia_public/metadata/exp02_proxy_batch_eval_v1/proxy_sweep_contact_sheet.png",
+  "mask_qa_contact_sheet": "/home/tmushuru/datasets/alopecia_public/metadata/exp02_proxy_batch_eval_v1/mask_qa_contact_sheet.png",
+  "cases": [
+    {
+      "case_id": "000_unidatapro_women_hair_loss_3_top",
+      "dataset_key": "unidatapro_women_hair_loss",
+      "split": "train",
+      "image_view": "top",
+      "label_schema": "ludwig_stage",
+      "image_path": "/home/tmushuru/datasets/alopecia_public/raw/unidatapro_women_hair_loss/3/top.png",
+      "source_severity": 3,
+      "source_score": {
+        "predicted_severity": 3,
+        "predicted_confidence": 0.46615538001060486,
+        "expected_severity": 4.772451400756836
+      },
+      "ellipse_mask": [
+        0.5,
+        0.52,
+        0.36,
+        0.45
+      ],
+      "ellipse_mask_source": "default",
+      "mask_area_fraction": 0.5163443684577942,
+      "targets": [
+        {
+          "target_severity": 1,
+          "predicted_severity": 4,
+          "predicted_confidence": 0.5971059799194336,
+          "expected_severity": 4.551642417907715,
+          "mean_absolute_delta": 0.02206176146864891,
+          "max_absolute_delta": 0.3511572480201721,
+          "mask_area_fraction": 0.5163443684577942,
+          "masked_mean_absolute_delta": 0.03837911653335951,
+          "unmasked_mean_absolute_delta": 0.004641564081486795
+        },
+        {
+          "target_severity": 2,
+          "predicted_severity": 7,
+          "predicted_confidence": 0.3774092495441437,
+          "expected_severity": 4.795831203460693,
+          "mean_absolute_delta": 0.011371340602636337,
+          "max_absolute_delta": 0.22927682101726532,
+          "mask_area_fraction": 0.5163443684577942,
+          "masked_mean_absolute_delta": 0.01977368885762692,
+          "unmasked_mean_absolute_delta": 0.0024011051501680596
+        },
+        {
+          "target_severity": 3,
+          "predicted_severity": 3,
+          "predicted_confidence": 0.4661726951599121,
+          "expected_severity": 4.772384166717529,
+          "mean_absolute_delta": 2.293897294336489e-09,
+          "max_absolute_delta": 5.960464477539063e-08,
+          "mask_area_fraction": 0.5163443684577942,
+          "masked_mean_absolute_delta": 1.829092403610675e-09,
+          "unmasked_mean_absolute_delta": 2.7901167076772135e-09
+        },
+        {
+          "target_severity": 4,
+          "predicted_severity": 3,
+          "predicted_confidence": 0.4909951090812683,
+          "expected_severity": 4.790131092071533,
+          "mean_absolute_delta": 0.008457347750663757,
+          "max_absolute_delta": 0.1672324389219284,
+          "mask_area_fraction": 0.5163443684577942,
+          "masked_mean_absolute_delta": 0.014760518446202926,
+          "unmasked_mean_absolute_delta": 0.0017281636652104306
+        },
+        {
+          "target_severity": 5,
+          "predicted_severity": 7,
+          "predicted_confidence": 0.47338995337486267,
+          "expected_severity": 4.9838032722473145,
+          "mean_absolute_delta": 0.016087844967842102,
+          "max_absolute_delta": 0.3098447918891907,
+          "mask_area_fraction": 0.5163443684577942,
+          "masked_mean_absolute_delta": 0.028080522691931727,
+          "unmasked_mean_absolute_delta": 0.0032846195583072467
+        },
+        {
+          "target_severity": 6,
+          "predicted_severity": 7,
+          "predicted_confidence": 0.5683298110961914,
+          "expected_severity": 5.339203357696533,
+          "mean_absolute_delta": 0.022891487926244736,
+          "max_absolute_delta": 0.4278370141983032,
+          "mask_area_fraction": 0.5163443684577942,
+          "masked_mean_absolute_delta": 0.039960005522446544,
+          "unmasked_mean_absolute_delta": 0.004669359976929397
+        },
+        {
+          "target_severity": 7,
+          "predicted_severity": 7,
+          "predicted_confidence": 0.6351557374000549,
+          "expected_severity": 5.592193603515625,
+          "mean_absolute_delta": 0.02886826917529106,
+          "max_absolute_delta": 0.521209180355072,
+          "mask_area_fraction": 0.5163443684577942,
+          "masked_mean_absolute_delta": 0.050398959723007515,
+          "unmasked_mean_absolute_delta": 0.005882379144306094
+        }
+      ],
+      "expected_severity_monotonic_fraction": 0.8333333333333334,
+      "predicted_severity_monotonic_fraction": 0.8333333333333334,
+      "expected_severity_span": 1.0405511856079102,
+      "max_mean_absolute_delta": 0.02886826917529106,
+      "max_masked_mean_absolute_delta": 0.050398959723007515,
+      "max_unmasked_mean_absolute_delta": 0.005882379144306094,
+      "panel_path": "/home/tmushuru/datasets/alopecia_public/metadata/exp02_proxy_batch_eval_v1/case_panels/000_unidatapro_women_hair_loss_3_top.png",
+      "auto_pass": true
+    },
+    {
+      "case_id": "001_unidatapro_men_hair_loss_1_top",
+      "dataset_key": "unidatapro_men_hair_loss",
+      "split": "train",
+      "image_view": "top",
+      "label_schema": "norwood_stage",
+      "image_path": "/home/tmushuru/datasets/alopecia_public/raw/unidatapro_men_hair_loss/1/top.png",
+      "source_severity": 1,
+      "source_score": {
+        "predicted_severity": 1,
+        "predicted_confidence": 0.9542022943496704,
+        "expected_severity": 1.253220796585083
+      },
+      "ellipse_mask": [
+        0.5,
+        0.52,
+        0.36,
+        0.45
+      ],
+      "ellipse_mask_source": "default",
+      "mask_area_fraction": 0.5163443684577942,
+      "targets": [
+        {
+          "target_severity": 1,
+          "predicted_severity": 1,
+          "predicted_confidence": 0.9542007446289062,
+          "expected_severity": 1.2532293796539307,
+          "mean_absolute_delta": 2.155881473342447e-09,
+          "max_absolute_delta": 5.960464477539063e-08,
+          "mask_area_fraction": 0.5163443684577942,
+          "masked_mean_absolute_delta": 1.780234317167505e-09,
+          "unmasked_mean_absolute_delta": 2.5569171130385674e-09
+        },
+        {
+          "target_severity": 2,
+          "predicted_severity": 1,
+          "predicted_confidence": 0.8176401853561401,
+          "expected_severity": 2.048737049102783,
+          "mean_absolute_delta": 0.004058326594531536,
+          "max_absolute_delta": 0.07530787587165833,
+          "mask_area_fraction": 0.5163443684577942,
+          "masked_mean_absolute_delta": 0.00664603799385839,
+          "unmasked_mean_absolute_delta": 0.0012957191772819245
+        },
+        {
+          "target_severity": 3,
+          "predicted_severity": 7,
+          "predicted_confidence": 0.5915969014167786,
+          "expected_severity": 4.669084548950195,
+          "mean_absolute_delta": 0.00793563574552536,
+          "max_absolute_delta": 0.1433972716331482,
+          "mask_area_fraction": 0.5163443684577942,
+          "masked_mean_absolute_delta": 0.01301969911610266,
+          "unmasked_mean_absolute_delta": 0.002507957277108299
+        },
+        {
+          "target_severity": 4,
+          "predicted_severity": 7,
+          "predicted_confidence": 0.8997886180877686,
+          "expected_severity": 6.548904895782471,
+          "mean_absolute_delta": 0.011632760986685753,
+          "max_absolute_delta": 0.20426830649375916,
+          "mask_area_fraction": 0.5163443684577942,
+          "masked_mean_absolute_delta": 0.019122203860226405,
+          "unmasked_mean_absolute_delta": 0.003637130628140512
+        },
+        {
+          "target_severity": 5,
+          "predicted_severity": 7,
+          "predicted_confidence": 0.9628049731254578,
+          "expected_severity": 6.873558044433594,
+          "mean_absolute_delta": 0.015150169841945171,
+          "max_absolute_delta": 0.2579208314418793,
+          "mask_area_fraction": 0.5163443684577942,
+          "masked_mean_absolute_delta": 0.024954140227528506,
+          "unmasked_mean_absolute_delta": 0.004683579177292865
+        },
+        {
+          "target_severity": 6,
+          "predicted_severity": 7,
+          "predicted_confidence": 0.975966215133667,
+          "expected_severity": 6.924030303955078,
+          "mean_absolute_delta": 0.01848793402314186,
+          "max_absolute_delta": 0.30435487627983093,
+          "mask_area_fraction": 0.5163443684577942,
+          "masked_mean_absolute_delta": 0.03051548537133273,
+          "unmasked_mean_absolute_delta": 0.005647477671881701
+        },
+        {
+          "target_severity": 7,
+          "predicted_severity": 7,
+          "predicted_confidence": 0.9804480075836182,
+          "expected_severity": 6.9391703605651855,
+          "mean_absolute_delta": 0.02164648286998272,
+          "max_absolute_delta": 0.3435705006122589,
+          "mask_area_fraction": 0.5163443684577942,
+          "masked_mean_absolute_delta": 0.03580675875290926,
+          "unmasked_mean_absolute_delta": 0.006529159239022473
+        }
+      ],
+      "expected_severity_monotonic_fraction": 1.0,
+      "predicted_severity_monotonic_fraction": 1.0,
+      "expected_severity_span": 5.685940980911255,
+      "max_mean_absolute_delta": 0.02164648286998272,
+      "max_masked_mean_absolute_delta": 0.03580675875290926,
+      "max_unmasked_mean_absolute_delta": 0.006529159239022473,
+      "panel_path": "/home/tmushuru/datasets/alopecia_public/metadata/exp02_proxy_batch_eval_v1/case_panels/001_unidatapro_men_hair_loss_1_top.png",
+      "auto_pass": true
+    },
+    {
+      "case_id": "002_unidpro_hair_loss_male_norwood_scale_5_000011bb35--65cf0764771e3135a597521c_Top-Down",
+      "dataset_key": "unidpro_hair_loss_male_norwood_scale",
+      "split": "train",
+      "image_view": "top",
+      "label_schema": "norwood_stage",
+      "image_path": "/home/tmushuru/datasets/alopecia_public/raw/unidpro_hair_loss_male_norwood_scale/images/5/000011bb35--65cf0764771e3135a597521c_Top-Down.jpg",
+      "source_severity": 5,
+      "source_score": {
+        "predicted_severity": 5,
+        "predicted_confidence": 0.9658346176147461,
+        "expected_severity": 5.005859375
+      },
+      "ellipse_mask": [
+        0.5,
+        0.28,
+        0.3,
+        0.26
+      ],
+      "ellipse_mask_source": "dataset:unidpro_hair_loss_male_norwood_scale",
+      "mask_area_fraction": 0.24585068225860596,
+      "targets": [
+        {
+          "target_severity": 1,
+          "predicted_severity": 5,
+          "predicted_confidence": 0.9673371911048889,
+          "expected_severity": 5.012153148651123,
+          "mean_absolute_delta": 0.007534835487604141,
+          "max_absolute_delta": 0.21264709532260895,
+          "mask_area_fraction": 0.24585068225860596,
+          "masked_mean_absolute_delta": 0.026229796966554485,
+          "unmasked_mean_absolute_delta": 0.0014403278172476206
+        },
+        {
+          "target_severity": 2,
+          "predicted_severity": 5,
+          "predicted_confidence": 0.9685477018356323,
+          "expected_severity": 5.0124921798706055,
+          "mean_absolute_delta": 0.005690654274076223,
+          "max_absolute_delta": 0.15948528051376343,
+          "mask_area_fraction": 0.24585068225860596,
+          "masked_mean_absolute_delta": 0.01980973873187636,
+          "unmasked_mean_absolute_delta": 0.001087869685402404
+        },
+        {
+          "target_severity": 3,
+          "predicted_severity": 5,
+          "predicted_confidence": 0.9682794809341431,
+          "expected_severity": 5.010725975036621,
+          "mean_absolute_delta": 0.0038007358089089394,
+          "max_absolute_delta": 0.10632354021072388,
+          "mask_area_fraction": 0.24585068225860596,
+          "masked_mean_absolute_delta": 0.013227218793005547,
+          "unmasked_mean_absolute_delta": 0.0007277272966414805
+        },
+        {
+          "target_severity": 4,
+          "predicted_severity": 5,
+          "predicted_confidence": 0.9668798446655273,
+          "expected_severity": 5.00671911239624,
+          "mean_absolute_delta": 0.001900666393339634,
+          "max_absolute_delta": 0.05316177010536194,
+          "mask_area_fraction": 0.24585068225860596,
+          "masked_mean_absolute_delta": 0.006613831635426588,
+          "unmasked_mean_absolute_delta": 0.000364187097402502
+        },
+        {
+          "target_severity": 5,
+          "predicted_severity": 5,
+          "predicted_confidence": 0.9658320546150208,
+          "expected_severity": 5.005858421325684,
+          "mean_absolute_delta": 1.2473341248764314e-09,
+          "max_absolute_delta": 5.960464477539063e-08,
+          "mask_area_fraction": 0.24585068225860596,
+          "masked_mean_absolute_delta": 2.1695619942703436e-09,
+          "unmasked_mean_absolute_delta": 9.466902304086586e-10
+        },
+        {
+          "target_severity": 6,
+          "predicted_severity": 5,
+          "predicted_confidence": 0.9544132351875305,
+          "expected_severity": 5.04416036605835,
+          "mean_absolute_delta": 0.005701990332454443,
+          "max_absolute_delta": 0.14573529362678528,
+          "mask_area_fraction": 0.24585068225860596,
+          "masked_mean_absolute_delta": 0.019732931191996612,
+          "unmasked_mean_absolute_delta": 0.0011279407352465193
+        },
+        {
+          "target_severity": 7,
+          "predicted_severity": 5,
+          "predicted_confidence": 0.9072026610374451,
+          "expected_severity": 5.135342597961426,
+          "mean_absolute_delta": 0.010547591373324394,
+          "max_absolute_delta": 0.24823525547981262,
+          "mask_area_fraction": 0.24585068225860596,
+          "masked_mean_absolute_delta": 0.036457694396419826,
+          "unmasked_mean_absolute_delta": 0.0021009663406341317
+        }
+      ],
+      "expected_severity_monotonic_fraction": 0.5,
+      "predicted_severity_monotonic_fraction": 1.0,
+      "expected_severity_span": 0.1294841766357422,
+      "max_mean_absolute_delta": 0.010547591373324394,
+      "max_masked_mean_absolute_delta": 0.036457694396419826,
+      "max_unmasked_mean_absolute_delta": 0.0021009663406341317,
+      "panel_path": "/home/tmushuru/datasets/alopecia_public/metadata/exp02_proxy_batch_eval_v1/case_panels/002_unidpro_hair_loss_male_norwood_scale_5_000011bb35--65cf0764771e3135a597521c_Top-Down.png",
+      "auto_pass": false
+    },
+    {
+      "case_id": "003_unidpro_hair_loss_male_norwood_scale_1_000011bb35--65cd8d5f9f818843e6987969_Top-Down",
+      "dataset_key": "unidpro_hair_loss_male_norwood_scale",
+      "split": "train",
+      "image_view": "top",
+      "label_schema": "norwood_stage",
+      "image_path": "/home/tmushuru/datasets/alopecia_public/raw/unidpro_hair_loss_male_norwood_scale/images/1/000011bb35--65cd8d5f9f818843e6987969_Top-Down.jpg",
+      "source_severity": 1,
+      "source_score": {
+        "predicted_severity": 4,
+        "predicted_confidence": 0.8215842247009277,
+        "expected_severity": 3.8555188179016113
+      },
+      "ellipse_mask": [
+        0.5,
+        0.28,
+        0.3,
+        0.26
+      ],
+      "ellipse_mask_source": "dataset:unidpro_hair_loss_male_norwood_scale",
+      "mask_area_fraction": 0.24585068225860596,
+      "targets": [
+        {
+          "target_severity": 1,
+          "predicted_severity": 4,
+          "predicted_confidence": 0.8215816020965576,
+          "expected_severity": 3.8555901050567627,
+          "mean_absolute_delta": 1.5416787846334046e-09,
+          "max_absolute_delta": 5.960464477539063e-08,
+          "mask_area_fraction": 0.24585068225860596,
+          "masked_mean_absolute_delta": 2.5146617951648843e-09,
+          "unmasked_mean_absolute_delta": 1.2244887993707215e-09
+        },
+        {
+          "target_severity": 2,
+          "predicted_severity": 4,
+          "predicted_confidence": 0.741476833820343,
+          "expected_severity": 3.878100633621216,
+          "mean_absolute_delta": 0.002238677581772208,
+          "max_absolute_delta": 0.10406862199306488,
+          "mask_area_fraction": 0.24585068225860596,
+          "masked_mean_absolute_delta": 0.007734478985085764,
+          "unmasked_mean_absolute_delta": 0.0004470609679705816
+        },
+        {
+          "target_severity": 3,
+          "predicted_severity": 4,
+          "predicted_confidence": 0.6434810757637024,
+          "expected_severity": 4.035966873168945,
+          "mean_absolute_delta": 0.004358217120170593,
+          "max_absolute_delta": 0.19830067455768585,
+          "mask_area_fraction": 0.24585068225860596,
+          "masked_mean_absolute_delta": 0.015057488916335649,
+          "unmasked_mean_absolute_delta": 0.0008702826168860871
+        },
+        {
+          "target_severity": 4,
+          "predicted_severity": 4,
+          "predicted_confidence": 0.5373948812484741,
+          "expected_severity": 4.290325164794922,
+          "mean_absolute_delta": 0.006358578335493803,
+          "max_absolute_delta": 0.28269606828689575,
+          "mask_area_fraction": 0.24585068225860596,
+          "masked_mean_absolute_delta": 0.02196887069088374,
+          "unmasked_mean_absolute_delta": 0.0012696643292808816
+        },
+        {
+          "target_severity": 5,
+          "predicted_severity": 4,
+          "predicted_confidence": 0.44489502906799316,
+          "expected_severity": 4.557087421417236,
+          "mean_absolute_delta": 0.00823974609375,
+          "max_absolute_delta": 0.35725492238998413,
+          "mask_area_fraction": 0.24585068225860596,
+          "masked_mean_absolute_delta": 0.028468558647229823,
+          "unmasked_mean_absolute_delta": 0.0016452070313534174
+        },
+        {
+          "target_severity": 6,
+          "predicted_severity": 4,
+          "predicted_confidence": 0.38106390833854675,
+          "expected_severity": 4.7690958976745605,
+          "mean_absolute_delta": 0.010001756250858307,
+          "max_absolute_delta": 0.421977162361145,
+          "mask_area_fraction": 0.24585068225860596,
+          "masked_mean_absolute_delta": 0.03455670052374939,
+          "unmasked_mean_absolute_delta": 0.001996909796905242
+        },
+        {
+          "target_severity": 7,
+          "predicted_severity": 7,
+          "predicted_confidence": 0.4042704999446869,
+          "expected_severity": 4.903530120849609,
+          "mean_absolute_delta": 0.011644641868770123,
+          "max_absolute_delta": 0.47686272859573364,
+          "mask_area_fraction": 0.24585068225860596,
+          "masked_mean_absolute_delta": 0.040233427643442864,
+          "unmasked_mean_absolute_delta": 0.002324772934669173
+        }
+      ],
+      "expected_severity_monotonic_fraction": 1.0,
+      "predicted_severity_monotonic_fraction": 1.0,
+      "expected_severity_span": 1.0479400157928467,
+      "max_mean_absolute_delta": 0.011644641868770123,
+      "max_masked_mean_absolute_delta": 0.040233427643442864,
+      "max_unmasked_mean_absolute_delta": 0.002324772934669173,
+      "panel_path": "/home/tmushuru/datasets/alopecia_public/metadata/exp02_proxy_batch_eval_v1/case_panels/003_unidpro_hair_loss_male_norwood_scale_1_000011bb35--65cd8d5f9f818843e6987969_Top-Down.png",
+      "auto_pass": true
+    },
+    {
+      "case_id": "004_unidatapro_men_hair_loss_4_top",
+      "dataset_key": "unidatapro_men_hair_loss",
+      "split": "train",
+      "image_view": "top",
+      "label_schema": "norwood_stage",
+      "image_path": "/home/tmushuru/datasets/alopecia_public/raw/unidatapro_men_hair_loss/4/top.png",
+      "source_severity": 4,
+      "source_score": {
+        "predicted_severity": 4,
+        "predicted_confidence": 0.7158614993095398,
+        "expected_severity": 4.805349826812744
+      },
+      "ellipse_mask": [
+        0.5,
+        0.52,
+        0.36,
+        0.45
+      ],
+      "ellipse_mask_source": "default",
+      "mask_area_fraction": 0.5163443684577942,
+      "targets": [
+        {
+          "target_severity": 1,
+          "predicted_severity": 4,
+          "predicted_confidence": 0.9389281868934631,
+          "expected_severity": 4.148167610168457,
+          "mean_absolute_delta": 0.01211874932050705,
+          "max_absolute_delta": 0.2359573245048523,
+          "mask_area_fraction": 0.5163443684577942,
+          "masked_mean_absolute_delta": 0.019984817397625587,
+          "unmasked_mean_absolute_delta": 0.0037210404703612314
+        },
+        {
+          "target_severity": 2,
+          "predicted_severity": 4,
+          "predicted_confidence": 0.894759476184845,
+          "expected_severity": 4.274626731872559,
+          "mean_absolute_delta": 0.008149862289428711,
+          "max_absolute_delta": 0.17237600684165955,
+          "mask_area_fraction": 0.5163443684577942,
+          "masked_mean_absolute_delta": 0.013406845664553756,
+          "unmasked_mean_absolute_delta": 0.002537575583268726
+        },
+        {
+          "target_severity": 3,
+          "predicted_severity": 4,
+          "predicted_confidence": 0.8197354078292847,
+          "expected_severity": 4.493809700012207,
+          "mean_absolute_delta": 0.004096932243555784,
+          "max_absolute_delta": 0.09523183107376099,
+          "mask_area_fraction": 0.5163443684577942,
+          "masked_mean_absolute_delta": 0.0067283966543147545,
+          "unmasked_mean_absolute_delta": 0.0012876150899624147
+        },
+        {
+          "target_severity": 4,
+          "predicted_severity": 4,
+          "predicted_confidence": 0.7158380746841431,
+          "expected_severity": 4.805413246154785,
+          "mean_absolute_delta": 1.891445888801968e-09,
+          "max_absolute_delta": 5.960464477539063e-08,
+          "mask_area_fraction": 0.5163443684577942,
+          "masked_mean_absolute_delta": 1.4948184907092705e-09,
+          "unmasked_mean_absolute_delta": 2.314879910883232e-09
+        },
+        {
+          "target_severity": 5,
+          "predicted_severity": 4,
+          "predicted_confidence": 0.546389639377594,
+          "expected_severity": 5.325712203979492,
+          "mean_absolute_delta": 0.00684953760355711,
+          "max_absolute_delta": 0.13527335226535797,
+          "mask_area_fraction": 0.5163443684577942,
+          "masked_mean_absolute_delta": 0.011400540741865759,
+          "unmasked_mean_absolute_delta": 0.0019909472032416838
+        },
+        {
+          "target_severity": 6,
+          "predicted_severity": 7,
+          "predicted_confidence": 0.5387831926345825,
+          "expected_severity": 5.609668731689453,
+          "mean_absolute_delta": 0.0132563766092062,
+          "max_absolute_delta": 0.24390311539173126,
+          "mask_area_fraction": 0.5163443684577942,
+          "masked_mean_absolute_delta": 0.02213831864546754,
+          "unmasked_mean_absolute_delta": 0.003774130598563431
+        },
+        {
+          "target_severity": 7,
+          "predicted_severity": 7,
+          "predicted_confidence": 0.5936802625656128,
+          "expected_severity": 5.776004791259766,
+          "mean_absolute_delta": 0.0192205049097538,
+          "max_absolute_delta": 0.3258892893791199,
+          "mask_area_fraction": 0.5163443684577942,
+          "masked_mean_absolute_delta": 0.03221331326904241,
+          "unmasked_mean_absolute_delta": 0.005349548741772546
+        }
+      ],
+      "expected_severity_monotonic_fraction": 1.0,
+      "predicted_severity_monotonic_fraction": 1.0,
+      "expected_severity_span": 1.6278371810913086,
+      "max_mean_absolute_delta": 0.0192205049097538,
+      "max_masked_mean_absolute_delta": 0.03221331326904241,
+      "max_unmasked_mean_absolute_delta": 0.005349548741772546,
+      "panel_path": "/home/tmushuru/datasets/alopecia_public/metadata/exp02_proxy_batch_eval_v1/case_panels/004_unidatapro_men_hair_loss_4_top.png",
+      "auto_pass": true
+    },
+    {
+      "case_id": "005_unidpro_hair_loss_male_norwood_scale_2_000011bb35--65cd9710f302167b37996dc6_Top-Down",
+      "dataset_key": "unidpro_hair_loss_male_norwood_scale",
+      "split": "train",
+      "image_view": "top",
+      "label_schema": "norwood_stage",
+      "image_path": "/home/tmushuru/datasets/alopecia_public/raw/unidpro_hair_loss_male_norwood_scale/images/2/000011bb35--65cd9710f302167b37996dc6_Top-Down.jpg",
+      "source_severity": 2,
+      "source_score": {
+        "predicted_severity": 2,
+        "predicted_confidence": 0.9313007593154907,
+        "expected_severity": 2.239375114440918
+      },
+      "ellipse_mask": [
+        0.5,
+        0.28,
+        0.3,
+        0.26
+      ],
+      "ellipse_mask_source": "dataset:unidpro_hair_loss_male_norwood_scale",
+      "mask_area_fraction": 0.24585068225860596,
+      "targets": [
+        {
+          "target_severity": 1,
+          "predicted_severity": 2,
+          "predicted_confidence": 0.9075607061386108,
+          "expected_severity": 2.308353900909424,
+          "mean_absolute_delta": 0.008029146119952202,
+          "max_absolute_delta": 0.239215686917305,
+          "mask_area_fraction": 0.24585068225860596,
+          "masked_mean_absolute_delta": 0.02793167739069914,
+          "unmasked_mean_absolute_delta": 0.0015409739953638783
+        },
+        {
+          "target_severity": 2,
+          "predicted_severity": 2,
+          "predicted_confidence": 0.9313021302223206,
+          "expected_severity": 2.2393717765808105,
+          "mean_absolute_delta": 1.3297949408297427e-09,
+          "max_absolute_delta": 5.960464477539063e-08,
+          "mask_area_fraction": 0.24585068225860596,
+          "masked_mean_absolute_delta": 2.2504142452383207e-09,
+          "unmasked_mean_absolute_delta": 1.0296754833630031e-09
+        },
+        {
+          "target_severity": 3,
+          "predicted_severity": 2,
+          "predicted_confidence": 0.9338783621788025,
+          "expected_severity": 2.2343196868896484,
+          "mean_absolute_delta": 0.002608302980661392,
+          "max_absolute_delta": 0.09085489809513092,
+          "mask_area_fraction": 0.24585068225860596,
+          "masked_mean_absolute_delta": 0.009053945569240907,
+          "unmasked_mean_absolute_delta": 0.0005070408079151863
+        },
+        {
+          "target_severity": 4,
+          "predicted_severity": 2,
+          "predicted_confidence": 0.9330735206604004,
+          "expected_severity": 2.2411131858825684,
+          "mean_absolute_delta": 0.005055277608335018,
+          "max_absolute_delta": 0.17149804532527924,
+          "mask_area_fraction": 0.24585068225860596,
+          "masked_mean_absolute_delta": 0.017541395282631753,
+          "unmasked_mean_absolute_delta": 0.00098483576767589
+        },
+        {
+          "target_severity": 5,
+          "predicted_severity": 2,
+          "predicted_confidence": 0.9354616403579712,
+          "expected_severity": 2.236618995666504,
+          "mean_absolute_delta": 0.007340916898101568,
+          "max_absolute_delta": 0.24192942678928375,
+          "mask_area_fraction": 0.24585068225860596,
+          "masked_mean_absolute_delta": 0.025462327673912856,
+          "unmasked_mean_absolute_delta": 0.001433384930737581
+        },
+        {
+          "target_severity": 6,
+          "predicted_severity": 2,
+          "predicted_confidence": 0.9382058382034302,
+          "expected_severity": 2.230654716491699,
+          "mean_absolute_delta": 0.009465224109590054,
+          "max_absolute_delta": 0.3021489977836609,
+          "mask_area_fraction": 0.24585068225860596,
+          "masked_mean_absolute_delta": 0.03281674905669,
+          "unmasked_mean_absolute_delta": 0.0018526879369119718
+        },
+        {
+          "target_severity": 7,
+          "predicted_severity": 2,
+          "predicted_confidence": 0.9432166814804077,
+          "expected_severity": 2.2156450748443604,
+          "mean_absolute_delta": 0.011428199708461761,
+          "max_absolute_delta": 0.3521568775177002,
+          "mask_area_fraction": 0.24585068225860596,
+          "masked_mean_absolute_delta": 0.03960466574456898,
+          "unmasked_mean_absolute_delta": 0.002242745712397515
+        }
+      ],
+      "expected_severity_monotonic_fraction": 0.16666666666666666,
+      "predicted_severity_monotonic_fraction": 1.0,
+      "expected_severity_span": 0.09270882606506348,
+      "max_mean_absolute_delta": 0.011428199708461761,
+      "max_masked_mean_absolute_delta": 0.03960466574456898,
+      "max_unmasked_mean_absolute_delta": 0.002242745712397515,
+      "panel_path": "/home/tmushuru/datasets/alopecia_public/metadata/exp02_proxy_batch_eval_v1/case_panels/005_unidpro_hair_loss_male_norwood_scale_2_000011bb35--65cd9710f302167b37996dc6_Top-Down.png",
+      "auto_pass": false
+    },
+    {
+      "case_id": "006_unidatapro_men_hair_loss_3_top",
+      "dataset_key": "unidatapro_men_hair_loss",
+      "split": "train",
+      "image_view": "top",
+      "label_schema": "norwood_stage",
+      "image_path": "/home/tmushuru/datasets/alopecia_public/raw/unidatapro_men_hair_loss/3/top.png",
+      "source_severity": 3,
+      "source_score": {
+        "predicted_severity": 7,
+        "predicted_confidence": 0.6546613574028015,
+        "expected_severity": 5.64626407623291
+      },
+      "ellipse_mask": [
+        0.5,
+        0.52,
+        0.36,
+        0.45
+      ],
+      "ellipse_mask_source": "default",
+      "mask_area_fraction": 0.5163443684577942,
+      "targets": [
+        {
+          "target_severity": 1,
+          "predicted_severity": 3,
+          "predicted_confidence": 0.37556925415992737,
+          "expected_severity": 4.707827568054199,
+          "mean_absolute_delta": 0.019186807796359062,
+          "max_absolute_delta": 0.39302194118499756,
+          "mask_area_fraction": 0.5163443684577942,
+          "masked_mean_absolute_delta": 0.03213368178025448,
+          "unmasked_mean_absolute_delta": 0.005364894733371425
+        },
+        {
+          "target_severity": 2,
+          "predicted_severity": 7,
+          "predicted_confidence": 0.47730040550231934,
+          "expected_severity": 5.006926536560059,
+          "mean_absolute_delta": 0.009785894304513931,
+          "max_absolute_delta": 0.21957901120185852,
+          "mask_area_fraction": 0.5163443684577942,
+          "masked_mean_absolute_delta": 0.016303623842624255,
+          "unmasked_mean_absolute_delta": 0.002827652919081573
+        },
+        {
+          "target_severity": 3,
+          "predicted_severity": 7,
+          "predicted_confidence": 0.6546773314476013,
+          "expected_severity": 5.646322727203369,
+          "mean_absolute_delta": 2.0379693488337125e-09,
+          "max_absolute_delta": 5.960464477539063e-08,
+          "mask_area_fraction": 0.5163443684577942,
+          "masked_mean_absolute_delta": 1.6302696854970368e-09,
+          "unmasked_mean_absolute_delta": 2.473223822114286e-09
+        },
+        {
+          "target_severity": 4,
+          "predicted_severity": 7,
+          "predicted_confidence": 0.840371310710907,
+          "expected_severity": 6.365176200866699,
+          "mean_absolute_delta": 0.007507937960326672,
+          "max_absolute_delta": 0.15933772921562195,
+          "mask_area_fraction": 0.5163443684577942,
+          "masked_mean_absolute_delta": 0.0125401028910393,
+          "unmasked_mean_absolute_delta": 0.0021356638161766643
+        },
+        {
+          "target_severity": 5,
+          "predicted_severity": 7,
+          "predicted_confidence": 0.934322714805603,
+          "expected_severity": 6.732912063598633,
+          "mean_absolute_delta": 0.01436518132686615,
+          "max_absolute_delta": 0.29546329379081726,
+          "mask_area_fraction": 0.5163443684577942,
+          "masked_mean_absolute_delta": 0.02402415063945638,
+          "unmasked_mean_absolute_delta": 0.004053392535733908
+        },
+        {
+          "target_severity": 6,
+          "predicted_severity": 7,
+          "predicted_confidence": 0.9687741994857788,
+          "expected_severity": 6.874291896820068,
+          "mean_absolute_delta": 0.02057156339287758,
+          "max_absolute_delta": 0.408376544713974,
+          "mask_area_fraction": 0.5163443684577942,
+          "masked_mean_absolute_delta": 0.03445211919611836,
+          "unmasked_mean_absolute_delta": 0.005752866510688116
+        },
+        {
+          "target_severity": 7,
+          "predicted_severity": 7,
+          "predicted_confidence": 0.981353759765625,
+          "expected_severity": 6.925346374511719,
+          "mean_absolute_delta": 0.026126757264137268,
+          "max_absolute_delta": 0.4980776607990265,
+          "mask_area_fraction": 0.5163443684577942,
+          "masked_mean_absolute_delta": 0.043824061469117576,
+          "unmasked_mean_absolute_delta": 0.007233346956241818
+        }
+      ],
+      "expected_severity_monotonic_fraction": 1.0,
+      "predicted_severity_monotonic_fraction": 1.0,
+      "expected_severity_span": 2.2175188064575195,
+      "max_mean_absolute_delta": 0.026126757264137268,
+      "max_masked_mean_absolute_delta": 0.043824061469117576,
+      "max_unmasked_mean_absolute_delta": 0.007233346956241818,
+      "panel_path": "/home/tmushuru/datasets/alopecia_public/metadata/exp02_proxy_batch_eval_v1/case_panels/006_unidatapro_men_hair_loss_3_top.png",
+      "auto_pass": true
+    },
+    {
+      "case_id": "007_unidatapro_men_hair_loss_5_top",
+      "dataset_key": "unidatapro_men_hair_loss",
+      "split": "train",
+      "image_view": "top",
+      "label_schema": "norwood_stage",
+      "image_path": "/home/tmushuru/datasets/alopecia_public/raw/unidatapro_men_hair_loss/5/top.png",
+      "source_severity": 5,
+      "source_score": {
+        "predicted_severity": 3,
+        "predicted_confidence": 0.4327965974807739,
+        "expected_severity": 4.375274658203125
+      },
+      "ellipse_mask": [
+        0.5,
+        0.52,
+        0.36,
+        0.45
+      ],
+      "ellipse_mask_source": "default",
+      "mask_area_fraction": 0.5163443684577942,
+      "targets": [
+        {
+          "target_severity": 1,
+          "predicted_severity": 3,
+          "predicted_confidence": 0.6293302178382874,
+          "expected_severity": 3.85644268989563,
+          "mean_absolute_delta": 0.014202515594661236,
+          "max_absolute_delta": 0.18900001049041748,
+          "mask_area_fraction": 0.5163443684577942,
+          "masked_mean_absolute_delta": 0.02340921431174826,
+          "unmasked_mean_absolute_delta": 0.004373564279899643
+        },
+        {
+          "target_severity": 2,
+          "predicted_severity": 3,
+          "predicted_confidence": 0.5840868353843689,
+          "expected_severity": 3.9612882137298584,
+          "mean_absolute_delta": 0.01068894099444151,
+          "max_absolute_delta": 0.14201991260051727,
+          "mask_area_fraction": 0.5163443684577942,
+          "masked_mean_absolute_delta": 0.017592991647869094,
+          "unmasked_mean_absolute_delta": 0.003318269569080279
+        },
+        {
+          "target_severity": 3,
+          "predicted_severity": 3,
+          "predicted_confidence": 0.5357450246810913,
+          "expected_severity": 4.077967166900635,
+          "mean_absolute_delta": 0.007144567556679249,
+          "max_absolute_delta": 0.11503268778324127,
+          "mask_area_fraction": 0.5163443684577942,
+          "masked_mean_absolute_delta": 0.011747788576414463,
+          "unmasked_mean_absolute_delta": 0.002230229714445513
+        },
+        {
+          "target_severity": 4,
+          "predicted_severity": 3,
+          "predicted_confidence": 0.4888801872730255,
+          "expected_severity": 4.209229469299316,
+          "mean_absolute_delta": 0.0035751541145145893,
+          "max_absolute_delta": 0.06573039293289185,
+          "mask_area_fraction": 0.5163443684577942,
+          "masked_mean_absolute_delta": 0.005877073583573794,
+          "unmasked_mean_absolute_delta": 0.0011176551921768716
+        },
+        {
+          "target_severity": 5,
+          "predicted_severity": 3,
+          "predicted_confidence": 0.4327940344810486,
+          "expected_severity": 4.3752665519714355,
+          "mean_absolute_delta": 1.9825090458169825e-09,
+          "max_absolute_delta": 5.960464477539063e-08,
+          "mask_area_fraction": 0.5163443684577942,
+          "masked_mean_absolute_delta": 1.6174125885602072e-09,
+          "unmasked_mean_absolute_delta": 2.3722810516390753e-09
+        },
+        {
+          "target_severity": 6,
+          "predicted_severity": 7,
+          "predicted_confidence": 0.514991819858551,
+          "expected_severity": 5.647834777832031,
+          "mean_absolute_delta": 0.011184665374457836,
+          "max_absolute_delta": 0.17763559520244598,
+          "mask_area_fraction": 0.5163443684577942,
+          "masked_mean_absolute_delta": 0.01871231164189864,
+          "unmasked_mean_absolute_delta": 0.0031482470093782693
+        },
+        {
+          "target_severity": 7,
+          "predicted_severity": 7,
+          "predicted_confidence": 0.9097755551338196,
+          "expected_severity": 6.733602046966553,
+          "mean_absolute_delta": 0.020932180806994438,
+          "max_absolute_delta": 0.3001633882522583,
+          "mask_area_fraction": 0.5163443684577942,
+          "masked_mean_absolute_delta": 0.03520669921879989,
+          "unmasked_mean_absolute_delta": 0.005692891434501501
+        }
+      ],
+      "expected_severity_monotonic_fraction": 1.0,
+      "predicted_severity_monotonic_fraction": 1.0,
+      "expected_severity_span": 2.877159357070923,
+      "max_mean_absolute_delta": 0.020932180806994438,
+      "max_masked_mean_absolute_delta": 0.03520669921879989,
+      "max_unmasked_mean_absolute_delta": 0.005692891434501501,
+      "panel_path": "/home/tmushuru/datasets/alopecia_public/metadata/exp02_proxy_batch_eval_v1/case_panels/007_unidatapro_men_hair_loss_5_top.png",
+      "auto_pass": true
+    },
+    {
+      "case_id": "008_unidatapro_women_hair_loss_1_top",
+      "dataset_key": "unidatapro_women_hair_loss",
+      "split": "train",
+      "image_view": "top",
+      "label_schema": "ludwig_stage",
+      "image_path": "/home/tmushuru/datasets/alopecia_public/raw/unidatapro_women_hair_loss/1/top.png",
+      "source_severity": 1,
+      "source_score": {
+        "predicted_severity": 7,
+        "predicted_confidence": 0.5102570652961731,
+        "expected_severity": 4.90458869934082
+      },
+      "ellipse_mask": [
+        0.5,
+        0.52,
+        0.36,
+        0.45
+      ],
+      "ellipse_mask_source": "default",
+      "mask_area_fraction": 0.5163443684577942,
+      "targets": [
+        {
+          "target_severity": 1,
+          "predicted_severity": 7,
+          "predicted_confidence": 0.5102235674858093,
+          "expected_severity": 4.904316425323486,
+          "mean_absolute_delta": 2.3872721577333778e-09,
+          "max_absolute_delta": 5.960464477539063e-08,
+          "mask_area_fraction": 0.5163443684577942,
+          "masked_mean_absolute_delta": 2.0253506975242568e-09,
+          "unmasked_mean_absolute_delta": 2.7736544255819704e-09
+        },
+        {
+          "target_severity": 2,
+          "predicted_severity": 7,
+          "predicted_confidence": 0.6577935218811035,
+          "expected_severity": 5.814355850219727,
+          "mean_absolute_delta": 0.0035611079074442387,
+          "max_absolute_delta": 0.0455586314201355,
+          "mask_area_fraction": 0.5163443684577942,
+          "masked_mean_absolute_delta": 0.005971445988359709,
+          "unmasked_mean_absolute_delta": 0.0009878621444768822
+        },
+        {
+          "target_severity": 3,
+          "predicted_severity": 7,
+          "predicted_confidence": 0.7633649110794067,
+          "expected_severity": 6.326221466064453,
+          "mean_absolute_delta": 0.006974648684263229,
+          "max_absolute_delta": 0.08694219589233398,
+          "mask_area_fraction": 0.5163443684577942,
+          "masked_mean_absolute_delta": 0.011703981878419284,
+          "unmasked_mean_absolute_delta": 0.0019256749887081362
+        },
+        {
+          "target_severity": 4,
+          "predicted_severity": 7,
+          "predicted_confidence": 0.8381108641624451,
+          "expected_severity": 6.57558536529541,
+          "mean_absolute_delta": 0.010252133011817932,
+          "max_absolute_delta": 0.12415069341659546,
+          "mask_area_fraction": 0.5163443684577942,
+          "masked_mean_absolute_delta": 0.017219239263974784,
+          "unmasked_mean_absolute_delta": 0.0028141429777982134
+        },
+        {
+          "target_severity": 5,
+          "predicted_severity": 7,
+          "predicted_confidence": 0.883680522441864,
+          "expected_severity": 6.695596218109131,
+          "mean_absolute_delta": 0.013394704088568687,
+          "max_absolute_delta": 0.1571841835975647,
+          "mask_area_fraction": 0.5163443684577942,
+          "masked_mean_absolute_delta": 0.022519418039456292,
+          "unmasked_mean_absolute_delta": 0.003653276702493558
+        },
+        {
+          "target_severity": 6,
+          "predicted_severity": 7,
+          "predicted_confidence": 0.9114917516708374,
+          "expected_severity": 6.763698101043701,
+          "mean_absolute_delta": 0.016401343047618866,
+          "max_absolute_delta": 0.18604254722595215,
+          "mask_area_fraction": 0.5163443684577942,
+          "masked_mean_absolute_delta": 0.027602565415274054,
+          "unmasked_mean_absolute_delta": 0.004443066534842857
+        },
+        {
+          "target_severity": 7,
+          "predicted_severity": 7,
+          "predicted_confidence": 0.927642822265625,
+          "expected_severity": 6.801480770111084,
+          "mean_absolute_delta": 0.01927265152335167,
+          "max_absolute_delta": 0.21072590351104736,
+          "mask_area_fraction": 0.5163443684577942,
+          "masked_mean_absolute_delta": 0.032469907897204886,
+          "unmasked_mean_absolute_delta": 0.0051834316000550764
+        }
+      ],
+      "expected_severity_monotonic_fraction": 1.0,
+      "predicted_severity_monotonic_fraction": 1.0,
+      "expected_severity_span": 1.8971643447875977,
+      "max_mean_absolute_delta": 0.01927265152335167,
+      "max_masked_mean_absolute_delta": 0.032469907897204886,
+      "max_unmasked_mean_absolute_delta": 0.0051834316000550764,
+      "panel_path": "/home/tmushuru/datasets/alopecia_public/metadata/exp02_proxy_batch_eval_v1/case_panels/008_unidatapro_women_hair_loss_1_top.png",
+      "auto_pass": true
+    },
+    {
+      "case_id": "009_unidpro_hair_loss_male_norwood_scale_4_000011bb35--65ceb4885851f6329e99c09c_Top-Down",
+      "dataset_key": "unidpro_hair_loss_male_norwood_scale",
+      "split": "val",
+      "image_view": "top",
+      "label_schema": "norwood_stage",
+      "image_path": "/home/tmushuru/datasets/alopecia_public/raw/unidpro_hair_loss_male_norwood_scale/images/4/000011bb35--65ceb4885851f6329e99c09c_Top-Down.jpg",
+      "source_severity": 4,
+      "source_score": {
+        "predicted_severity": 7,
+        "predicted_confidence": 0.7907987236976624,
+        "expected_severity": 6.359048843383789
+      },
+      "ellipse_mask": [
+        0.5,
+        0.28,
+        0.3,
+        0.26
+      ],
+      "ellipse_mask_source": "dataset:unidpro_hair_loss_male_norwood_scale",
+      "mask_area_fraction": 0.24585068225860596,
+      "targets": [
+        {
+          "target_severity": 1,
+          "predicted_severity": 4,
+          "predicted_confidence": 0.6331373453140259,
+          "expected_severity": 5.0378217697143555,
+          "mean_absolute_delta": 0.006655914708971977,
+          "max_absolute_delta": 0.2361764907836914,
+          "mask_area_fraction": 0.24585068225860596,
+          "masked_mean_absolute_delta": 0.022745772510575888,
+          "unmasked_mean_absolute_delta": 0.0014106636361254762
+        },
+        {
+          "target_severity": 2,
+          "predicted_severity": 7,
+          "predicted_confidence": 0.49706465005874634,
+          "expected_severity": 5.467008590698242,
+          "mean_absolute_delta": 0.004575678147375584,
+          "max_absolute_delta": 0.17000001668930054,
+          "mask_area_fraction": 0.24585068225860596,
+          "masked_mean_absolute_delta": 0.015596636757345003,
+          "unmasked_mean_absolute_delta": 0.0009828749026412455
+        },
+        {
+          "target_severity": 3,
+          "predicted_severity": 7,
+          "predicted_confidence": 0.6586726307868958,
+          "expected_severity": 5.956461429595947,
+          "mean_absolute_delta": 0.002351475181058049,
+          "max_absolute_delta": 0.0963398814201355,
+          "mask_area_fraction": 0.24585068225860596,
+          "masked_mean_absolute_delta": 0.007995299722522949,
+          "unmasked_mean_absolute_delta": 0.000511603107125241
+        },
+        {
+          "target_severity": 4,
+          "predicted_severity": 7,
+          "predicted_confidence": 0.7908111810684204,
+          "expected_severity": 6.359086513519287,
+          "mean_absolute_delta": 1.7246435390916304e-09,
+          "max_absolute_delta": 5.960464477539063e-08,
+          "mask_area_fraction": 0.24585068225860596,
+          "masked_mean_absolute_delta": 2.7276316494443655e-09,
+          "unmasked_mean_absolute_delta": 1.3976720688180783e-09
+        },
+        {
+          "target_severity": 5,
+          "predicted_severity": 7,
+          "predicted_confidence": 0.9096193909645081,
+          "expected_severity": 6.722620964050293,
+          "mean_absolute_delta": 0.0037642340175807476,
+          "max_absolute_delta": 0.14131015539169312,
+          "mask_area_fraction": 0.24585068225860596,
+          "masked_mean_absolute_delta": 0.012807119040054504,
+          "unmasked_mean_absolute_delta": 0.0008162776317023681
+        },
+        {
+          "target_severity": 6,
+          "predicted_severity": 7,
+          "predicted_confidence": 0.9500319361686707,
+          "expected_severity": 6.846628665924072,
+          "mean_absolute_delta": 0.007198227569460869,
+          "max_absolute_delta": 0.25514957308769226,
+          "mask_area_fraction": 0.24585068225860596,
+          "masked_mean_absolute_delta": 0.024508470636576105,
+          "unmasked_mean_absolute_delta": 0.0015551343347696214
+        },
+        {
+          "target_severity": 7,
+          "predicted_severity": 7,
+          "predicted_confidence": 0.9638568162918091,
+          "expected_severity": 6.889045238494873,
+          "mean_absolute_delta": 0.010301387868821621,
+          "max_absolute_delta": 0.3415182828903198,
+          "mask_area_fraction": 0.24585068225860596,
+          "masked_mean_absolute_delta": 0.035103633040698023,
+          "unmasked_mean_absolute_delta": 0.002215920946997575
+        }
+      ],
+      "expected_severity_monotonic_fraction": 1.0,
+      "predicted_severity_monotonic_fraction": 1.0,
+      "expected_severity_span": 1.8512234687805176,
+      "max_mean_absolute_delta": 0.010301387868821621,
+      "max_masked_mean_absolute_delta": 0.035103633040698023,
+      "max_unmasked_mean_absolute_delta": 0.002215920946997575,
+      "panel_path": "/home/tmushuru/datasets/alopecia_public/metadata/exp02_proxy_batch_eval_v1/case_panels/009_unidpro_hair_loss_male_norwood_scale_4_000011bb35--65ceb4885851f6329e99c09c_Top-Down.png",
+      "auto_pass": true
+    },
+    {
+      "case_id": "010_unidpro_hair_loss_male_norwood_scale_3_000011bb35--65ce09cf6a73b2313d0bea6b_Top-Down",
+      "dataset_key": "unidpro_hair_loss_male_norwood_scale",
+      "split": "val",
+      "image_view": "top",
+      "label_schema": "norwood_stage",
+      "image_path": "/home/tmushuru/datasets/alopecia_public/raw/unidpro_hair_loss_male_norwood_scale/images/3/000011bb35--65ce09cf6a73b2313d0bea6b_Top-Down.jpg",
+      "source_severity": 3,
+      "source_score": {
+        "predicted_severity": 5,
+        "predicted_confidence": 0.3851087689399719,
+        "expected_severity": 4.827596187591553
+      },
+      "ellipse_mask": [
+        0.5,
+        0.28,
+        0.3,
+        0.26
+      ],
+      "ellipse_mask_source": "dataset:unidpro_hair_loss_male_norwood_scale",
+      "mask_area_fraction": 0.24585068225860596,
+      "targets": [
+        {
+          "target_severity": 1,
+          "predicted_severity": 5,
+          "predicted_confidence": 0.6500889658927917,
+          "expected_severity": 4.459268569946289,
+          "mean_absolute_delta": 0.0065299225971102715,
+          "max_absolute_delta": 0.18911761045455933,
+          "mask_area_fraction": 0.24585068225860596,
+          "masked_mean_absolute_delta": 0.022751987624115733,
+          "unmasked_mean_absolute_delta": 0.0012415733476855877
+        },
+        {
+          "target_severity": 2,
+          "predicted_severity": 5,
+          "predicted_confidence": 0.5002536773681641,
+          "expected_severity": 4.42345666885376,
+          "mean_absolute_delta": 0.0032649612985551357,
+          "max_absolute_delta": 0.09455880522727966,
+          "mask_area_fraction": 0.24585068225860596,
+          "masked_mean_absolute_delta": 0.011375993812057866,
+          "unmasked_mean_absolute_delta": 0.000620786416565446
+        },
+        {
+          "target_severity": 3,
+          "predicted_severity": 5,
+          "predicted_confidence": 0.3851127028465271,
+          "expected_severity": 4.827524185180664,
+          "mean_absolute_delta": 2.242056096335432e-09,
+          "max_absolute_delta": 5.960464477539063e-08,
+          "mask_area_fraction": 0.24585068225860596,
+          "masked_mean_absolute_delta": 3.5511012976184518e-09,
+          "unmasked_mean_absolute_delta": 1.8153108241830854e-09
+        },
+        {
+          "target_severity": 4,
+          "predicted_severity": 7,
+          "predicted_confidence": 0.4075741767883301,
+          "expected_severity": 5.318774700164795,
+          "mean_absolute_delta": 0.0026580505073070526,
+          "max_absolute_delta": 0.06984680891036987,
+          "mask_area_fraction": 0.24585068225860596,
+          "masked_mean_absolute_delta": 0.00923380441418841,
+          "unmasked_mean_absolute_delta": 0.0005143719259431853
+        },
+        {
+          "target_severity": 5,
+          "predicted_severity": 7,
+          "predicted_confidence": 0.5697025060653687,
+          "expected_severity": 5.786705017089844,
+          "mean_absolute_delta": 0.005160670727491379,
+          "max_absolute_delta": 0.130171537399292,
+          "mask_area_fraction": 0.24585068225860596,
+          "masked_mean_absolute_delta": 0.01791809404666,
+          "unmasked_mean_absolute_delta": 0.0010017842731561385
+        },
+        {
+          "target_severity": 6,
+          "predicted_severity": 7,
+          "predicted_confidence": 0.6660010814666748,
+          "expected_severity": 6.071717739105225,
+          "mean_absolute_delta": 0.007507859729230404,
+          "max_absolute_delta": 0.18097418546676636,
+          "mask_area_fraction": 0.24585068225860596,
+          "masked_mean_absolute_delta": 0.026052861952448412,
+          "unmasked_mean_absolute_delta": 0.0014622376591044942
+        },
+        {
+          "target_severity": 7,
+          "predicted_severity": 7,
+          "predicted_confidence": 0.7113394141197205,
+          "expected_severity": 6.203547477722168,
+          "mean_absolute_delta": 0.009699616581201553,
+          "max_absolute_delta": 0.22225481271743774,
+          "mask_area_fraction": 0.24585068225860596,
+          "masked_mean_absolute_delta": 0.03363810876291422,
+          "unmasked_mean_absolute_delta": 0.0018957314663226178
+        }
+      ],
+      "expected_severity_monotonic_fraction": 0.8333333333333334,
+      "predicted_severity_monotonic_fraction": 1.0,
+      "expected_severity_span": 1.7800908088684082,
+      "max_mean_absolute_delta": 0.009699616581201553,
+      "max_masked_mean_absolute_delta": 0.03363810876291422,
+      "max_unmasked_mean_absolute_delta": 0.0018957314663226178,
+      "panel_path": "/home/tmushuru/datasets/alopecia_public/metadata/exp02_proxy_batch_eval_v1/case_panels/010_unidpro_hair_loss_male_norwood_scale_3_000011bb35--65ce09cf6a73b2313d0bea6b_Top-Down.png",
+      "auto_pass": true
+    },
+    {
+      "case_id": "011_unidatapro_women_hair_loss_2_top",
+      "dataset_key": "unidatapro_women_hair_loss",
+      "split": "test",
+      "image_view": "top",
+      "label_schema": "ludwig_stage",
+      "image_path": "/home/tmushuru/datasets/alopecia_public/raw/unidatapro_women_hair_loss/2/top.png",
+      "source_severity": 2,
+      "source_score": {
+        "predicted_severity": 7,
+        "predicted_confidence": 0.6238588094711304,
+        "expected_severity": 5.674881935119629
+      },
+      "ellipse_mask": [
+        0.5,
+        0.52,
+        0.36,
+        0.45
+      ],
+      "ellipse_mask_source": "default",
+      "mask_area_fraction": 0.5163443684577942,
+      "targets": [
+        {
+          "target_severity": 1,
+          "predicted_severity": 4,
+          "predicted_confidence": 0.39385873079299927,
+          "expected_severity": 4.799271106719971,
+          "mean_absolute_delta": 0.01768171787261963,
+          "max_absolute_delta": 0.2639561891555786,
+          "mask_area_fraction": 0.5163443684577942,
+          "masked_mean_absolute_delta": 0.02980888336874419,
+          "unmasked_mean_absolute_delta": 0.004734916697424264
+        },
+        {
+          "target_severity": 2,
+          "predicted_severity": 7,
+          "predicted_confidence": 0.6238517761230469,
+          "expected_severity": 5.674861907958984,
+          "mean_absolute_delta": 1.5681393961131107e-09,
+          "max_absolute_delta": 5.960464477539063e-08,
+          "mask_area_fraction": 0.5163443684577942,
+          "masked_mean_absolute_delta": 1.2503507419626507e-09,
+          "unmasked_mean_absolute_delta": 1.9074063687874317e-09
+        },
+        {
+          "target_severity": 3,
+          "predicted_severity": 7,
+          "predicted_confidence": 0.7123037576675415,
+          "expected_severity": 5.9760422706604,
+          "mean_absolute_delta": 0.005626155994832516,
+          "max_absolute_delta": 0.09386517107486725,
+          "mask_area_fraction": 0.5163443684577942,
+          "masked_mean_absolute_delta": 0.009486216537698891,
+          "unmasked_mean_absolute_delta": 0.0015052053454589506
+        },
+        {
+          "target_severity": 4,
+          "predicted_severity": 7,
+          "predicted_confidence": 0.7670958638191223,
+          "expected_severity": 6.154478549957275,
+          "mean_absolute_delta": 0.010890834033489227,
+          "max_absolute_delta": 0.17707417905330658,
+          "mask_area_fraction": 0.5163443684577942,
+          "masked_mean_absolute_delta": 0.018377503221331443,
+          "unmasked_mean_absolute_delta": 0.002898165787981013
+        },
+        {
+          "target_severity": 5,
+          "predicted_severity": 7,
+          "predicted_confidence": 0.8265720009803772,
+          "expected_severity": 6.3556036949157715,
+          "mean_absolute_delta": 0.01579403132200241,
+          "max_absolute_delta": 0.2496270090341568,
+          "mask_area_fraction": 0.5163443684577942,
+          "masked_mean_absolute_delta": 0.0266738504312445,
+          "unmasked_mean_absolute_delta": 0.00417888325315645
+        },
+        {
+          "target_severity": 6,
+          "predicted_severity": 7,
+          "predicted_confidence": 0.8740039467811584,
+          "expected_severity": 6.522824287414551,
+          "mean_absolute_delta": 0.020335745066404343,
+          "max_absolute_delta": 0.31152379512786865,
+          "mask_area_fraction": 0.5163443684577942,
+          "masked_mean_absolute_delta": 0.03437524373795834,
+          "unmasked_mean_absolute_delta": 0.005347355494463289
+        },
+        {
+          "target_severity": 7,
+          "predicted_severity": 7,
+          "predicted_confidence": 0.8973045945167542,
+          "expected_severity": 6.608311176300049,
+          "mean_absolute_delta": 0.024515952914953232,
+          "max_absolute_delta": 0.3627643585205078,
+          "mask_area_fraction": 0.5163443684577942,
+          "masked_mean_absolute_delta": 0.041481671116906524,
+          "unmasked_mean_absolute_delta": 0.006403570958359952
+        }
+      ],
+      "expected_severity_monotonic_fraction": 1.0,
+      "predicted_severity_monotonic_fraction": 1.0,
+      "expected_severity_span": 1.8090400695800781,
+      "max_mean_absolute_delta": 0.024515952914953232,
+      "max_masked_mean_absolute_delta": 0.041481671116906524,
+      "max_unmasked_mean_absolute_delta": 0.006403570958359952,
+      "panel_path": "/home/tmushuru/datasets/alopecia_public/metadata/exp02_proxy_batch_eval_v1/case_panels/011_unidatapro_women_hair_loss_2_top.png",
+      "auto_pass": true
+    },
+    {
+      "case_id": "012_unidatapro_women_hair_loss_4_top",
+      "dataset_key": "unidatapro_women_hair_loss",
+      "split": "test",
+      "image_view": "top",
+      "label_schema": "ludwig_stage",
+      "image_path": "/home/tmushuru/datasets/alopecia_public/raw/unidatapro_women_hair_loss/4/top.png",
+      "source_severity": 4,
+      "source_score": {
+        "predicted_severity": 6,
+        "predicted_confidence": 0.31463006138801575,
+        "expected_severity": 5.150424480438232
+      },
+      "ellipse_mask": [
+        0.5,
+        0.52,
+        0.36,
+        0.45
+      ],
+      "ellipse_mask_source": "default",
+      "mask_area_fraction": 0.5163443684577942,
+      "targets": [
+        {
+          "target_severity": 1,
+          "predicted_severity": 4,
+          "predicted_confidence": 0.3610747754573822,
+          "expected_severity": 4.593502998352051,
+          "mean_absolute_delta": 0.015758328139781952,
+          "max_absolute_delta": 0.21850058436393738,
+          "mask_area_fraction": 0.5163443684577942,
+          "masked_mean_absolute_delta": 0.02647110181159741,
+          "unmasked_mean_absolute_delta": 0.004321513649507612
+        },
+        {
+          "target_severity": 2,
+          "predicted_severity": 4,
+          "predicted_confidence": 0.2718718349933624,
+          "expected_severity": 4.758702754974365,
+          "mean_absolute_delta": 0.010539386421442032,
+          "max_absolute_delta": 0.17514187097549438,
+          "mask_area_fraction": 0.5163443684577942,
+          "masked_mean_absolute_delta": 0.017677067416412996,
+          "unmasked_mean_absolute_delta": 0.0029192917596852067
+        },
+        {
+          "target_severity": 3,
+          "predicted_severity": 5,
+          "predicted_confidence": 0.29149001836776733,
+          "expected_severity": 4.950943470001221,
+          "mean_absolute_delta": 0.00527705904096365,
+          "max_absolute_delta": 0.09394388645887375,
+          "mask_area_fraction": 0.5163443684577942,
+          "masked_mean_absolute_delta": 0.008844254395690017,
+          "unmasked_mean_absolute_delta": 0.001468768363712318
+        },
+        {
+          "target_severity": 4,
+          "predicted_severity": 6,
+          "predicted_confidence": 0.31466785073280334,
+          "expected_severity": 5.150447845458984,
+          "mean_absolute_delta": 1.866178989118339e-09,
+          "max_absolute_delta": 5.960464477539063e-08,
+          "mask_area_fraction": 0.5163443684577942,
+          "masked_mean_absolute_delta": 1.4237878106557616e-09,
+          "unmasked_mean_absolute_delta": 2.338469819085788e-09
+        },
+        {
+          "target_severity": 5,
+          "predicted_severity": 6,
+          "predicted_confidence": 0.3973682224750519,
+          "expected_severity": 5.527645111083984,
+          "mean_absolute_delta": 0.008229933679103851,
+          "max_absolute_delta": 0.15956991910934448,
+          "mask_area_fraction": 0.5163443684577942,
+          "masked_mean_absolute_delta": 0.013906290841438542,
+          "unmasked_mean_absolute_delta": 0.0021699280902435095
+        },
+        {
+          "target_severity": 6,
+          "predicted_severity": 6,
+          "predicted_confidence": 0.43764299154281616,
+          "expected_severity": 5.802572250366211,
+          "mean_absolute_delta": 0.015672821551561356,
+          "max_absolute_delta": 0.2870096266269684,
+          "mask_area_fraction": 0.5163443684577942,
+          "masked_mean_absolute_delta": 0.026532780622691387,
+          "unmasked_mean_absolute_delta": 0.004078870983295306
+        },
+        {
+          "target_severity": 7,
+          "predicted_severity": 6,
+          "predicted_confidence": 0.4586218297481537,
+          "expected_severity": 5.809305191040039,
+          "mean_absolute_delta": 0.022328481078147888,
+          "max_absolute_delta": 0.3823191225528717,
+          "mask_area_fraction": 0.5163443684577942,
+          "masked_mean_absolute_delta": 0.037879380361966884,
+          "unmasked_mean_absolute_delta": 0.005726546259250191
+        }
+      ],
+      "expected_severity_monotonic_fraction": 1.0,
+      "predicted_severity_monotonic_fraction": 1.0,
+      "expected_severity_span": 1.2158021926879883,
+      "max_mean_absolute_delta": 0.022328481078147888,
+      "max_masked_mean_absolute_delta": 0.037879380361966884,
+      "max_unmasked_mean_absolute_delta": 0.005726546259250191,
+      "panel_path": "/home/tmushuru/datasets/alopecia_public/metadata/exp02_proxy_batch_eval_v1/case_panels/012_unidatapro_women_hair_loss_4_top.png",
+      "auto_pass": true
+    },
+    {
+      "case_id": "013_unidatapro_men_hair_loss_2_top",
+      "dataset_key": "unidatapro_men_hair_loss",
+      "split": "test",
+      "image_view": "top",
+      "label_schema": "norwood_stage",
+      "image_path": "/home/tmushuru/datasets/alopecia_public/raw/unidatapro_men_hair_loss/2/top.png",
+      "source_severity": 2,
+      "source_score": {
+        "predicted_severity": 7,
+        "predicted_confidence": 0.9726826548576355,
+        "expected_severity": 6.849739074707031
+      },
+      "ellipse_mask": [
+        0.5,
+        0.52,
+        0.36,
+        0.45
+      ],
+      "ellipse_mask_source": "default",
+      "mask_area_fraction": 0.5163443684577942,
+      "targets": [
+        {
+          "target_severity": 1,
+          "predicted_severity": 1,
+          "predicted_confidence": 0.8411452770233154,
+          "expected_severity": 1.7568178176879883,
+          "mean_absolute_delta": 0.014691273681819439,
+          "max_absolute_delta": 0.2952249348163605,
+          "mask_area_fraction": 0.5163443684577942,
+          "masked_mean_absolute_delta": 0.024052098136774707,
+          "unmasked_mean_absolute_delta": 0.004697779763617126
+        },
+        {
+          "target_severity": 2,
+          "predicted_severity": 7,
+          "predicted_confidence": 0.9726839065551758,
+          "expected_severity": 6.8497443199157715,
+          "mean_absolute_delta": 1.8152851444241946e-09,
+          "max_absolute_delta": 5.960464477539063e-08,
+          "mask_area_fraction": 0.5163443684577942,
+          "masked_mean_absolute_delta": 1.562140001360842e-09,
+          "unmasked_mean_absolute_delta": 2.0855394813762887e-09
+        },
+        {
+          "target_severity": 3,
+          "predicted_severity": 7,
+          "predicted_confidence": 0.9980672001838684,
+          "expected_severity": 6.993231296539307,
+          "mean_absolute_delta": 0.0049291648901999,
+          "max_absolute_delta": 0.090982586145401,
+          "mask_area_fraction": 0.5163443684577942,
+          "masked_mean_absolute_delta": 0.008013796352634609,
+          "unmasked_mean_absolute_delta": 0.0016360524131290057
+        },
+        {
+          "target_severity": 4,
+          "predicted_severity": 7,
+          "predicted_confidence": 0.9991703033447266,
+          "expected_severity": 6.997438430786133,
+          "mean_absolute_delta": 0.00959171261638403,
+          "max_absolute_delta": 0.17167001962661743,
+          "mask_area_fraction": 0.5163443684577942,
+          "masked_mean_absolute_delta": 0.015636065607264268,
+          "unmasked_mean_absolute_delta": 0.0031388401800130908
+        },
+        {
+          "target_severity": 5,
+          "predicted_severity": 7,
+          "predicted_confidence": 0.9994458556175232,
+          "expected_severity": 6.998299598693848,
+          "mean_absolute_delta": 0.013987580314278603,
+          "max_absolute_delta": 0.24206241965293884,
+          "mask_area_fraction": 0.5163443684577942,
+          "masked_mean_absolute_delta": 0.022866689923137874,
+          "unmasked_mean_absolute_delta": 0.00450835944947173
+        },
+        {
+          "target_severity": 6,
+          "predicted_severity": 7,
+          "predicted_confidence": 0.9995088577270508,
+          "expected_severity": 6.998485088348389,
+          "mean_absolute_delta": 0.01811668649315834,
+          "max_absolute_delta": 0.30215969681739807,
+          "mask_area_fraction": 0.5163443684577942,
+          "masked_mean_absolute_delta": 0.02970550336123856,
+          "unmasked_mean_absolute_delta": 0.0057446127889586055
+        },
+        {
+          "target_severity": 7,
+          "predicted_severity": 7,
+          "predicted_confidence": 0.9995162487030029,
+          "expected_severity": 6.998499393463135,
+          "mean_absolute_delta": 0.02197873406112194,
+          "max_absolute_delta": 0.3519619405269623,
+          "mask_area_fraction": 0.5163443684577942,
+          "masked_mean_absolute_delta": 0.036151945576770254,
+          "unmasked_mean_absolute_delta": 0.006847599877542009
+        }
+      ],
+      "expected_severity_monotonic_fraction": 1.0,
+      "predicted_severity_monotonic_fraction": 1.0,
+      "expected_severity_span": 5.2416815757751465,
+      "max_mean_absolute_delta": 0.02197873406112194,
+      "max_masked_mean_absolute_delta": 0.036151945576770254,
+      "max_unmasked_mean_absolute_delta": 0.006847599877542009,
+      "panel_path": "/home/tmushuru/datasets/alopecia_public/metadata/exp02_proxy_batch_eval_v1/case_panels/013_unidatapro_men_hair_loss_2_top.png",
+      "auto_pass": true
+    },
+    {
+      "case_id": "014_unidatapro_women_hair_loss_5_top",
+      "dataset_key": "unidatapro_women_hair_loss",
+      "split": "test",
+      "image_view": "top",
+      "label_schema": "ludwig_stage",
+      "image_path": "/home/tmushuru/datasets/alopecia_public/raw/unidatapro_women_hair_loss/5/top.png",
+      "source_severity": 5,
+      "source_score": {
+        "predicted_severity": 6,
+        "predicted_confidence": 0.3415147662162781,
+        "expected_severity": 5.237853527069092
+      },
+      "ellipse_mask": [
+        0.5,
+        0.52,
+        0.36,
+        0.45
+      ],
+      "ellipse_mask_source": "default",
+      "mask_area_fraction": 0.5163443684577942,
+      "targets": [
+        {
+          "target_severity": 1,
+          "predicted_severity": 5,
+          "predicted_confidence": 0.3430767357349396,
+          "expected_severity": 5.015773296356201,
+          "mean_absolute_delta": 0.01301964558660984,
+          "max_absolute_delta": 0.1326470673084259,
+          "mask_area_fraction": 0.5163443684577942,
+          "masked_mean_absolute_delta": 0.021632385012532087,
+          "unmasked_mean_absolute_delta": 0.0038247986551468187
+        },
+        {
+          "target_severity": 2,
+          "predicted_severity": 5,
+          "predicted_confidence": 0.3219813406467438,
+          "expected_severity": 5.058830261230469,
+          "mean_absolute_delta": 0.009791499935090542,
+          "max_absolute_delta": 0.09948530793190002,
+          "mask_area_fraction": 0.5163443684577942,
+          "masked_mean_absolute_delta": 0.016235021286174503,
+          "unmasked_mean_absolute_delta": 0.0029124809469259073
+        },
+        {
+          "target_severity": 3,
+          "predicted_severity": 5,
+          "predicted_confidence": 0.29105958342552185,
+          "expected_severity": 5.105249404907227,
+          "mean_absolute_delta": 0.0065386658534407616,
+          "max_absolute_delta": 0.06632354855537415,
+          "mask_area_fraction": 0.5163443684577942,
+          "masked_mean_absolute_delta": 0.010827764949007269,
+          "unmasked_mean_absolute_delta": 0.0019596809127480643
+        },
+        {
+          "target_severity": 4,
+          "predicted_severity": 6,
+          "predicted_confidence": 0.28500601649284363,
+          "expected_severity": 5.16240930557251,
+          "mean_absolute_delta": 0.003270090324804187,
+          "max_absolute_delta": 0.03316175937652588,
+          "mask_area_fraction": 0.5163443684577942,
+          "masked_mean_absolute_delta": 0.005414186094806228,
+          "unmasked_mean_absolute_delta": 0.0009810819004630038
+        },
+        {
+          "target_severity": 5,
+          "predicted_severity": 6,
+          "predicted_confidence": 0.3414871394634247,
+          "expected_severity": 5.237858295440674,
+          "mean_absolute_delta": 1.7891655934576534e-09,
+          "max_absolute_delta": 5.960464477539063e-08,
+          "mask_area_fraction": 0.5163443684577942,
+          "masked_mean_absolute_delta": 1.3203960753447684e-09,
+          "unmasked_mean_absolute_delta": 2.289617667183838e-09
+        },
+        {
+          "target_severity": 6,
+          "predicted_severity": 6,
+          "predicted_confidence": 0.514814555644989,
+          "expected_severity": 5.619725704193115,
+          "mean_absolute_delta": 0.010622969828546047,
+          "max_absolute_delta": 0.09281864762306213,
+          "mask_area_fraction": 0.5163443684577942,
+          "masked_mean_absolute_delta": 0.01773663832101016,
+          "unmasked_mean_absolute_delta": 0.0030285093137973626
+        },
+        {
+          "target_severity": 7,
+          "predicted_severity": 6,
+          "predicted_confidence": 0.5275947451591492,
+          "expected_severity": 5.854639053344727,
+          "mean_absolute_delta": 0.02007848024368286,
+          "max_absolute_delta": 0.1599019467830658,
+          "mask_area_fraction": 0.5163443684577942,
+          "masked_mean_absolute_delta": 0.03366163862787552,
+          "unmasked_mean_absolute_delta": 0.005577276427673114
+        }
+      ],
+      "expected_severity_monotonic_fraction": 1.0,
+      "predicted_severity_monotonic_fraction": 1.0,
+      "expected_severity_span": 0.8388657569885254,
+      "max_mean_absolute_delta": 0.02007848024368286,
+      "max_masked_mean_absolute_delta": 0.03366163862787552,
+      "max_unmasked_mean_absolute_delta": 0.005577276427673114,
+      "panel_path": "/home/tmushuru/datasets/alopecia_public/metadata/exp02_proxy_batch_eval_v1/case_panels/014_unidatapro_women_hair_loss_5_top.png",
+      "auto_pass": true
+    }
+  ]
+}
