@@ -15,8 +15,14 @@ classifiers on the current working manifests.
 - Validation manifest: `/home/tmushuru/datasets/alopecia_public/manifests/exp01_working_val.csv`
 - Train samples: `41`
 - Validation samples: `9`
+- Validation severity distribution: severity `3`: `2`, severity `4`: `2`,
+  severity `5`: `2`, severity `6`: `1`, severity `7`: `2`
 - Features: `131` handcrafted image features
 - Gate threshold: validation macro F1 `>= 0.40`
+
+Severity classes `1` and `2` are absent from validation. For that reason, this
+package reports both macro F1 over all train-observed labels and macro F1 over
+validation-present labels.
 
 ## Results
 
@@ -24,6 +30,10 @@ classifiers on the current working manifests.
 | --- | --- | ---: | ---: | ---: | --- |
 | Exact 7-class | `logreg_c0_5_balanced` | `0.556` | `0.424` | `0.593` | pass |
 | Ordinal 3-bin | `extra_trees_balanced` | `0.778` | `0.552` | `0.829` | pass |
+
+The exact seven-class scorer clears the `0.40` gate even under the all-train-label
+macro F1 calculation (`0.424`), not only under the validation-present subset
+calculation.
 
 ## Saved Artefacts
 

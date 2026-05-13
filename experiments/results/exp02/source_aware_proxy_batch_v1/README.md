@@ -35,6 +35,11 @@ supervision input for later learned residual editing experiments.
 - Curated severity-shift proxy pairs exported: `78`
 - Curated source cases exported: `13`
 
+The mean expected-severity span decreased from the Experiment 01 proxy baseline
+of `2.157` to `1.957`. This is treated as an acceptable trade-off because the
+source-aware mask preset reduces edit area on the problematic source and makes
+the two remaining failures diagnostically cleaner.
+
 ## Failure Cases
 
 Both automatic failures came from
@@ -49,6 +54,12 @@ mask preset:
 The failures had low unmasked drift (`<= 0.0023`) and valid mask area
 (`0.246`), so they are treated as scorer/proxy response failures rather than
 gross mask-leak failures.
+
+The exported proxy-pair manifest contains six non-identity target severity
+shifts per accepted source case (`13 * 6 = 78`). Because only three of five
+`unidpro_hair_loss_male_norwood_scale` cases pass QA, the exported manifest is
+source-imbalanced and should be used with source-aware sampling or augmentation
+in the learned residual-editor experiment.
 
 ## Saved Artefacts
 

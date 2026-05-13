@@ -29,12 +29,21 @@ Experiment 02 used the same current public-data working manifests as Experiment
 
 - Working train samples: `41`
 - Working validation samples: `9`
+- Validation severity distribution: severity `3`: `2`, severity `4`: `2`,
+  severity `5`: `2`, severity `6`: `1`, severity `7`: `2`
 - Top-view samples used for source-aware proxy QA: `15`
 - Top-view source datasets: `unidatapro_women_hair_loss`,
   `unidatapro_men_hair_loss`, and `unidpro_hair_loss_male_norwood_scale`
 
 The data remain small and heterogeneous. Results should be read as pipeline and
 feasibility evidence, not as population-level validation.
+
+Severity classes `1` and `2` are absent from the nine-sample validation set.
+This means validation-present macro F1 is computed over severities `3-7`, not
+over all seven severities. The exact seven-class model still clears the
+Experiment 02 gate under the stricter all-train-label macro F1 calculation
+(`0.424 >= 0.40`), but the split is non-standard and should not be treated as a
+robust generalization estimate.
 
 ## Completed Milestones
 
@@ -46,6 +55,14 @@ training learned residual editors.
 `scorer_gate_v1` evaluated lightweight feature-based classifiers on the working
 train/validation manifests.
 
+Feature-based classifiers were used here because the Experiment 01 neural scorer
+remained close to chance on the current tiny validation set, while the immediate
+Experiment 02 need was an auditable, fast, small-data engineering gate rather
+than an end-to-end neural severity model. This is not a permanent replacement
+for neural severity estimation. A neural scorer remains appropriate once the
+dataset, augmentation strategy, or pseudo-pair pool is large enough to support
+it without overfitting.
+
 Key results:
 
 | Formulation | Best model | Accuracy | Macro F1 over train labels | Macro F1 over validation-present labels | Gate |
@@ -56,7 +73,7 @@ Key results:
 The exact seven-class scorer cleared the pre-specified macro F1 gate of `0.40`.
 This is a meaningful improvement over the Experiment 01 neural scorer
 (`0.15` macro F1), but remains fragile because validation contains only `9`
-samples.
+samples and excludes severities `1` and `2`.
 
 ### 2. Source-Aware Mask QA
 
@@ -82,6 +99,13 @@ quality improved. The two remaining failures now have valid smaller masks and
 low unmasked drift, so they are interpreted as insufficient proxy/scorer target
 separation rather than gross mask leakage.
 
+The mean expected-severity span decreased from the Experiment 01 proxy baseline
+(`2.157`) to `1.957`. This is an acceptable trade-off for this pipeline-hardening
+run: the source-aware preset constrains edits more tightly on the
+`unidpro_hair_loss_male_norwood_scale` cases, reducing severity response span
+but making the remaining failures cleaner and less attributable to background or
+mask leakage.
+
 ### 3. QA-Gated Proxy-Pair Export
 
 Experiment 02 exported `proxy_pair_manifest.csv` from the source-aware batch
@@ -98,6 +122,13 @@ Exported supervision specification:
   `unidatapro_women_hair_loss`: `5`,
   `unidatapro_men_hair_loss`: `5`,
   `unidpro_hair_loss_male_norwood_scale`: `3`
+
+The `78` rows come from six non-identity target severities per accepted source
+case (`13 * 6 = 78`). The source distribution is imbalanced because two
+`unidpro_hair_loss_male_norwood_scale` cases failed QA; `10 / 13` accepted cases
+come from the two `unidatapro` sources. This is a potential acquisition-source
+confound for the learned residual editor and should be handled with source-aware
+sampling, augmentation, or explicit reporting in the next experiment.
 
 The manifest is a specification for reproducible proxy-pair generation, not a
 claim that the proxy edits are clinical ground truth.
@@ -134,7 +165,12 @@ but not enough for strong generalization claims.
 ## Recommended Next Experiment
 
 The next experiment should train a learned residual editor from the
-QA-gated `proxy_pair_manifest.csv` and compare against the proxy baseline.
+QA-gated `proxy_pair_manifest.csv` and compare against the proxy baseline. The
+first learned-editor run should explicitly state whether it trains on the
+`78` proxy-pair rows as-is or expands the effective training set with
+augmentation. Given the tiny `13`-source-image pool, augmentation and
+source-aware sampling should be treated as planned safeguards rather than
+optional cosmetic additions.
 
 The learned editor should only be considered an improvement if it:
 
