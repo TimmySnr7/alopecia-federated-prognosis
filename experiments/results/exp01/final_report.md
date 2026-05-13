@@ -47,6 +47,13 @@ and source severity, but not by acquisition conditions:
 | Acquisition heterogeneity | variable resolution, lighting, rotation, camera distance, background, and head centering |
 | Clinical-label heterogeneity | mixed `norwood_stage` and `ludwig_stage` proxy labels from public sources |
 
+Combining Norwood and Ludwig labels into one ordinal severity proxy is a
+methodological simplification. Experiment 01 treats them as a shared severity
+axis for feasibility testing, but this assumption requires validation or
+replacement in Experiment 02. A future scorer trained on a conflated
+Norwood/Ludwig axis may learn label-source noise rather than a robust alopecia
+severity signal.
+
 ## Completed Milestones
 
 ### 1. Manifest and Loader Pipeline
@@ -188,6 +195,12 @@ cases with the lowest expected-severity monotonic fractions:
 - `unidpro_hair_loss_male_norwood_scale`, source severity `2`:
   monotonic fraction `0.000`, expected-severity span `0.403`
 
+Both automatic failures came from `unidpro_hair_loss_male_norwood_scale`. With
+only five cases from that source, this should not be over-interpreted as a
+statistical dataset effect. However, it is a useful warning that source-specific
+acquisition conditions, head centering, or label conventions may be less
+compatible with the fixed ellipse proxy than the two `unidatapro` sources.
+
 ## Main Findings
 
 1. The data and manifest pipeline is functional and reproducible.
@@ -254,6 +267,23 @@ Experiment 02 should only claim improvement if it beats the proxy baseline on:
 - target separation,
 - low background/unmasked drift,
 - and source identity preservation.
+
+The Experiment 01 proxy baseline values to carry into the Experiment 02 planning
+document are:
+
+| Metric | Experiment 01 proxy baseline |
+| --- | --- |
+| Mean expected-severity monotonic fraction | `0.878` |
+| Mean expected-severity span | `2.157` |
+| Auto-pass rate under exploratory QA criteria | `0.867` |
+| Maximum unmasked mean absolute delta criterion | `<= 0.01` |
+
+Before Experiment 02 begins, these qualitative improvement dimensions should be
+operationalised. A defensible starting point is to require mean expected-severity
+monotonic fraction `>= 0.95`, no reduction in visual plausibility under
+contact-sheet review, no increase in unmasked/background drift beyond the
+Experiment 01 threshold, and explicit source-identity preservation assessment
+using either a second human rater, a perceptual similarity metric, or both.
 
 ## Final Conclusion
 
