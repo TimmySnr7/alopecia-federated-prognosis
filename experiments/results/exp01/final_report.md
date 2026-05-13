@@ -35,6 +35,18 @@ curated public pool:
 The top-view subset remains small and heterogeneous. Results should therefore be
 read as feasibility evidence rather than population-level validation.
 
+The 15 top-view cases used for batch proxy QA were balanced by source dataset
+and source severity, but not by acquisition conditions:
+
+| Characteristic | Distribution |
+| --- | --- |
+| Dataset source | `unidatapro_women_hair_loss`: 5; `unidatapro_men_hair_loss`: 5; `unidpro_hair_loss_male_norwood_scale`: 5 |
+| Source severity | `1`: 3; `2`: 3; `3`: 3; `4`: 3; `5`: 3 |
+| Split | train: 9; validation: 2; test: 4 |
+| View | all labelled `top` |
+| Acquisition heterogeneity | variable resolution, lighting, rotation, camera distance, background, and head centering |
+| Clinical-label heterogeneity | mixed `norwood_stage` and `ludwig_stage` proxy labels from public sources |
+
 ## Completed Milestones
 
 ### 1. Manifest and Loader Pipeline
@@ -60,6 +72,14 @@ Key result from `severity_baseline_working_v3`:
 
 This classifier is useful as a weak experimental scorer, but it is not strong
 enough to be a sole clinical or scientific evaluator.
+
+For context, a uniform random classifier over seven classes would have expected
+accuracy of approximately `0.143`, and macro F1 is also approximately `0.143`
+under a balanced no-skill setting. The observed validation accuracy is therefore
+only marginally above a simple random baseline, while macro F1 is essentially at
+chance level. The working training distribution is imbalanced, with class `7`
+over-represented, so accuracy is especially fragile; macro F1 is the more
+appropriate warning signal here.
 
 ### 3. Learned Generative Scaffolds
 
@@ -94,6 +114,15 @@ This was the first clear positive control for target conditioning. However, the
 outputs were visually stylized and adversarial, so the run supports
 controllability but not visual plausibility.
 
+The adversarial artefacts were primarily visual texture and colour shortcuts
+that changed the scorer response without producing clinically plausible
+alopecia morphology. Earlier unconstrained and weakly constrained sweeps showed
+global colour casts, patchy scalp texture, boundary noise, and checker/banding
+artefacts inside the editable region, especially at larger target shifts away
+from the source severity. These artefacts are not part of the 13/15
+batch-QA-passing cases, which used the morphology-inspired proxy rather than
+direct scorer-guided residual optimization.
+
 ### 5. Visual Plausibility Proxy
 
 `plausible_proxy_sweep_v1` introduced a morphology-inspired proxy edit:
@@ -111,6 +140,11 @@ Key single-image result:
 
 This is not a learned generator, but it is the first usable visual plausibility
 guardrail for the project.
+
+The single-image proxy result achieved perfect monotonicity because it used a
+well-centered top-view bald/scalp image for which the fixed ellipse was a
+reasonable edit mask. This should be read as a positive control rather than as
+evidence of generalization.
 
 ### 6. Batch-Level Proxy QA
 
@@ -130,6 +164,29 @@ unmasked visual delta, and mask area.
 
 The contact sheets revealed the main remaining bottleneck: the fixed ellipse
 mask is useful for first-pass QA, but it is not source-aligned for every image.
+
+The automatic pass criteria were:
+
+| Criterion | Threshold |
+| --- | --- |
+| Expected-severity monotonic fraction | `>= 0.8` |
+| Expected-severity span | `>= 0.5` |
+| Maximum unmasked mean absolute delta | `<= 0.01` |
+| Mask area fraction | `0.20` to `0.75` |
+
+These thresholds were exploratory engineering criteria chosen to make the first
+batch QA auditable, not pre-registered statistical success criteria. The `0.867`
+pass rate should therefore be interpreted as exploratory feasibility evidence.
+
+The batch mean expected-severity monotonic fraction (`0.878`) is lower than the
+single-image proxy result (`1.0`) because source alignment and scorer response
+vary across the 15 top-view cases. The two automatic failures were also the two
+cases with the lowest expected-severity monotonic fractions:
+
+- `unidpro_hair_loss_male_norwood_scale`, source severity `5`:
+  monotonic fraction `0.333`, expected-severity span `0.153`
+- `unidpro_hair_loss_male_norwood_scale`, source severity `2`:
+  monotonic fraction `0.000`, expected-severity span `0.403`
 
 ## Main Findings
 
@@ -152,6 +209,12 @@ current public-data subset.
 
 It also supports using the plausible proxy outputs as a baseline, sanity check,
 and possible source of pseudo-paired supervision for later learned models.
+
+Proxy outputs should only be used as pseudo-paired supervision after mask QA.
+Cases with visibly misaligned masks, excessive background editing, or failed
+automatic plausibility criteria should be excluded from any learned model's
+training set. This gating is required to avoid teaching a downstream model
+spurious mask-boundary or background artefacts.
 
 ## What Experiment 01 Does Not Support
 
@@ -176,6 +239,13 @@ Recommended goals:
 3. Generate a curated pseudo-paired training set from visually valid proxy edits.
 4. Train a learned residual editor against the proxy pairs.
 5. Evaluate learned outputs using both scorer metrics and contact-sheet visual QA.
+
+Experiment 02 should not proceed to learned residual-editor training until a
+stronger severity scorer is available. A suggested hard entry criterion is a
+validation macro F1 of at least `0.40` on the working validation set, or an
+equivalently justified ordinal metric if the classifier is reformulated as an
+ordinal severity model. Without a stronger scorer, predicted-severity
+monotonicity is not scientifically interpretable.
 
 Experiment 02 should only claim improvement if it beats the proxy baseline on:
 
