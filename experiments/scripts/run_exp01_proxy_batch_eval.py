@@ -104,6 +104,31 @@ def _mask_overlay(source: torch.Tensor, mask: torch.Tensor) -> Image.Image:
     return Image.blend(base, Image.composite(overlay, base, mask_image), alpha=0.35)
 
 
+def _load_mask_presets(path: Path | None) -> dict[str, Any]:
+    if path is None:
+        return {}
+    return json.loads(path.read_text())
+
+
+def _select_ellipse_mask(
+    row: dict[str, str],
+    default_ellipse: list[float],
+    mask_presets: dict[str, Any],
+) -> tuple[list[float], str]:
+    case_presets = mask_presets.get("by_case_id", {})
+    image_path = Path(row["image_path"])
+    for key in [str(image_path), image_path.name, image_path.stem]:
+        if key in case_presets:
+            return [float(value) for value in case_presets[key]], f"case:{key}"
+
+    dataset_presets = mask_presets.get("by_dataset_key", {})
+    dataset_key = row.get("dataset_key", "")
+    if dataset_key in dataset_presets:
+        return [float(value) for value in dataset_presets[dataset_key]], f"dataset:{dataset_key}"
+
+    return default_ellipse, "default"
+
+
 def _case_passes(
     case_summary: dict[str, Any],
     min_monotonic_fraction: float,
@@ -162,6 +187,7 @@ def main() -> None:
         help="Normalized ellipse mask in resized-image coordinates.",
     )
     parser.add_argument("--mask-blur-radius", type=float, default=10.0)
+    parser.add_argument("--mask-preset-json", type=Path, default=None)
     parser.add_argument("--texture-blur-radius", type=float, default=3.0)
     parser.add_argument("--hair-enhancement-strength", type=float, default=1.2)
     parser.add_argument("--hair-suppression-strength", type=float, default=1.5)
@@ -187,6 +213,7 @@ def main() -> None:
         view=args.view,
         max_samples=args.max_samples,
     )
+    mask_presets = _load_mask_presets(args.mask_preset_json)
 
     case_summaries: list[dict[str, Any]] = []
     contact_panels: list[Image.Image] = []
@@ -207,8 +234,13 @@ def main() -> None:
             )
             source = ToTensor()(resized_image).unsqueeze(0).to(device)
             blurred = ToTensor()(blurred_image).unsqueeze(0).to(device)
+            selected_ellipse, selected_ellipse_source = _select_ellipse_mask(
+                row=row,
+                default_ellipse=args.ellipse_mask,
+                mask_presets=mask_presets,
+            )
             mask = _build_ellipse_mask(
-                args.ellipse_mask,
+                selected_ellipse,
                 image_size=image_size,
                 device=device,
                 blur_radius=args.mask_blur_radius,
@@ -273,7 +305,8 @@ def main() -> None:
                 "image_path": str(image_path),
                 "source_severity": source_severity,
                 "source_score": source_score,
-                "ellipse_mask": args.ellipse_mask,
+                "ellipse_mask": selected_ellipse,
+                "ellipse_mask_source": selected_ellipse_source,
                 "mask_area_fraction": target_summaries[0]["mask_area_fraction"],
                 "targets": target_summaries,
                 "expected_severity_monotonic_fraction": _monotonic_fraction(expected_values),
@@ -366,6 +399,7 @@ def main() -> None:
         },
         "proxy_parameters": {
             "ellipse_mask": args.ellipse_mask,
+            "mask_preset_json": str(args.mask_preset_json) if args.mask_preset_json else None,
             "mask_blur_radius": args.mask_blur_radius,
             "texture_blur_radius": args.texture_blur_radius,
             "hair_enhancement_strength": args.hair_enhancement_strength,
