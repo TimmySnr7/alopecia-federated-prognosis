@@ -156,6 +156,13 @@ def _prepare_proxy_pair(
         "source": source[0],
         "proxy_target": proxy_target[0],
         "mask": mask[0],
+        "texture": torch.cat(
+            [
+                blurred_tensor[0],
+                (blurred_tensor[0] - source[0]).clamp(min=0.0),
+            ],
+            dim=0,
+        ),
         "condition": _condition_vector(source_severity, target_severity, classes),
         "source_severity": torch.tensor(source_severity, dtype=torch.long),
         "target_severity": torch.tensor(target_severity, dtype=torch.long),
@@ -203,10 +210,12 @@ class MaskedResidualEditor(nn.Module):
         condition_dim: int,
         hidden_channels: int = 32,
         residual_scale: float = 0.35,
+        texture_channels: int = 0,
     ) -> None:
         super().__init__()
         self.residual_scale = residual_scale
-        input_channels = 3 + 1 + condition_dim
+        self.texture_channels = texture_channels
+        input_channels = 3 + 1 + texture_channels + condition_dim
         self.enc1 = nn.Sequential(
             nn.Conv2d(input_channels, hidden_channels, kernel_size=3, padding=1),
             nn.ReLU(inplace=True),
@@ -255,11 +264,18 @@ class MaskedResidualEditor(nn.Module):
         source: torch.Tensor,
         mask: torch.Tensor,
         condition: torch.Tensor,
+        texture: torch.Tensor | None = None,
     ) -> torch.Tensor:
         condition_map = condition[:, :, None, None].expand(
             -1, -1, source.shape[-2], source.shape[-1]
         )
-        h = torch.cat([source, mask, condition_map], dim=1)
+        inputs = [source, mask]
+        if self.texture_channels:
+            if texture is None:
+                raise ValueError("Texture channels are enabled but no texture tensor was given.")
+            inputs.append(texture)
+        inputs.append(condition_map)
+        h = torch.cat(inputs, dim=1)
         h1 = self.enc1(h)
         h2 = self.enc2(F.avg_pool2d(h1, kernel_size=2))
         h3 = self.enc3(F.avg_pool2d(h2, kernel_size=2))
@@ -282,6 +298,9 @@ def _run_epoch(
     optimizer: AdamW | None,
     device: torch.device,
     unmasked_loss_weight: float,
+    proxy_loss_weight: float,
+    masked_proxy_loss_weight: float,
+    delta_loss_weight: float,
 ) -> dict[str, float]:
     training = optimizer is not None
     model.train(training)
@@ -292,18 +311,26 @@ def _run_epoch(
         source = batch["source"].to(device)
         proxy_target = batch["proxy_target"].to(device)
         mask = batch["mask"].to(device)
+        texture = batch["texture"].to(device)
         condition = batch["condition"].to(device)
 
         with torch.set_grad_enabled(training):
             if training:
                 optimizer.zero_grad()
-            prediction = model(source, mask, condition)
+            prediction = model(source, mask, condition, texture)
             proxy_delta = (prediction - proxy_target).abs()
             source_delta = (prediction - source).abs()
+            residual_delta = ((prediction - source) - (proxy_target - source)).abs()
             proxy_l1 = proxy_delta.mean()
             masked_proxy_l1 = _masked_mean(proxy_delta, mask)
+            masked_delta_l1 = _masked_mean(residual_delta, mask)
             unmasked_source_delta = _masked_mean(source_delta, 1.0 - mask)
-            loss = proxy_l1 + 0.5 * masked_proxy_l1 + unmasked_loss_weight * unmasked_source_delta
+            loss = (
+                proxy_loss_weight * proxy_l1
+                + masked_proxy_loss_weight * masked_proxy_l1
+                + delta_loss_weight * masked_delta_l1
+                + unmasked_loss_weight * unmasked_source_delta
+            )
             if training:
                 loss.backward()
                 optimizer.step()
@@ -313,6 +340,7 @@ def _run_epoch(
         totals["loss"] += float(loss.item()) * batch_size
         totals["proxy_l1"] += float(proxy_l1.item()) * batch_size
         totals["masked_proxy_l1"] += float(masked_proxy_l1.item()) * batch_size
+        totals["masked_delta_l1"] += float(masked_delta_l1.item()) * batch_size
         totals["unmasked_source_delta"] += float(unmasked_source_delta.item()) * batch_size
 
     return {key: value / max(count, 1) for key, value in totals.items()} | {"examples": count}
@@ -436,8 +464,9 @@ def _evaluate_cases(
                     augment=False,
                 )
                 proxy_target = item["proxy_target"].unsqueeze(0).to(device)
+                texture = item["texture"].unsqueeze(0).to(device)
                 condition = item["condition"].unsqueeze(0).to(device)
-                learned = model(source, mask, condition)
+                learned = model(source, mask, condition, texture)
 
                 proxy_score = _score_image(scorer, scorer_labels, proxy_target)
                 learned_score = _score_image(scorer, scorer_labels, learned)
@@ -583,6 +612,7 @@ def _save_checkpoint(
     image_size: int,
     condition_dim: int,
     residual_scale: float,
+    texture_channels: int,
 ) -> None:
     checkpoint_path.parent.mkdir(parents=True, exist_ok=True)
     torch.save(
@@ -592,6 +622,7 @@ def _save_checkpoint(
             "image_size": image_size,
             "condition_dim": condition_dim,
             "residual_scale": residual_scale,
+            "texture_channels": texture_channels,
         },
         checkpoint_path,
     )
@@ -611,6 +642,10 @@ def main() -> None:
     parser.add_argument("--weight-decay", type=float, default=1e-4)
     parser.add_argument("--hidden-channels", type=int, default=32)
     parser.add_argument("--residual-scale", type=float, default=0.35)
+    parser.add_argument("--include-texture-channels", action="store_true")
+    parser.add_argument("--proxy-loss-weight", type=float, default=1.0)
+    parser.add_argument("--masked-proxy-loss-weight", type=float, default=0.5)
+    parser.add_argument("--delta-loss-weight", type=float, default=0.0)
     parser.add_argument("--unmasked-loss-weight", type=float, default=2.0)
     parser.add_argument("--seed", type=int, default=42)
     parser.add_argument("--min-monotonic-fraction", type=float, default=0.8)
@@ -645,10 +680,12 @@ def main() -> None:
     )
 
     condition_dim = len(classes) * 2 + 3
+    texture_channels = 6 if args.include_texture_channels else 0
     model = MaskedResidualEditor(
         condition_dim=condition_dim,
         hidden_channels=args.hidden_channels,
         residual_scale=args.residual_scale,
+        texture_channels=texture_channels,
     )
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     model.to(device)
@@ -667,6 +704,9 @@ def main() -> None:
             optimizer=optimizer,
             device=device,
             unmasked_loss_weight=args.unmasked_loss_weight,
+            proxy_loss_weight=args.proxy_loss_weight,
+            masked_proxy_loss_weight=args.masked_proxy_loss_weight,
+            delta_loss_weight=args.delta_loss_weight,
         )
         val_metrics = _run_epoch(
             model=model,
@@ -674,6 +714,9 @@ def main() -> None:
             optimizer=None,
             device=device,
             unmasked_loss_weight=args.unmasked_loss_weight,
+            proxy_loss_weight=args.proxy_loss_weight,
+            masked_proxy_loss_weight=args.masked_proxy_loss_weight,
+            delta_loss_weight=args.delta_loss_weight,
         )
         epoch_summary = {
             "epoch": epoch,
@@ -691,6 +734,7 @@ def main() -> None:
                 image_size=args.image_size,
                 condition_dim=condition_dim,
                 residual_scale=args.residual_scale,
+                texture_channels=texture_channels,
             )
 
     test_metrics = _run_epoch(
@@ -699,6 +743,9 @@ def main() -> None:
         optimizer=None,
         device=device,
         unmasked_loss_weight=args.unmasked_loss_weight,
+        proxy_loss_weight=args.proxy_loss_weight,
+        masked_proxy_loss_weight=args.masked_proxy_loss_weight,
+        delta_loss_weight=args.delta_loss_weight,
     )
 
     sample_dir = args.sample_output_dir
@@ -761,12 +808,16 @@ def main() -> None:
             "hidden_channels": args.hidden_channels,
             "residual_scale": args.residual_scale,
             "mask_constrained": True,
+            "texture_channels": texture_channels,
         },
         "training": {
             "epochs": args.epochs,
             "batch_size": args.batch_size,
             "learning_rate": args.learning_rate,
             "weight_decay": args.weight_decay,
+            "proxy_loss_weight": args.proxy_loss_weight,
+            "masked_proxy_loss_weight": args.masked_proxy_loss_weight,
+            "delta_loss_weight": args.delta_loss_weight,
             "unmasked_loss_weight": args.unmasked_loss_weight,
             "augmentation": "random_horizontal_flip",
         },
