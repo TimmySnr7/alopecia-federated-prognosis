@@ -40,6 +40,11 @@ experiments/results/**
 !experiments/results/exp02/**/*.md
 !experiments/results/exp02/**/*.json
 !experiments/results/exp02/**/*.csv
+!experiments/results/exp03/
+!experiments/results/exp03/proxy_residual_editor_v1/
+!experiments/results/exp03/**/*.md
+!experiments/results/exp03/**/*.json
+!experiments/results/exp03/**/*.csv
 
 # Build
 build/
