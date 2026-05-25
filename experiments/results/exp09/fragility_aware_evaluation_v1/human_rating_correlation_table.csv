@@ -1,0 +1,4 @@
+status,pipeline_id,n_ratings,spearman_fragility_vs_acceptability,pearson_fragility_vs_acceptability,note
+pending_human_ratings,P1_proxy,0,,,Populate after 2-4 rater face-validity study.
+pending_human_ratings,P2_diffusion_archived_exp06,0,,,Populate after 2-4 rater face-validity study.
+pending_human_ratings,P4_sparse4_ridge,0,,,Populate after 2-4 rater face-validity study.

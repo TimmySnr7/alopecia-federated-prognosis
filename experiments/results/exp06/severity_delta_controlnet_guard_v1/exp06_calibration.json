@@ -1,0 +1,177 @@
+{
+  "experiment": "exp06_domain_conditional_diffusion",
+  "run_timestamp": "2026-05-13T19:53:51",
+  "variant": "severity_delta_controlnet_guard",
+  "scorer_checkpoint": "/home/tmushuru/datasets/alopecia_public/metadata/exp05_proxy_severity_scorer_v1.ckpt",
+  "scorer_image_size": 256,
+  "image_size": 256,
+  "proxy_determinism": {
+    "sample_count": 3,
+    "all_deterministic": true,
+    "checks": [
+      {
+        "pair_id": "000_unidatapro_women_hair_loss_3_top__target_1",
+        "case_id": "000_unidatapro_women_hair_loss_3_top",
+        "target_severity": 1,
+        "max_source_abs_delta": 0.0,
+        "max_proxy_abs_delta": 0.0,
+        "max_mask_abs_delta": 0.0,
+        "deterministic": true
+      },
+      {
+        "pair_id": "000_unidatapro_women_hair_loss_3_top__target_2",
+        "case_id": "000_unidatapro_women_hair_loss_3_top",
+        "target_severity": 2,
+        "max_source_abs_delta": 0.0,
+        "max_proxy_abs_delta": 0.0,
+        "max_mask_abs_delta": 0.0,
+        "deterministic": true
+      },
+      {
+        "pair_id": "000_unidatapro_women_hair_loss_3_top__target_4",
+        "case_id": "000_unidatapro_women_hair_loss_3_top",
+        "target_severity": 4,
+        "max_source_abs_delta": 0.0,
+        "max_proxy_abs_delta": 0.0,
+        "max_mask_abs_delta": 0.0,
+        "deterministic": true
+      }
+    ]
+  },
+  "val_proxy_reference": {
+    "split": "val",
+    "case_count": 2,
+    "proxy_auto_pass_count": 2,
+    "proxy_auto_pass_rate": 1.0,
+    "mean_proxy_monotonic_fraction": 1.0,
+    "mean_proxy_expected_span": 4.457632541656494,
+    "cases": [
+      {
+        "case_id": "009_unidpro_hair_loss_male_norwood_scale_4_000011bb35--65ceb4885851f6329e99c09c_Top-Down",
+        "dataset_key": "unidpro_hair_loss_male_norwood_scale",
+        "source_severity": 4,
+        "expected_severities": [
+          1.456611156463623,
+          1.5343811511993408,
+          1.6510114669799805,
+          1.880000352859497,
+          4.142772197723389,
+          6.23008394241333,
+          6.627938747406006
+        ],
+        "monotonic_fraction": 1.0,
+        "expected_span": 5.171327590942383,
+        "max_unmasked_mean_absolute_delta": 0.002215920946997575,
+        "mask_area_fraction": 0.24585068225860596,
+        "auto_pass": true
+      },
+      {
+        "case_id": "010_unidpro_hair_loss_male_norwood_scale_3_000011bb35--65ce09cf6a73b2313d0bea6b_Top-Down",
+        "dataset_key": "unidpro_hair_loss_male_norwood_scale",
+        "source_severity": 3,
+        "expected_severities": [
+          1.6161346435546875,
+          1.769476294517517,
+          2.01279616355896,
+          3.0547564029693604,
+          4.087186813354492,
+          4.880610466003418,
+          5.360072135925293
+        ],
+        "monotonic_fraction": 1.0,
+        "expected_span": 3.7439374923706055,
+        "max_unmasked_mean_absolute_delta": 0.0018957314663226178,
+        "mask_area_fraction": 0.24585068225860596,
+        "auto_pass": true
+      }
+    ],
+    "contact_sheet": "/home/tmushuru/datasets/alopecia_public/metadata/exp06_severity_delta_controlnet_guard_v1_samples/val_proxy_contact_sheet.png"
+  },
+  "test_proxy_reference": {
+    "split": "test",
+    "case_count": 4,
+    "proxy_auto_pass_count": 4,
+    "proxy_auto_pass_rate": 1.0,
+    "mean_proxy_monotonic_fraction": 1.0,
+    "mean_proxy_expected_span": 5.3495097160339355,
+    "cases": [
+      {
+        "case_id": "011_unidatapro_women_hair_loss_2_top",
+        "dataset_key": "unidatapro_women_hair_loss",
+        "source_severity": 2,
+        "expected_severities": [
+          1.8067336082458496,
+          3.6359591484069824,
+          4.405793190002441,
+          4.953168869018555,
+          6.4682841300964355,
+          6.925626277923584,
+          6.965734958648682
+        ],
+        "monotonic_fraction": 1.0,
+        "expected_span": 5.159001350402832,
+        "max_unmasked_mean_absolute_delta": 0.006403570958359952,
+        "mask_area_fraction": 0.5163443684577942,
+        "auto_pass": true
+      },
+      {
+        "case_id": "012_unidatapro_women_hair_loss_4_top",
+        "dataset_key": "unidatapro_women_hair_loss",
+        "source_severity": 4,
+        "expected_severities": [
+          1.8403929471969604,
+          1.9985703229904175,
+          2.945866584777832,
+          4.088664531707764,
+          5.375678062438965,
+          6.969145774841309,
+          6.989394187927246
+        ],
+        "monotonic_fraction": 1.0,
+        "expected_span": 5.149001240730286,
+        "max_unmasked_mean_absolute_delta": 0.005726546259250191,
+        "mask_area_fraction": 0.5163443684577942,
+        "auto_pass": true
+      },
+      {
+        "case_id": "013_unidatapro_men_hair_loss_2_top",
+        "dataset_key": "unidatapro_men_hair_loss",
+        "source_severity": 2,
+        "expected_severities": [
+          1.1699877977371216,
+          1.70705246925354,
+          3.10861873626709,
+          5.177652359008789,
+          6.742313861846924,
+          6.954419136047363,
+          6.966320037841797
+        ],
+        "monotonic_fraction": 1.0,
+        "expected_span": 5.796332240104675,
+        "max_unmasked_mean_absolute_delta": 0.006847599877542009,
+        "mask_area_fraction": 0.5163443684577942,
+        "auto_pass": true
+      },
+      {
+        "case_id": "014_unidatapro_women_hair_loss_5_top",
+        "dataset_key": "unidatapro_women_hair_loss",
+        "source_severity": 5,
+        "expected_severities": [
+          1.6956076622009277,
+          1.7756367921829224,
+          1.9987788200378418,
+          2.8237385749816895,
+          4.006069660186768,
+          6.918723106384277,
+          6.989311695098877
+        ],
+        "monotonic_fraction": 1.0,
+        "expected_span": 5.293704032897949,
+        "max_unmasked_mean_absolute_delta": 0.005577276427673114,
+        "mask_area_fraction": 0.5163443684577942,
+        "auto_pass": true
+      }
+    ],
+    "contact_sheet": "/home/tmushuru/datasets/alopecia_public/metadata/exp06_severity_delta_controlnet_guard_v1_samples/test_proxy_contact_sheet.png"
+  }
+}

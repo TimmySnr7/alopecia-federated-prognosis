@@ -1,0 +1,437 @@
+{
+  "experiment": "exp07_proxy_parameter_controller_snapshot_v1",
+  "pair_manifest": "experiments/results/exp02/source_aware_proxy_batch_v1/proxy_pair_manifest.csv",
+  "parameter_names": [
+    "ellipse_cx",
+    "ellipse_cy",
+    "ellipse_rx",
+    "ellipse_ry",
+    "mask_blur_radius",
+    "texture_blur_radius",
+    "lower_hair_enhancement_eff",
+    "lower_tone_shift_eff",
+    "upper_hair_suppression_eff",
+    "upper_smoothing_eff",
+    "upper_tone_shift_eff"
+  ],
+  "target_definition": "effective proxy vector: ellipse, blur constants, and severity-scaled edit strengths",
+  "image_features_available_locally": false,
+  "image_feature_note": "Manifest image paths point to AI5 /home/tmushuru paths and were not present locally; this snapshot evaluates severity/metadata controllers only.",
+  "splits": [
+    {
+      "split": "train",
+      "pair_count": 42,
+      "case_count": 7,
+      "dataset_counts": {
+        "unidatapro_men_hair_loss": 24,
+        "unidatapro_women_hair_loss": 12,
+        "unidpro_hair_loss_male_norwood_scale": 6
+      }
+    },
+    {
+      "split": "val",
+      "pair_count": 12,
+      "case_count": 2,
+      "dataset_counts": {
+        "unidpro_hair_loss_male_norwood_scale": 12
+      }
+    },
+    {
+      "split": "test",
+      "pair_count": 24,
+      "case_count": 4,
+      "dataset_counts": {
+        "unidatapro_men_hair_loss": 6,
+        "unidatapro_women_hair_loss": 18
+      }
+    }
+  ],
+  "models": {
+    "constant_mean": {
+      "feature_mode": "constant",
+      "val": {
+        "mae": 0.13404581529581522,
+        "normalized_mae": 1.1099224198067636,
+        "per_parameter_mae": {
+          "ellipse_cx": 0.0,
+          "ellipse_cy": 0.2057142857142855,
+          "ellipse_rx": 0.05142857142857116,
+          "ellipse_ry": 0.16285714285714256,
+          "mask_blur_radius": 0.0,
+          "texture_blur_radius": 0.0,
+          "lower_hair_enhancement_eff": 0.38571428571428573,
+          "lower_tone_shift_eff": 0.00482142857142857,
+          "upper_hair_suppression_eff": 0.5297619047619048,
+          "upper_smoothing_eff": 0.1236111111111111,
+          "upper_tone_shift_eff": 0.010595238095238095
+        },
+        "per_parameter_normalized_mae": {
+          "ellipse_cx": 0.0,
+          "ellipse_cy": 2.4494897427831774,
+          "ellipse_rx": 2.4494897427831677,
+          "ellipse_ry": 2.4494897427831757,
+          "mask_blur_radius": 0.0,
+          "texture_blur_radius": 0.0,
+          "lower_hair_enhancement_eff": 0.9721711171762598,
+          "lower_tone_shift_eff": 0.9721711171762598,
+          "upper_hair_suppression_eff": 0.9721117183907871,
+          "upper_smoothing_eff": 0.9721117183907868,
+          "upper_tone_shift_eff": 0.9721117183907871
+        },
+        "controller_diagnostics": {
+          "case_count": 2,
+          "mean_predicted_effect_monotonic_fraction": 1.0,
+          "mean_predicted_effect_span": 0.0,
+          "mask_area_gate_pass_rate": 1.0,
+          "cases": [
+            {
+              "case_id": "009_unidpro_hair_loss_male_norwood_scale_4_000011bb35--65ceb4885851f6329e99c09c_Top-Down",
+              "predicted_effect_monotonic_fraction": 1.0,
+              "predicted_effect_span": 0.0,
+              "predicted_mask_area_min": 0.4668534911506,
+              "predicted_mask_area_max": 0.4668534911506,
+              "predicted_mask_area_in_gate": true
+            },
+            {
+              "case_id": "010_unidpro_hair_loss_male_norwood_scale_3_000011bb35--65ce09cf6a73b2313d0bea6b_Top-Down",
+              "predicted_effect_monotonic_fraction": 1.0,
+              "predicted_effect_span": 0.0,
+              "predicted_mask_area_min": 0.4668534911506,
+              "predicted_mask_area_max": 0.4668534911506,
+              "predicted_mask_area_in_gate": true
+            }
+          ]
+        }
+      },
+      "test": {
+        "mae": 0.09990854978354986,
+        "normalized_mae": 0.5426486169953842,
+        "per_parameter_mae": {
+          "ellipse_cx": 0.0,
+          "ellipse_cy": 0.03428571428571451,
+          "ellipse_rx": 0.00857142857142884,
+          "ellipse_ry": 0.02714285714285747,
+          "mask_blur_radius": 0.0,
+          "texture_blur_radius": 0.0,
+          "lower_hair_enhancement_eff": 0.3785714285714285,
+          "lower_tone_shift_eff": 0.0047321428571428575,
+          "upper_hair_suppression_eff": 0.5151785714285715,
+          "upper_smoothing_eff": 0.1202083333333333,
+          "upper_tone_shift_eff": 0.01030357142857143
+        },
+        "per_parameter_normalized_mae": {
+          "ellipse_cx": 0.0,
+          "ellipse_cy": 0.4082482904638665,
+          "ellipse_rx": 0.4082482904638762,
+          "ellipse_ry": 0.4082482904638684,
+          "mask_blur_radius": 0.0,
+          "texture_blur_radius": 0.0,
+          "lower_hair_enhancement_eff": 0.9541679483396625,
+          "lower_tone_shift_eff": 0.9541679483396623,
+          "upper_hair_suppression_eff": 0.9453513396260966,
+          "upper_smoothing_eff": 0.9453513396260966,
+          "upper_tone_shift_eff": 0.9453513396260974
+        },
+        "controller_diagnostics": {
+          "case_count": 4,
+          "mean_predicted_effect_monotonic_fraction": 1.0,
+          "mean_predicted_effect_span": 0.0,
+          "mask_area_gate_pass_rate": 1.0,
+          "cases": [
+            {
+              "case_id": "011_unidatapro_women_hair_loss_2_top",
+              "predicted_effect_monotonic_fraction": 1.0,
+              "predicted_effect_span": 0.0,
+              "predicted_mask_area_min": 0.4668534911506,
+              "predicted_mask_area_max": 0.4668534911506,
+              "predicted_mask_area_in_gate": true
+            },
+            {
+              "case_id": "012_unidatapro_women_hair_loss_4_top",
+              "predicted_effect_monotonic_fraction": 1.0,
+              "predicted_effect_span": 0.0,
+              "predicted_mask_area_min": 0.4668534911506,
+              "predicted_mask_area_max": 0.4668534911506,
+              "predicted_mask_area_in_gate": true
+            },
+            {
+              "case_id": "013_unidatapro_men_hair_loss_2_top",
+              "predicted_effect_monotonic_fraction": 1.0,
+              "predicted_effect_span": 0.0,
+              "predicted_mask_area_min": 0.4668534911506,
+              "predicted_mask_area_max": 0.4668534911506,
+              "predicted_mask_area_in_gate": true
+            },
+            {
+              "case_id": "014_unidatapro_women_hair_loss_5_top",
+              "predicted_effect_monotonic_fraction": 1.0,
+              "predicted_effect_span": 0.0,
+              "predicted_mask_area_min": 0.4668534911506,
+              "predicted_mask_area_max": 0.4668534911506,
+              "predicted_mask_area_in_gate": true
+            }
+          ]
+        }
+      }
+    },
+    "severity_ridge": {
+      "feature_mode": "severity",
+      "val": {
+        "mae": 0.043313853768013,
+        "normalized_mae": 0.7577472486662041,
+        "per_parameter_mae": {
+          "ellipse_cx": 0.0,
+          "ellipse_cy": 0.2333281652348244,
+          "ellipse_rx": 0.05833204130870608,
+          "ellipse_ry": 0.18471813081090263,
+          "mask_blur_radius": 0.0,
+          "texture_blur_radius": 0.0,
+          "lower_hair_enhancement_eff": 1.6538069217901057e-05,
+          "lower_tone_shift_eff": 2.0672586522389331e-07,
+          "upper_hair_suppression_eff": 4.572550422351126e-05,
+          "upper_smoothing_eff": 1.0669284318815206e-05,
+          "upper_tone_shift_eff": 9.145100844704738e-07
+        },
+        "per_parameter_normalized_mae": {
+          "ellipse_cx": 0.0,
+          "ellipse_cy": 2.778294883413784,
+          "ellipse_rx": 2.778294883413785,
+          "ellipse_ry": 2.7782948834137855,
+          "mask_blur_radius": 0.0,
+          "texture_blur_radius": 0.0,
+          "lower_hair_enhancement_eff": 4.1683271330569e-05,
+          "lower_tone_shift_eff": 4.168327133059522e-05,
+          "upper_hair_suppression_eff": 8.390618140989277e-05,
+          "upper_smoothing_eff": 8.390618140986062e-05,
+          "upper_tone_shift_eff": 8.390618140991559e-05
+        },
+        "controller_diagnostics": {
+          "case_count": 2,
+          "mean_predicted_effect_monotonic_fraction": 1.0,
+          "mean_predicted_effect_span": 3.094874197010225,
+          "mask_area_gate_pass_rate": 1.0,
+          "cases": [
+            {
+              "case_id": "009_unidpro_hair_loss_male_norwood_scale_4_000011bb35--65ceb4885851f6329e99c09c_Top-Down",
+              "predicted_effect_monotonic_fraction": 1.0,
+              "predicted_effect_span": 3.0949026026670468,
+              "predicted_mask_area_min": 0.5064053810145563,
+              "predicted_mask_area_max": 0.5156777750651871,
+              "predicted_mask_area_in_gate": true
+            },
+            {
+              "case_id": "010_unidpro_hair_loss_male_norwood_scale_3_000011bb35--65ce09cf6a73b2313d0bea6b_Top-Down",
+              "predicted_effect_monotonic_fraction": 1.0,
+              "predicted_effect_span": 3.0948457913534027,
+              "predicted_mask_area_min": 0.4808765722466263,
+              "predicted_mask_area_max": 0.5152002072694384,
+              "predicted_mask_area_in_gate": true
+            }
+          ]
+        }
+      },
+      "test": {
+        "mae": 0.004865972753823421,
+        "normalized_mae": 0.0850452885145007,
+        "per_parameter_mae": {
+          "ellipse_cx": 0.0,
+          "ellipse_cy": 0.026178391606942335,
+          "ellipse_rx": 0.006544597901735586,
+          "ellipse_ry": 0.02072456002216269,
+          "mask_blur_radius": 0.0,
+          "texture_blur_radius": 0.0,
+          "lower_hair_enhancement_eff": 2.963899017317459e-05,
+          "lower_tone_shift_eff": 3.7048737716471127e-07,
+          "upper_hair_suppression_eff": 3.8410598670222486e-05,
+          "upper_smoothing_eff": 8.962473023056578e-06,
+          "upper_tone_shift_eff": 7.682119734052131e-07
+        },
+        "per_parameter_normalized_mae": {
+          "ellipse_cx": 0.0,
+          "ellipse_cy": 0.31171243893497624,
+          "ellipse_rx": 0.3117124389349764,
+          "ellipse_ry": 0.3117124389349765,
+          "mask_blur_radius": 0.0,
+          "texture_blur_radius": 0.0,
+          "lower_hair_enhancement_eff": 7.47034041927479e-05,
+          "lower_tone_shift_eff": 7.470340419275371e-05,
+          "upper_hair_suppression_eff": 7.048334873099381e-05,
+          "upper_smoothing_eff": 7.048334873103049e-05,
+          "upper_tone_shift_eff": 7.048334873106385e-05
+        },
+        "controller_diagnostics": {
+          "case_count": 4,
+          "mean_predicted_effect_monotonic_fraction": 1.0,
+          "mean_predicted_effect_span": 3.094859994181814,
+          "mask_area_gate_pass_rate": 1.0,
+          "cases": [
+            {
+              "case_id": "011_unidatapro_women_hair_loss_2_top",
+              "predicted_effect_monotonic_fraction": 1.0,
+              "predicted_effect_span": 3.0947889800397586,
+              "predicted_mask_area_min": 0.4493050255494846,
+              "predicted_mask_area_max": 0.524056531152965,
+              "predicted_mask_area_in_gate": true
+            },
+            {
+              "case_id": "012_unidatapro_women_hair_loss_4_top",
+              "predicted_effect_monotonic_fraction": 1.0,
+              "predicted_effect_span": 3.0949026026670468,
+              "predicted_mask_area_min": 0.5064053810145563,
+              "predicted_mask_area_max": 0.5156777750651871,
+              "predicted_mask_area_in_gate": true
+            },
+            {
+              "case_id": "013_unidatapro_men_hair_loss_2_top",
+              "predicted_effect_monotonic_fraction": 1.0,
+              "predicted_effect_span": 3.0947889800397586,
+              "predicted_mask_area_min": 0.4493050255494846,
+              "predicted_mask_area_max": 0.524056531152965,
+              "predicted_mask_area_in_gate": true
+            },
+            {
+              "case_id": "014_unidatapro_women_hair_loss_5_top",
+              "predicted_effect_monotonic_fraction": 1.0,
+              "predicted_effect_span": 3.0949594139806917,
+              "predicted_mask_area_min": 0.49767205238831924,
+              "predicted_mask_area_max": 0.5497637009511478,
+              "predicted_mask_area_in_gate": true
+            }
+          ]
+        }
+      }
+    },
+    "metadata_ridge": {
+      "feature_mode": "metadata",
+      "val": {
+        "mae": 8.416486013906578e-06,
+        "normalized_mae": 5.109230382577887e-05,
+        "per_parameter_mae": {
+          "ellipse_cx": 0.0,
+          "ellipse_cy": 5.270504538329446e-06,
+          "ellipse_rx": 1.3176261345939262e-06,
+          "ellipse_ry": 4.1724827595697915e-06,
+          "mask_blur_radius": 0.0,
+          "texture_blur_radius": 0.0,
+          "lower_hair_enhancement_eff": 2.419422075418398e-05,
+          "lower_tone_shift_eff": 3.0242775942664204e-07,
+          "upper_hair_suppression_eff": 4.57373012288792e-05,
+          "upper_smoothing_eff": 1.067203695341116e-05,
+          "upper_tone_shift_eff": 9.147460245782028e-07
+        },
+        "per_parameter_normalized_mae": {
+          "ellipse_cx": 0.0,
+          "ellipse_cy": 6.275717197327169e-05,
+          "ellipse_rx": 6.275717197382252e-05,
+          "ellipse_ry": 6.275717197415881e-05,
+          "mask_blur_radius": 0.0,
+          "texture_blur_radius": 0.0,
+          "lower_hair_enhancement_eff": 6.098016975504765e-05,
+          "lower_tone_shift_eff": 6.0980169754915015e-05,
+          "upper_hair_suppression_eff": 8.392782888408264e-05,
+          "upper_smoothing_eff": 8.392782888412991e-05,
+          "upper_tone_shift_eff": 8.39278288841394e-05
+        },
+        "controller_diagnostics": {
+          "case_count": 2,
+          "mean_predicted_effect_monotonic_fraction": 1.0,
+          "mean_predicted_effect_span": 3.094873238779713,
+          "mask_area_gate_pass_rate": 1.0,
+          "cases": [
+            {
+              "case_id": "009_unidpro_hair_loss_male_norwood_scale_4_000011bb35--65ceb4885851f6329e99c09c_Top-Down",
+              "predicted_effect_monotonic_fraction": 1.0,
+              "predicted_effect_span": 3.0949033055377257,
+              "predicted_mask_area_min": 0.24504943255089562,
+              "predicted_mask_area_max": 0.24504954570439527,
+              "predicted_mask_area_in_gate": true
+            },
+            {
+              "case_id": "010_unidpro_hair_loss_male_norwood_scale_3_000011bb35--65ce09cf6a73b2313d0bea6b_Top-Down",
+              "predicted_effect_monotonic_fraction": 1.0,
+              "predicted_effect_span": 3.094843172021701,
+              "predicted_mask_area_min": 0.2450488684424996,
+              "predicted_mask_area_max": 0.24504927849682906,
+              "predicted_mask_area_in_gate": true
+            }
+          ]
+        }
+      },
+      "test": {
+        "mae": 7.494554008661316e-06,
+        "normalized_mae": 3.70948454211118e-05,
+        "per_parameter_mae": {
+          "ellipse_cx": 0.0,
+          "ellipse_cy": 1.0115353602420847e-06,
+          "ellipse_rx": 2.5288384006514714e-07,
+          "ellipse_ry": 8.007988268633285e-07,
+          "mask_blur_radius": 0.0,
+          "texture_blur_radius": 0.0,
+          "lower_hair_enhancement_eff": 3.180121569527674e-05,
+          "lower_tone_shift_eff": 3.975151961906665e-07,
+          "upper_hair_suppression_eff": 3.84384137047597e-05,
+          "upper_smoothing_eff": 8.968963197780616e-06,
+          "upper_tone_shift_eff": 7.687682740962001e-07
+        },
+        "per_parameter_normalized_mae": {
+          "ellipse_cx": 0.0,
+          "ellipse_cy": 1.2044596128908562e-05,
+          "ellipse_rx": 1.2044596129128891e-05,
+          "ellipse_ry": 1.2044596128983942e-05,
+          "mask_blur_radius": 0.0,
+          "texture_blur_radius": 0.0,
+          "lower_hair_enhancement_eff": 8.015317175195657e-05,
+          "lower_tone_shift_eff": 8.015317175189754e-05,
+          "upper_hair_suppression_eff": 7.053438924707854e-05,
+          "upper_smoothing_eff": 7.053438924710491e-05,
+          "upper_tone_shift_eff": 7.053438924717083e-05
+        },
+        "controller_diagnostics": {
+          "case_count": 4,
+          "mean_predicted_effect_monotonic_fraction": 1.0,
+          "mean_predicted_effect_span": 3.094858205400707,
+          "mask_area_gate_pass_rate": 1.0,
+          "cases": [
+            {
+              "case_id": "011_unidatapro_women_hair_loss_2_top",
+              "predicted_effect_monotonic_fraction": 1.0,
+              "predicted_effect_span": 3.0947830385056765,
+              "predicted_mask_area_min": 0.5089374610012539,
+              "predicted_mask_area_max": 0.5089386487495899,
+              "predicted_mask_area_in_gate": true
+            },
+            {
+              "case_id": "012_unidatapro_women_hair_loss_4_top",
+              "predicted_effect_monotonic_fraction": 1.0,
+              "predicted_effect_span": 3.0949033055377257,
+              "predicted_mask_area_min": 0.5089390536163676,
+              "predicted_mask_area_max": 0.5089392023047323,
+              "predicted_mask_area_in_gate": true
+            },
+            {
+              "case_id": "013_unidatapro_men_hair_loss_2_top",
+              "predicted_effect_monotonic_fraction": 1.0,
+              "predicted_effect_span": 3.0947830385056765,
+              "predicted_mask_area_min": 0.5089361345801658,
+              "predicted_mask_area_max": 0.5089373223272455,
+              "predicted_mask_area_in_gate": true
+            },
+            {
+              "case_id": "014_unidatapro_women_hair_loss_5_top",
+              "predicted_effect_monotonic_fraction": 1.0,
+              "predicted_effect_span": 3.0949634390537497,
+              "predicted_mask_area_min": 0.5089392560498054,
+              "predicted_mask_area_max": 0.5089400673080391,
+              "predicted_mask_area_in_gate": true
+            }
+          ]
+        }
+      }
+    }
+  },
+  "best_by_test_normalized_mae": {
+    "model_name": "metadata_ridge",
+    "test_normalized_mae": 3.70948454211118e-05,
+    "test_mae": 7.494554008661316e-06
+  }
+}

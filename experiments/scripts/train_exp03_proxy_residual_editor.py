@@ -16,7 +16,7 @@ import torch
 from torch import nn
 import torch.nn.functional as F
 from torch.optim import AdamW
-from torch.utils.data import DataLoader, Dataset
+from torch.utils.data import DataLoader, Dataset, WeightedRandomSampler
 from torchvision.transforms import InterpolationMode, Resize, ToTensor
 
 from experiments.scripts.run_exp01_plausible_proxy_sweep import (
@@ -289,7 +289,48 @@ class MaskedResidualEditor(nn.Module):
 
 
 def _masked_mean(delta: torch.Tensor, mask: torch.Tensor) -> torch.Tensor:
-    return (delta * mask).sum() / (mask.sum() * delta.shape[1] + 1e-8)
+    return _per_sample_masked_mean(delta, mask).mean()
+
+
+def _per_sample_mean(delta: torch.Tensor) -> torch.Tensor:
+    return delta.flatten(start_dim=1).mean(dim=1)
+
+
+def _per_sample_masked_mean(delta: torch.Tensor, mask: torch.Tensor) -> torch.Tensor:
+    numerator = (delta * mask).flatten(start_dim=1).sum(dim=1)
+    denominator = mask.flatten(start_dim=1).sum(dim=1) * delta.shape[1] + 1e-8
+    return numerator / denominator
+
+
+def _severity_delta_weights(
+    source_severity: torch.Tensor,
+    target_severity: torch.Tensor,
+    classes: list[int],
+    strength: float,
+) -> torch.Tensor:
+    if strength <= 0:
+        return torch.ones_like(source_severity, dtype=torch.float32)
+    severity_range = max(max(classes) - min(classes), 1)
+    normalized_delta = (target_severity.float() - source_severity.float()).abs() / severity_range
+    return 1.0 + strength * normalized_delta
+
+
+def _expected_from_logits(logits: torch.Tensor, labels: torch.Tensor) -> torch.Tensor:
+    probabilities = torch.softmax(logits, dim=1)
+    return (probabilities * labels[None, :]).sum(dim=1)
+
+
+def _sampling_weights(rows: list[dict[str, str]], strategy: str) -> list[float] | None:
+    if strategy == "none":
+        return None
+    if strategy == "case":
+        keys = [row["case_id"] for row in rows]
+    elif strategy == "dataset":
+        keys = [row["dataset_key"] for row in rows]
+    else:
+        raise ValueError(f"Unsupported sampling strategy: {strategy}")
+    counts = Counter(keys)
+    return [1.0 / counts[key] for key in keys]
 
 
 def _run_epoch(
@@ -297,10 +338,16 @@ def _run_epoch(
     loader: DataLoader,
     optimizer: AdamW | None,
     device: torch.device,
+    classes: list[int],
     unmasked_loss_weight: float,
     proxy_loss_weight: float,
     masked_proxy_loss_weight: float,
     delta_loss_weight: float,
+    target_delta_weight_strength: float,
+    scorer: nn.Module | None,
+    scorer_labels: list[int] | None,
+    scorer_consistency_weight: float,
+    expected_consistency_weight: float,
 ) -> dict[str, float]:
     training = optimizer is not None
     model.train(training)
@@ -313,6 +360,8 @@ def _run_epoch(
         mask = batch["mask"].to(device)
         texture = batch["texture"].to(device)
         condition = batch["condition"].to(device)
+        source_severity = batch["source_severity"].to(device)
+        target_severity = batch["target_severity"].to(device)
 
         with torch.set_grad_enabled(training):
             if training:
@@ -321,16 +370,53 @@ def _run_epoch(
             proxy_delta = (prediction - proxy_target).abs()
             source_delta = (prediction - source).abs()
             residual_delta = ((prediction - source) - (proxy_target - source)).abs()
-            proxy_l1 = proxy_delta.mean()
-            masked_proxy_l1 = _masked_mean(proxy_delta, mask)
-            masked_delta_l1 = _masked_mean(residual_delta, mask)
-            unmasked_source_delta = _masked_mean(source_delta, 1.0 - mask)
-            loss = (
-                proxy_loss_weight * proxy_l1
-                + masked_proxy_loss_weight * masked_proxy_l1
-                + delta_loss_weight * masked_delta_l1
-                + unmasked_loss_weight * unmasked_source_delta
+            proxy_l1_samples = _per_sample_mean(proxy_delta)
+            masked_proxy_l1_samples = _per_sample_masked_mean(proxy_delta, mask)
+            masked_delta_l1_samples = _per_sample_masked_mean(residual_delta, mask)
+            unmasked_source_delta_samples = _per_sample_masked_mean(source_delta, 1.0 - mask)
+            sample_weights = _severity_delta_weights(
+                source_severity=source_severity,
+                target_severity=target_severity,
+                classes=classes,
+                strength=target_delta_weight_strength,
+            ).to(device)
+            per_sample_loss = sample_weights * (
+                proxy_loss_weight * proxy_l1_samples
+                + masked_proxy_loss_weight * masked_proxy_l1_samples
+                + delta_loss_weight * masked_delta_l1_samples
+                + unmasked_loss_weight * unmasked_source_delta_samples
             )
+
+            scorer_kl_samples = torch.zeros_like(proxy_l1_samples)
+            expected_mse_samples = torch.zeros_like(proxy_l1_samples)
+            if (
+                scorer is not None
+                and scorer_labels is not None
+                and (scorer_consistency_weight > 0 or expected_consistency_weight > 0)
+            ):
+                with torch.no_grad():
+                    proxy_logits = scorer(proxy_target)
+                    proxy_probabilities = torch.softmax(proxy_logits, dim=1)
+                    scorer_label_tensor = torch.tensor(
+                        scorer_labels,
+                        dtype=prediction.dtype,
+                        device=device,
+                    )
+                    proxy_expected = _expected_from_logits(proxy_logits, scorer_label_tensor)
+                learned_logits = scorer(prediction)
+                scorer_kl_samples = F.kl_div(
+                    F.log_softmax(learned_logits, dim=1),
+                    proxy_probabilities,
+                    reduction="none",
+                ).sum(dim=1)
+                learned_expected = _expected_from_logits(learned_logits, scorer_label_tensor)
+                expected_mse_samples = (learned_expected - proxy_expected).pow(2)
+                per_sample_loss = per_sample_loss + sample_weights * (
+                    scorer_consistency_weight * scorer_kl_samples
+                    + expected_consistency_weight * expected_mse_samples
+                )
+
+            loss = per_sample_loss.mean()
             if training:
                 loss.backward()
                 optimizer.step()
@@ -338,10 +424,15 @@ def _run_epoch(
         batch_size = source.shape[0]
         count += batch_size
         totals["loss"] += float(loss.item()) * batch_size
-        totals["proxy_l1"] += float(proxy_l1.item()) * batch_size
-        totals["masked_proxy_l1"] += float(masked_proxy_l1.item()) * batch_size
-        totals["masked_delta_l1"] += float(masked_delta_l1.item()) * batch_size
-        totals["unmasked_source_delta"] += float(unmasked_source_delta.item()) * batch_size
+        totals["proxy_l1"] += float(proxy_l1_samples.mean().item()) * batch_size
+        totals["masked_proxy_l1"] += float(masked_proxy_l1_samples.mean().item()) * batch_size
+        totals["masked_delta_l1"] += float(masked_delta_l1_samples.mean().item()) * batch_size
+        totals["unmasked_source_delta"] += (
+            float(unmasked_source_delta_samples.mean().item()) * batch_size
+        )
+        totals["sample_weight"] += float(sample_weights.mean().item()) * batch_size
+        totals["scorer_kl"] += float(scorer_kl_samples.mean().item()) * batch_size
+        totals["expected_mse"] += float(expected_mse_samples.mean().item()) * batch_size
 
     return {key: value / max(count, 1) for key, value in totals.items()} | {"examples": count}
 
@@ -647,6 +738,30 @@ def main() -> None:
     parser.add_argument("--masked-proxy-loss-weight", type=float, default=0.5)
     parser.add_argument("--delta-loss-weight", type=float, default=0.0)
     parser.add_argument("--unmasked-loss-weight", type=float, default=2.0)
+    parser.add_argument(
+        "--target-delta-weight-strength",
+        type=float,
+        default=0.0,
+        help="Upsample loss contribution for larger absolute source-to-target severity shifts.",
+    )
+    parser.add_argument(
+        "--sampling-strategy",
+        choices=["none", "case", "dataset"],
+        default="none",
+        help="Use weighted training sampling to counter case or dataset imbalance.",
+    )
+    parser.add_argument(
+        "--scorer-consistency-weight",
+        type=float,
+        default=0.0,
+        help="Match the proxy target's scorer probability distribution.",
+    )
+    parser.add_argument(
+        "--expected-consistency-weight",
+        type=float,
+        default=0.0,
+        help="Match the proxy target's scorer expected severity.",
+    )
     parser.add_argument("--seed", type=int, default=42)
     parser.add_argument("--min-monotonic-fraction", type=float, default=0.8)
     parser.add_argument("--min-expected-span", type=float, default=0.5)
@@ -662,11 +777,22 @@ def main() -> None:
     train_rows = _split_rows(rows, "train")
     val_rows = _split_rows(rows, "val")
     test_rows = _split_rows(rows, "test")
+    train_sampling_weights = _sampling_weights(train_rows, args.sampling_strategy)
+    train_sampler = (
+        WeightedRandomSampler(
+            weights=torch.tensor(train_sampling_weights, dtype=torch.double),
+            num_samples=len(train_sampling_weights),
+            replacement=True,
+        )
+        if train_sampling_weights is not None
+        else None
+    )
 
     train_loader = DataLoader(
         ProxyPairDataset(train_rows, args.image_size, classes, augment=True),
         batch_size=args.batch_size,
-        shuffle=True,
+        shuffle=train_sampler is None,
+        sampler=train_sampler,
     )
     val_loader = DataLoader(
         ProxyPairDataset(val_rows, args.image_size, classes, augment=False),
@@ -695,6 +821,9 @@ def main() -> None:
         raise ValueError(
             f"Scorer image size {scorer_image_size} does not match requested {args.image_size}."
         )
+    scorer.eval()
+    for parameter in scorer.parameters():
+        parameter.requires_grad_(False)
 
     history: list[dict[str, Any]] = []
     for epoch in range(1, args.epochs + 1):
@@ -703,20 +832,32 @@ def main() -> None:
             loader=train_loader,
             optimizer=optimizer,
             device=device,
+            classes=classes,
             unmasked_loss_weight=args.unmasked_loss_weight,
             proxy_loss_weight=args.proxy_loss_weight,
             masked_proxy_loss_weight=args.masked_proxy_loss_weight,
             delta_loss_weight=args.delta_loss_weight,
+            target_delta_weight_strength=args.target_delta_weight_strength,
+            scorer=scorer,
+            scorer_labels=scorer_labels,
+            scorer_consistency_weight=args.scorer_consistency_weight,
+            expected_consistency_weight=args.expected_consistency_weight,
         )
         val_metrics = _run_epoch(
             model=model,
             loader=val_loader,
             optimizer=None,
             device=device,
+            classes=classes,
             unmasked_loss_weight=args.unmasked_loss_weight,
             proxy_loss_weight=args.proxy_loss_weight,
             masked_proxy_loss_weight=args.masked_proxy_loss_weight,
             delta_loss_weight=args.delta_loss_weight,
+            target_delta_weight_strength=args.target_delta_weight_strength,
+            scorer=scorer,
+            scorer_labels=scorer_labels,
+            scorer_consistency_weight=args.scorer_consistency_weight,
+            expected_consistency_weight=args.expected_consistency_weight,
         )
         epoch_summary = {
             "epoch": epoch,
@@ -742,10 +883,16 @@ def main() -> None:
         loader=test_loader,
         optimizer=None,
         device=device,
+        classes=classes,
         unmasked_loss_weight=args.unmasked_loss_weight,
         proxy_loss_weight=args.proxy_loss_weight,
         masked_proxy_loss_weight=args.masked_proxy_loss_weight,
         delta_loss_weight=args.delta_loss_weight,
+        target_delta_weight_strength=args.target_delta_weight_strength,
+        scorer=scorer,
+        scorer_labels=scorer_labels,
+        scorer_consistency_weight=args.scorer_consistency_weight,
+        expected_consistency_weight=args.expected_consistency_weight,
     )
 
     sample_dir = args.sample_output_dir
@@ -819,6 +966,10 @@ def main() -> None:
             "masked_proxy_loss_weight": args.masked_proxy_loss_weight,
             "delta_loss_weight": args.delta_loss_weight,
             "unmasked_loss_weight": args.unmasked_loss_weight,
+            "target_delta_weight_strength": args.target_delta_weight_strength,
+            "sampling_strategy": args.sampling_strategy,
+            "scorer_consistency_weight": args.scorer_consistency_weight,
+            "expected_consistency_weight": args.expected_consistency_weight,
             "augmentation": "random_horizontal_flip",
         },
         "qa_criteria": {

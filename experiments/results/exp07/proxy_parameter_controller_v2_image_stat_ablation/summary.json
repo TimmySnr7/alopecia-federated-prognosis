@@ -1,0 +1,338 @@
+{
+  "experiment": "exp07_v2_image_stat_ablation",
+  "image_stat_names": [
+    "masked_gray_mean",
+    "masked_gray_std",
+    "masked_dark_fraction",
+    "masked_bright_fraction",
+    "masked_texture_mean",
+    "masked_texture_p90",
+    "unmasked_gray_mean",
+    "mask_area_fraction",
+    "hair_presence_index"
+  ],
+  "baseline_no_image_stats": {
+    "selected_stats": [],
+    "val": {
+      "mae": 0.010125841636656247,
+      "normalized_mae": 0.08662629575228387
+    },
+    "test": {
+      "mae": 0.022909951475663274,
+      "normalized_mae": 0.0908941330166421
+    }
+  },
+  "all_image_stats": {
+    "selected_stats": [
+      "masked_gray_mean",
+      "masked_gray_std",
+      "masked_dark_fraction",
+      "masked_bright_fraction",
+      "masked_texture_mean",
+      "masked_texture_p90",
+      "unmasked_gray_mean",
+      "mask_area_fraction",
+      "hair_presence_index"
+    ],
+    "val": {
+      "mae": 0.011006588346038536,
+      "normalized_mae": 0.1827174113182826
+    },
+    "test": {
+      "mae": 0.008393912957235987,
+      "normalized_mae": 0.12397315903099237
+    }
+  },
+  "individual_ranked_by_test_mae": [
+    {
+      "selected_stats": [
+        "hair_presence_index"
+      ],
+      "val": {
+        "mae": 0.0035090939583117746,
+        "normalized_mae": 0.07456204859134222
+      },
+      "test": {
+        "mae": 0.00232018726310101,
+        "normalized_mae": 0.04229150814791725
+      },
+      "stat": "hair_presence_index"
+    },
+    {
+      "selected_stats": [
+        "masked_texture_mean"
+      ],
+      "val": {
+        "mae": 0.00845916333957248,
+        "normalized_mae": 0.08275507296322224
+      },
+      "test": {
+        "mae": 0.021236007130481325,
+        "normalized_mae": 0.08706246207656884
+      },
+      "stat": "masked_texture_mean"
+    },
+    {
+      "selected_stats": [
+        "masked_gray_mean"
+      ],
+      "val": {
+        "mae": 0.009807419109315941,
+        "normalized_mae": 0.044728464031519276
+      },
+      "test": {
+        "mae": 0.022754488407731498,
+        "normalized_mae": 0.07174717829433792
+      },
+      "stat": "masked_gray_mean"
+    },
+    {
+      "selected_stats": [
+        "mask_area_fraction"
+      ],
+      "val": {
+        "mae": 0.010125433169652646,
+        "normalized_mae": 0.08661914900601317
+      },
+      "test": {
+        "mae": 0.022909871848229117,
+        "normalized_mae": 0.09089273982139381
+      },
+      "stat": "mask_area_fraction"
+    },
+    {
+      "selected_stats": [
+        "unmasked_gray_mean"
+      ],
+      "val": {
+        "mae": 0.010125835000742833,
+        "normalized_mae": 0.08662658047787393
+      },
+      "test": {
+        "mae": 0.022909942151716507,
+        "normalized_mae": 0.09089361071703563
+      },
+      "stat": "unmasked_gray_mean"
+    },
+    {
+      "selected_stats": [
+        "masked_gray_std"
+      ],
+      "val": {
+        "mae": 0.010126204866183144,
+        "normalized_mae": 0.0866280073807843
+      },
+      "test": {
+        "mae": 0.0229103643224627,
+        "normalized_mae": 0.090896746818941
+      },
+      "stat": "masked_gray_std"
+    },
+    {
+      "selected_stats": [
+        "masked_dark_fraction"
+      ],
+      "val": {
+        "mae": 0.01012964844670652,
+        "normalized_mae": 0.08665114575460843
+      },
+      "test": {
+        "mae": 0.022911127776330968,
+        "normalized_mae": 0.09090272931031343
+      },
+      "stat": "masked_dark_fraction"
+    },
+    {
+      "selected_stats": [
+        "masked_texture_p90"
+      ],
+      "val": {
+        "mae": 0.0101284459119568,
+        "normalized_mae": 0.08664367409128963
+      },
+      "test": {
+        "mae": 0.022911128763462744,
+        "normalized_mae": 0.09090231256815419
+      },
+      "stat": "masked_texture_p90"
+    },
+    {
+      "selected_stats": [
+        "masked_bright_fraction"
+      ],
+      "val": {
+        "mae": 0.010264603639027144,
+        "normalized_mae": 0.08775074360024307
+      },
+      "test": {
+        "mae": 0.02324017464709508,
+        "normalized_mae": 0.0935440218453599
+      },
+      "stat": "masked_bright_fraction"
+    }
+  ],
+  "forward_selection": [
+    {
+      "selected_stats": [
+        "hair_presence_index"
+      ],
+      "val": {
+        "mae": 0.0035090939583117746,
+        "normalized_mae": 0.07456204859134222
+      },
+      "test": {
+        "mae": 0.00232018726310101,
+        "normalized_mae": 0.04229150814791725
+      },
+      "step": 1
+    },
+    {
+      "selected_stats": [
+        "hair_presence_index",
+        "masked_gray_mean"
+      ],
+      "val": {
+        "mae": 0.0032175248150217023,
+        "normalized_mae": 0.02759603909821323
+      },
+      "test": {
+        "mae": 0.0021941514610133487,
+        "normalized_mae": 0.015566884640636566
+      },
+      "step": 2
+    },
+    {
+      "selected_stats": [
+        "hair_presence_index",
+        "masked_gray_mean",
+        "mask_area_fraction"
+      ],
+      "val": {
+        "mae": 0.003200752049274562,
+        "normalized_mae": 0.027302777383514738
+      },
+      "test": {
+        "mae": 0.0021841785570346716,
+        "normalized_mae": 0.015392413885907919
+      },
+      "step": 3
+    },
+    {
+      "selected_stats": [
+        "hair_presence_index",
+        "masked_gray_mean",
+        "mask_area_fraction",
+        "masked_texture_p90"
+      ],
+      "val": {
+        "mae": 0.0032105117831872634,
+        "normalized_mae": 0.026692392873658516
+      },
+      "test": {
+        "mae": 0.0021802833545164716,
+        "normalized_mae": 0.014828018375553264
+      },
+      "step": 4
+    },
+    {
+      "selected_stats": [
+        "hair_presence_index",
+        "masked_gray_mean",
+        "mask_area_fraction",
+        "masked_texture_p90",
+        "masked_bright_fraction"
+      ],
+      "val": {
+        "mae": 0.0032238030965721382,
+        "normalized_mae": 0.030699354492508883
+      },
+      "test": {
+        "mae": 0.002287102576991001,
+        "normalized_mae": 0.01864452068271876
+      },
+      "step": 5
+    },
+    {
+      "selected_stats": [
+        "hair_presence_index",
+        "masked_gray_mean",
+        "mask_area_fraction",
+        "masked_texture_p90",
+        "masked_bright_fraction",
+        "masked_gray_std"
+      ],
+      "val": {
+        "mae": 0.004117712093915985,
+        "normalized_mae": 0.045393314980919586
+      },
+      "test": {
+        "mae": 0.003351741783900114,
+        "normalized_mae": 0.03402911734497181
+      },
+      "step": 6
+    },
+    {
+      "selected_stats": [
+        "hair_presence_index",
+        "masked_gray_mean",
+        "mask_area_fraction",
+        "masked_texture_p90",
+        "masked_bright_fraction",
+        "masked_gray_std",
+        "masked_texture_mean"
+      ],
+      "val": {
+        "mae": 0.0031277280384417396,
+        "normalized_mae": 0.030496015736761736
+      },
+      "test": {
+        "mae": 0.0031345085851471398,
+        "normalized_mae": 0.028383978515059857
+      },
+      "step": 7
+    },
+    {
+      "selected_stats": [
+        "hair_presence_index",
+        "masked_gray_mean",
+        "mask_area_fraction",
+        "masked_texture_p90",
+        "masked_bright_fraction",
+        "masked_gray_std",
+        "masked_texture_mean",
+        "masked_dark_fraction"
+      ],
+      "val": {
+        "mae": 0.004694584873249011,
+        "normalized_mae": 0.06265989702362434
+      },
+      "test": {
+        "mae": 0.005694412466456475,
+        "normalized_mae": 0.07370850824488187
+      },
+      "step": 8
+    },
+    {
+      "selected_stats": [
+        "hair_presence_index",
+        "masked_gray_mean",
+        "mask_area_fraction",
+        "masked_texture_p90",
+        "masked_bright_fraction",
+        "masked_gray_std",
+        "masked_texture_mean",
+        "masked_dark_fraction",
+        "unmasked_gray_mean"
+      ],
+      "val": {
+        "mae": 0.011006588346038536,
+        "normalized_mae": 0.1827174113182826
+      },
+      "test": {
+        "mae": 0.008393912957235987,
+        "normalized_mae": 0.12397315903099237
+      },
+      "step": 9
+    }
+  ]
+}

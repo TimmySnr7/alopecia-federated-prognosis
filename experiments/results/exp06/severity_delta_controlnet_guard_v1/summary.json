@@ -1,0 +1,649 @@
+{
+  "experiment": "exp06_domain_conditional_diffusion",
+  "status": "completed",
+  "variant": "severity_delta_controlnet_guard",
+  "model_id": "runwayml/stable-diffusion-v1-5",
+  "controlnet_id": "lllyasviel/control_v11p_sd15_softedge",
+  "proxy_pair_manifest": "experiments/results/exp02/source_aware_proxy_batch_v1/proxy_pair_manifest.csv",
+  "scorer_checkpoint": "/home/tmushuru/datasets/alopecia_public/metadata/exp05_proxy_severity_scorer_v1.ckpt",
+  "device": "cuda",
+  "dtype": "torch.bfloat16",
+  "classes": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7
+  ],
+  "image_size": 256,
+  "train_pair_count": 42,
+  "val_case_count": 2,
+  "test_case_count": 4,
+  "trainable_parameters": 1793792,
+  "training": {
+    "epochs": 8,
+    "batch_size": 1,
+    "learning_rate": 5e-05,
+    "gradient_accumulation_steps": 4,
+    "history": [
+      {
+        "epoch": 1,
+        "train_loss": 0.39848157586086363,
+        "guard_loss": 0.7109092686857496
+      },
+      {
+        "epoch": 2,
+        "train_loss": 0.3831021853146099,
+        "guard_loss": 0.6895829921676999
+      },
+      {
+        "epoch": 3,
+        "train_loss": 0.30063875977482113,
+        "guard_loss": 0.6927982242334456
+      },
+      {
+        "epoch": 4,
+        "train_loss": 0.36478252425080254,
+        "guard_loss": 0.7089094647339412
+      },
+      {
+        "epoch": 5,
+        "train_loss": 0.3518698013254574,
+        "guard_loss": 0.7199314023767199
+      },
+      {
+        "epoch": 6,
+        "train_loss": 0.37072292892705827,
+        "guard_loss": 0.7119808083488828
+      },
+      {
+        "epoch": 7,
+        "train_loss": 0.3265960046223232,
+        "guard_loss": 0.6916693903151012
+      },
+      {
+        "epoch": 8,
+        "train_loss": 0.317328141558738,
+        "guard_loss": 0.7044029647395724
+      }
+    ]
+  },
+  "generation": {
+    "num_inference_steps": 20,
+    "guidance_scale": 7.5,
+    "controlnet_conditioning_scale": 1.0,
+    "mask_blend_strength": 0.65,
+    "seed": 62
+  },
+  "calibration_log": "/home/tmushuru/datasets/alopecia_public/metadata/exp06_severity_delta_controlnet_guard_v1/exp06_calibration.json",
+  "proxy_determinism": {
+    "sample_count": 3,
+    "all_deterministic": true,
+    "checks": [
+      {
+        "pair_id": "000_unidatapro_women_hair_loss_3_top__target_1",
+        "case_id": "000_unidatapro_women_hair_loss_3_top",
+        "target_severity": 1,
+        "max_source_abs_delta": 0.0,
+        "max_proxy_abs_delta": 0.0,
+        "max_mask_abs_delta": 0.0,
+        "deterministic": true
+      },
+      {
+        "pair_id": "000_unidatapro_women_hair_loss_3_top__target_2",
+        "case_id": "000_unidatapro_women_hair_loss_3_top",
+        "target_severity": 2,
+        "max_source_abs_delta": 0.0,
+        "max_proxy_abs_delta": 0.0,
+        "max_mask_abs_delta": 0.0,
+        "deterministic": true
+      },
+      {
+        "pair_id": "000_unidatapro_women_hair_loss_3_top__target_4",
+        "case_id": "000_unidatapro_women_hair_loss_3_top",
+        "target_severity": 4,
+        "max_source_abs_delta": 0.0,
+        "max_proxy_abs_delta": 0.0,
+        "max_mask_abs_delta": 0.0,
+        "deterministic": true
+      }
+    ]
+  },
+  "qa_criteria": {
+    "min_monotonic_fraction": 0.8,
+    "min_expected_span": 0.5,
+    "max_unmasked_delta": 0.01,
+    "mask_area_min": 0.2,
+    "mask_area_max": 0.75
+  },
+  "val_proxy_reference": {
+    "split": "val",
+    "case_count": 2,
+    "proxy_auto_pass_count": 2,
+    "proxy_auto_pass_rate": 1.0,
+    "mean_proxy_monotonic_fraction": 1.0,
+    "mean_proxy_expected_span": 4.457632541656494,
+    "cases": [
+      {
+        "case_id": "009_unidpro_hair_loss_male_norwood_scale_4_000011bb35--65ceb4885851f6329e99c09c_Top-Down",
+        "dataset_key": "unidpro_hair_loss_male_norwood_scale",
+        "source_severity": 4,
+        "expected_severities": [
+          1.456611156463623,
+          1.5343811511993408,
+          1.6510114669799805,
+          1.880000352859497,
+          4.142772197723389,
+          6.23008394241333,
+          6.627938747406006
+        ],
+        "monotonic_fraction": 1.0,
+        "expected_span": 5.171327590942383,
+        "max_unmasked_mean_absolute_delta": 0.002215920946997575,
+        "mask_area_fraction": 0.24585068225860596,
+        "auto_pass": true
+      },
+      {
+        "case_id": "010_unidpro_hair_loss_male_norwood_scale_3_000011bb35--65ce09cf6a73b2313d0bea6b_Top-Down",
+        "dataset_key": "unidpro_hair_loss_male_norwood_scale",
+        "source_severity": 3,
+        "expected_severities": [
+          1.6161346435546875,
+          1.769476294517517,
+          2.01279616355896,
+          3.0547564029693604,
+          4.087186813354492,
+          4.880610466003418,
+          5.360072135925293
+        ],
+        "monotonic_fraction": 1.0,
+        "expected_span": 3.7439374923706055,
+        "max_unmasked_mean_absolute_delta": 0.0018957314663226178,
+        "mask_area_fraction": 0.24585068225860596,
+        "auto_pass": true
+      }
+    ],
+    "contact_sheet": "/home/tmushuru/datasets/alopecia_public/metadata/exp06_severity_delta_controlnet_guard_v1_samples/val_proxy_contact_sheet.png"
+  },
+  "test_proxy_reference": {
+    "split": "test",
+    "case_count": 4,
+    "proxy_auto_pass_count": 4,
+    "proxy_auto_pass_rate": 1.0,
+    "mean_proxy_monotonic_fraction": 1.0,
+    "mean_proxy_expected_span": 5.3495097160339355,
+    "cases": [
+      {
+        "case_id": "011_unidatapro_women_hair_loss_2_top",
+        "dataset_key": "unidatapro_women_hair_loss",
+        "source_severity": 2,
+        "expected_severities": [
+          1.8067336082458496,
+          3.6359591484069824,
+          4.405793190002441,
+          4.953168869018555,
+          6.4682841300964355,
+          6.925626277923584,
+          6.965734958648682
+        ],
+        "monotonic_fraction": 1.0,
+        "expected_span": 5.159001350402832,
+        "max_unmasked_mean_absolute_delta": 0.006403570958359952,
+        "mask_area_fraction": 0.5163443684577942,
+        "auto_pass": true
+      },
+      {
+        "case_id": "012_unidatapro_women_hair_loss_4_top",
+        "dataset_key": "unidatapro_women_hair_loss",
+        "source_severity": 4,
+        "expected_severities": [
+          1.8403929471969604,
+          1.9985703229904175,
+          2.945866584777832,
+          4.088664531707764,
+          5.375678062438965,
+          6.969145774841309,
+          6.989394187927246
+        ],
+        "monotonic_fraction": 1.0,
+        "expected_span": 5.149001240730286,
+        "max_unmasked_mean_absolute_delta": 0.005726546259250191,
+        "mask_area_fraction": 0.5163443684577942,
+        "auto_pass": true
+      },
+      {
+        "case_id": "013_unidatapro_men_hair_loss_2_top",
+        "dataset_key": "unidatapro_men_hair_loss",
+        "source_severity": 2,
+        "expected_severities": [
+          1.1699877977371216,
+          1.70705246925354,
+          3.10861873626709,
+          5.177652359008789,
+          6.742313861846924,
+          6.954419136047363,
+          6.966320037841797
+        ],
+        "monotonic_fraction": 1.0,
+        "expected_span": 5.796332240104675,
+        "max_unmasked_mean_absolute_delta": 0.006847599877542009,
+        "mask_area_fraction": 0.5163443684577942,
+        "auto_pass": true
+      },
+      {
+        "case_id": "014_unidatapro_women_hair_loss_5_top",
+        "dataset_key": "unidatapro_women_hair_loss",
+        "source_severity": 5,
+        "expected_severities": [
+          1.6956076622009277,
+          1.7756367921829224,
+          1.9987788200378418,
+          2.8237385749816895,
+          4.006069660186768,
+          6.918723106384277,
+          6.989311695098877
+        ],
+        "monotonic_fraction": 1.0,
+        "expected_span": 5.293704032897949,
+        "max_unmasked_mean_absolute_delta": 0.005577276427673114,
+        "mask_area_fraction": 0.5163443684577942,
+        "auto_pass": true
+      }
+    ],
+    "contact_sheet": "/home/tmushuru/datasets/alopecia_public/metadata/exp06_severity_delta_controlnet_guard_v1_samples/test_proxy_contact_sheet.png"
+  },
+  "val_sweep": {
+    "split": "val",
+    "case_count": 2,
+    "generated_auto_pass_count": 0,
+    "generated_auto_pass_rate": 0.0,
+    "proxy_auto_pass_count": 2,
+    "proxy_auto_pass_rate": 1.0,
+    "mean_generated_monotonic_fraction": 0.5,
+    "mean_proxy_monotonic_fraction": 1.0,
+    "mean_generated_expected_span": 1.9318912029266357,
+    "mean_proxy_expected_span": 4.457632541656494,
+    "mean_generated_l1_to_proxy": 0.031089626535986903,
+    "mean_generated_lpips_to_proxy": 0.0967268416924136,
+    "mean_proxy_lpips_to_source": 0.02658865487735186,
+    "domain_fid_resnet18_proxy_reference": 26.866275140808234,
+    "mean_anatomical_guard_masked_l1_to_proxy": 0.10634520962377472,
+    "mean_generated_max_unmasked_delta": 0.008975815958936501,
+    "by_dataset": {
+      "unidpro_hair_loss_male_norwood_scale": {
+        "case_count": 2,
+        "mean_generated_expected_span": 1.9318912029266357,
+        "mean_generated_monotonic_fraction": 0.5,
+        "generated_auto_pass_rate": 0.0
+      }
+    },
+    "cases": [
+      {
+        "case_id": "009_unidpro_hair_loss_male_norwood_scale_4_000011bb35--65ceb4885851f6329e99c09c_Top-Down",
+        "dataset_key": "unidpro_hair_loss_male_norwood_scale",
+        "source_severity": 4,
+        "proxy_expected_severities": [
+          1.456611156463623,
+          1.5343811511993408,
+          1.6510114669799805,
+          1.880000352859497,
+          4.142772197723389,
+          6.23008394241333,
+          6.627938747406006
+        ],
+        "generated_expected_severities": [
+          4.285113334655762,
+          4.518183708190918,
+          4.759217262268066,
+          1.8800034523010254,
+          4.937687873840332,
+          4.340288162231445,
+          4.218508243560791
+        ],
+        "proxy_predicted_severities": [
+          1,
+          2,
+          2,
+          2,
+          5,
+          7,
+          7
+        ],
+        "generated_predicted_severities": [
+          6,
+          7,
+          7,
+          2,
+          7,
+          6,
+          3
+        ],
+        "proxy_monotonic_fraction": 1.0,
+        "generated_monotonic_fraction": 0.5,
+        "proxy_expected_span": 5.171327590942383,
+        "generated_expected_span": 3.0576844215393066,
+        "generated_mean_l1_to_proxy": 0.0347157979985196,
+        "generated_mean_lpips_to_proxy": 0.08899167712245669,
+        "proxy_mean_lpips_to_source": 0.022038901091686318,
+        "anatomical_guard_masked_l1_to_proxy": 0.11838849053764137,
+        "generated_max_masked_mean_absolute_delta": 0.18897505024616124,
+        "generated_max_unmasked_mean_absolute_delta": 0.010584647781003648,
+        "mask_area_fraction": 0.24585068225860596,
+        "proxy_auto_pass": true,
+        "generated_auto_pass": false
+      },
+      {
+        "case_id": "010_unidpro_hair_loss_male_norwood_scale_3_000011bb35--65ce09cf6a73b2313d0bea6b_Top-Down",
+        "dataset_key": "unidpro_hair_loss_male_norwood_scale",
+        "source_severity": 3,
+        "proxy_expected_severities": [
+          1.6161346435546875,
+          1.769476294517517,
+          2.01279616355896,
+          3.0547564029693604,
+          4.087186813354492,
+          4.880610466003418,
+          5.360072135925293
+        ],
+        "generated_expected_severities": [
+          2.708897590637207,
+          2.3039650917053223,
+          2.0127968788146973,
+          2.745159864425659,
+          2.818894863128662,
+          2.446650505065918,
+          2.6038260459899902
+        ],
+        "proxy_predicted_severities": [
+          2,
+          2,
+          2,
+          3,
+          5,
+          6,
+          7
+        ],
+        "generated_predicted_severities": [
+          3,
+          2,
+          2,
+          3,
+          3,
+          2,
+          3
+        ],
+        "proxy_monotonic_fraction": 1.0,
+        "generated_monotonic_fraction": 0.5,
+        "proxy_expected_span": 3.7439374923706055,
+        "generated_expected_span": 0.8060979843139648,
+        "generated_mean_l1_to_proxy": 0.027463455073454206,
+        "generated_mean_lpips_to_proxy": 0.10446200626237052,
+        "proxy_mean_lpips_to_source": 0.031138408663017408,
+        "anatomical_guard_masked_l1_to_proxy": 0.09430192870990808,
+        "generated_max_masked_mean_absolute_delta": 0.16662199664294558,
+        "generated_max_unmasked_mean_absolute_delta": 0.007366984136869353,
+        "mask_area_fraction": 0.24585068225860596,
+        "proxy_auto_pass": true,
+        "generated_auto_pass": false
+      }
+    ],
+    "contact_sheet": "/home/tmushuru/datasets/alopecia_public/metadata/exp06_severity_delta_controlnet_guard_v1_samples/val_exp06_vs_proxy_contact_sheet.png"
+  },
+  "test_sweep": {
+    "split": "test",
+    "case_count": 4,
+    "generated_auto_pass_count": 0,
+    "generated_auto_pass_rate": 0.0,
+    "proxy_auto_pass_count": 4,
+    "proxy_auto_pass_rate": 1.0,
+    "mean_generated_monotonic_fraction": 0.41666666666666663,
+    "mean_proxy_monotonic_fraction": 1.0,
+    "mean_generated_expected_span": 3.3946045339107513,
+    "mean_proxy_expected_span": 5.3495097160339355,
+    "mean_generated_l1_to_proxy": 0.1029868963958769,
+    "mean_generated_lpips_to_proxy": 0.3051645617399897,
+    "mean_proxy_lpips_to_source": 0.0453385915607214,
+    "domain_fid_resnet18_proxy_reference": 169.24310893129237,
+    "mean_anatomical_guard_masked_l1_to_proxy": 0.1770414435496638,
+    "mean_generated_max_unmasked_delta": 0.03418276960779423,
+    "by_dataset": {
+      "unidatapro_men_hair_loss": {
+        "case_count": 1,
+        "mean_generated_expected_span": 4.998343825340271,
+        "mean_generated_monotonic_fraction": 0.3333333333333333,
+        "generated_auto_pass_rate": 0.0
+      },
+      "unidatapro_women_hair_loss": {
+        "case_count": 3,
+        "mean_generated_expected_span": 2.8600247701009116,
+        "mean_generated_monotonic_fraction": 0.4444444444444444,
+        "generated_auto_pass_rate": 0.0
+      }
+    },
+    "cases": [
+      {
+        "case_id": "011_unidatapro_women_hair_loss_2_top",
+        "dataset_key": "unidatapro_women_hair_loss",
+        "source_severity": 2,
+        "proxy_expected_severities": [
+          1.8067336082458496,
+          3.6359591484069824,
+          4.405793190002441,
+          4.953168869018555,
+          6.4682841300964355,
+          6.925626277923584,
+          6.965734958648682
+        ],
+        "generated_expected_severities": [
+          6.276689052581787,
+          3.635941743850708,
+          4.5142822265625,
+          4.480827331542969,
+          5.606269836425781,
+          3.9992799758911133,
+          3.3306641578674316
+        ],
+        "proxy_predicted_severities": [
+          2,
+          4,
+          4,
+          5,
+          7,
+          7,
+          7
+        ],
+        "generated_predicted_severities": [
+          7,
+          4,
+          6,
+          6,
+          7,
+          4,
+          2
+        ],
+        "proxy_monotonic_fraction": 1.0,
+        "generated_monotonic_fraction": 0.3333333333333333,
+        "proxy_expected_span": 5.159001350402832,
+        "generated_expected_span": 2.9460248947143555,
+        "generated_mean_l1_to_proxy": 0.13730419555995305,
+        "generated_mean_lpips_to_proxy": 0.32189640402793884,
+        "proxy_mean_lpips_to_source": 0.050836880026119094,
+        "anatomical_guard_masked_l1_to_proxy": 0.24144725588697002,
+        "generated_max_masked_mean_absolute_delta": 0.31936709762324855,
+        "generated_max_unmasked_mean_absolute_delta": 0.03776892280118248,
+        "mask_area_fraction": 0.5163443684577942,
+        "proxy_auto_pass": true,
+        "generated_auto_pass": false
+      },
+      {
+        "case_id": "012_unidatapro_women_hair_loss_4_top",
+        "dataset_key": "unidatapro_women_hair_loss",
+        "source_severity": 4,
+        "proxy_expected_severities": [
+          1.8403929471969604,
+          1.9985703229904175,
+          2.945866584777832,
+          4.088664531707764,
+          5.375678062438965,
+          6.969145774841309,
+          6.989394187927246
+        ],
+        "generated_expected_severities": [
+          4.116794586181641,
+          6.522322654724121,
+          4.3103132247924805,
+          4.088662147521973,
+          5.129792213439941,
+          4.714022636413574,
+          6.907517910003662
+        ],
+        "proxy_predicted_severities": [
+          2,
+          2,
+          3,
+          4,
+          5,
+          7,
+          7
+        ],
+        "generated_predicted_severities": [
+          6,
+          7,
+          4,
+          4,
+          7,
+          6,
+          7
+        ],
+        "proxy_monotonic_fraction": 1.0,
+        "generated_monotonic_fraction": 0.5,
+        "proxy_expected_span": 5.149001240730286,
+        "generated_expected_span": 2.8188557624816895,
+        "generated_mean_l1_to_proxy": 0.09727160339959424,
+        "generated_mean_lpips_to_proxy": 0.3041522034576961,
+        "proxy_mean_lpips_to_source": 0.043533953305866034,
+        "anatomical_guard_masked_l1_to_proxy": 0.16406549616705535,
+        "generated_max_masked_mean_absolute_delta": 0.24795585256424613,
+        "generated_max_unmasked_mean_absolute_delta": 0.03793832853013699,
+        "mask_area_fraction": 0.5163443684577942,
+        "proxy_auto_pass": true,
+        "generated_auto_pass": false
+      },
+      {
+        "case_id": "013_unidatapro_men_hair_loss_2_top",
+        "dataset_key": "unidatapro_men_hair_loss",
+        "source_severity": 2,
+        "proxy_expected_severities": [
+          1.1699877977371216,
+          1.70705246925354,
+          3.10861873626709,
+          5.177652359008789,
+          6.742313861846924,
+          6.954419136047363,
+          6.966320037841797
+        ],
+        "generated_expected_severities": [
+          5.8385701179504395,
+          1.7070685625076294,
+          6.448119163513184,
+          4.055736541748047,
+          6.7054123878479,
+          6.4407548904418945,
+          5.267712593078613
+        ],
+        "proxy_predicted_severities": [
+          1,
+          2,
+          2,
+          5,
+          7,
+          7,
+          7
+        ],
+        "generated_predicted_severities": [
+          7,
+          2,
+          7,
+          6,
+          7,
+          7,
+          6
+        ],
+        "proxy_monotonic_fraction": 1.0,
+        "generated_monotonic_fraction": 0.3333333333333333,
+        "proxy_expected_span": 5.796332240104675,
+        "generated_expected_span": 4.998343825340271,
+        "generated_mean_l1_to_proxy": 0.0814631413600737,
+        "generated_mean_lpips_to_proxy": 0.28872756021363394,
+        "proxy_mean_lpips_to_source": 0.059764349833130836,
+        "anatomical_guard_masked_l1_to_proxy": 0.13515530245970628,
+        "generated_max_masked_mean_absolute_delta": 0.19765918823285142,
+        "generated_max_unmasked_mean_absolute_delta": 0.03354279904211031,
+        "mask_area_fraction": 0.5163443684577942,
+        "proxy_auto_pass": true,
+        "generated_auto_pass": false
+      },
+      {
+        "case_id": "014_unidatapro_women_hair_loss_5_top",
+        "dataset_key": "unidatapro_women_hair_loss",
+        "source_severity": 5,
+        "proxy_expected_severities": [
+          1.6956076622009277,
+          1.7756367921829224,
+          1.9987788200378418,
+          2.8237385749816895,
+          4.006069660186768,
+          6.918723106384277,
+          6.989311695098877
+        ],
+        "generated_expected_severities": [
+          6.723053932189941,
+          6.564797878265381,
+          5.667233467102051,
+          6.190844535827637,
+          4.006011009216309,
+          6.408539772033691,
+          6.821204662322998
+        ],
+        "proxy_predicted_severities": [
+          2,
+          2,
+          2,
+          3,
+          4,
+          7,
+          7
+        ],
+        "generated_predicted_severities": [
+          7,
+          7,
+          6,
+          7,
+          4,
+          7,
+          7
+        ],
+        "proxy_monotonic_fraction": 1.0,
+        "generated_monotonic_fraction": 0.5,
+        "proxy_expected_span": 5.293704032897949,
+        "generated_expected_span": 2.8151936531066895,
+        "generated_mean_l1_to_proxy": 0.09590864526388661,
+        "generated_mean_lpips_to_proxy": 0.3058820792606899,
+        "proxy_mean_lpips_to_source": 0.02721918307776962,
+        "anatomical_guard_masked_l1_to_proxy": 0.1674977196849236,
+        "generated_max_masked_mean_absolute_delta": 0.2715962079019181,
+        "generated_max_unmasked_mean_absolute_delta": 0.027481028057747155,
+        "mask_area_fraction": 0.5163443684577942,
+        "proxy_auto_pass": true,
+        "generated_auto_pass": false
+      }
+    ],
+    "contact_sheet": "/home/tmushuru/datasets/alopecia_public/metadata/exp06_severity_delta_controlnet_guard_v1_samples/test_exp06_vs_proxy_contact_sheet.png"
+  },
+  "limitations": [
+    "The anatomical guard discriminator is weakly supervised by QA-gated proxy targets and should be supplemented by contact-sheet review or classifier labels.",
+    "The FID-like metric uses ImageNet ResNet18 features against proxy references rather than a fully trained scalp-domain FID model."
+  ]
+}

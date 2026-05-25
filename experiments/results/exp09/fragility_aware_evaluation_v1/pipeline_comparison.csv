@@ -1,0 +1,5 @@
+pipeline_id,description
+P1_proxy,QA-gated deterministic proxy baseline
+P2_diffusion_archived_exp06,"Best archived diffusion editor from Exp06, severity-delta cross-attention"
+P3_sparse2_ridge,Sparse2 ridge controller: hair-presence index + masked grayscale mean
+P4_sparse4_ridge,Sparse4 ridge controller: sparse2 + mask area fraction + texture p90

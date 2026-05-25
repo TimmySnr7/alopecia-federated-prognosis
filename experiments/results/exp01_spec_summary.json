@@ -1,0 +1,68 @@
+{
+  "experiment": "exp01_centralised_baseline",
+  "config_path": "/Users/timothymusharu/Documents/github-repos/alopecia-federated-prognosis/experiments/configs/exp01_centralised_baseline.yaml",
+  "objective": "proxy_prognostic_generation",
+  "claim_boundary": "This experiment generates severity-conditioned future-like scalp scenarios rather than asserting true longitudinal prediction.\n",
+  "datasets": [
+    {
+      "key": "unidatapro_men_hair_loss",
+      "title": "UniDataPro men hair-loss dataset",
+      "role": "training",
+      "label_schema": "norwood_stage",
+      "limitation": "Public dataset card needs audit for demographic balance and label provenance."
+    },
+    {
+      "key": "unidatapro_women_hair_loss",
+      "title": "UniDataPro women hair-loss dataset",
+      "role": "training",
+      "label_schema": "ludwig_stage",
+      "limitation": "Requires label harmonisation with Norwood-style staging before pooled training."
+    },
+    {
+      "key": "unidpro_hair_loss_male_norwood_scale",
+      "title": "Hair loss male Norwood scale",
+      "role": "training",
+      "label_schema": "norwood_stage",
+      "limitation": "Likely biased toward web-scraped top-view examples with uneven acquisition conditions."
+    },
+    {
+      "key": "tapakah68_bald_people",
+      "title": "Dataset of bald people",
+      "role": "training",
+      "label_schema": "norwood_scale_proxy",
+      "limitation": "Proxy labels and broad web variability may reduce label cleanliness."
+    }
+  ],
+  "conditioning": {
+    "input_image": "baseline_scalp_image",
+    "current_severity": "ordinal_stage",
+    "target_severity": "ordinal_stage",
+    "derived_delta": "target_minus_current",
+    "optional_covariates": [
+      "sex"
+    ],
+    "rationale": "The baseline keeps conditioning narrow so that target-stage sensitivity can be evaluated before broader multimodal covariates are introduced.\n"
+  },
+  "checkpoint": "stabilityai/stable-diffusion-2-1-base",
+  "calibration_target": "severity_class_proxy",
+  "domain_fid": {
+    "feature_extractor": "resnet18_scalp_encoder",
+    "initialisation": "imagenet_pretrained_then_finetuned_on_held_out_scalp_images",
+    "comparison_pool": "held_out_test_split",
+    "fallback_if_unavailable": "inception_v3_fid_with_limitation_note"
+  },
+  "compute_environment": {
+    "hardware": "single_gpu_feasibility_default",
+    "preferred_gpu": "nvidia_a100_40gb_or_equivalent",
+    "minimum_gpu": "consumer_gpu_with_gradient_accumulation",
+    "estimated_runtime_hours": 12,
+    "scaling_note": "Resolution 256x256, batch size 4, and the single-GPU setup are feasibility-checked defaults for the first run. They may be scaled if later compute access and project time permit.\n"
+  },
+  "hypotheses": {
+    "primary": "A latent diffusion model conditioned on current severity and target severity will generate scalp images whose derived severity predictions increase monotonically as the target severity increases.\n",
+    "secondary": [
+      "Conditioning on target severity will outperform an unconditioned baseline on severity-consistency checks and LPIPS.\n",
+      "Temperature scaling on the auxiliary severity head will reduce ECE on the held-out test split without materially worsening Brier score.\n"
+    ]
+  }
+}

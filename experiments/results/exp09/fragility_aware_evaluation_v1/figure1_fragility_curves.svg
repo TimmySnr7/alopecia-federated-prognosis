@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="520" viewBox="0 0 900 520">
+<rect width="100%" height="100%" fill="white"/>
+<text x="450.0" y="30" text-anchor="middle" font-family="Arial" font-size="22" font-weight="700">Experiment 09 Fragility Curves by Perturbation Strength</text>
+<line x1="85" y1="55" x2="85" y2="440" stroke="#333"/><line x1="85" y1="440" x2="690" y2="440" stroke="#333"/>
+<line x1="85" y1="440.0" x2="690" y2="440.0" stroke="#e5e5e5"/><text x="77" y="444.0" text-anchor="end" font-family="Arial" font-size="12">0.0</text>
+<line x1="85" y1="330.6" x2="690" y2="330.6" stroke="#e5e5e5"/><text x="77" y="334.6" text-anchor="end" font-family="Arial" font-size="12">0.2</text>
+<line x1="85" y1="221.3" x2="690" y2="221.3" stroke="#e5e5e5"/><text x="77" y="225.3" text-anchor="end" font-family="Arial" font-size="12">0.4</text>
+<line x1="85" y1="111.9" x2="690" y2="111.9" stroke="#e5e5e5"/><text x="77" y="115.9" text-anchor="end" font-family="Arial" font-size="12">0.6</text>
+<text x="85.0" y="465" text-anchor="middle" font-family="Arial" font-size="13">nominal</text>
+<text x="387.5" y="465" text-anchor="middle" font-family="Arial" font-size="13">low</text>
+<text x="690.0" y="465" text-anchor="middle" font-family="Arial" font-size="13">high</text>
+<polyline points="85.0,418.7 387.5,415.8 690.0,414.5" fill="none" stroke="#376092" stroke-width="3"/>
+<circle cx="85.0" cy="418.7" r="5" fill="#376092"/>
+<circle cx="387.5" cy="415.8" r="5" fill="#376092"/>
+<circle cx="690.0" cy="414.5" r="5" fill="#376092"/>
+<text x="715" y="85" font-family="Arial" font-size="14" fill="#376092">P1 proxy</text>
+<polyline points="85.0,90.0 387.5,90.0 690.0,90.0" fill="none" stroke="#c0504d" stroke-width="3"/>
+<circle cx="85.0" cy="90.0" r="5" fill="#c0504d"/>
+<circle cx="387.5" cy="90.0" r="5" fill="#c0504d"/>
+<circle cx="690.0" cy="90.0" r="5" fill="#c0504d"/>
+<text x="715" y="113" font-family="Arial" font-size="14" fill="#c0504d">P2 diffusion</text>
+<polyline points="85.0,440.0 387.5,434.2 690.0,425.3" fill="none" stroke="#70ad47" stroke-width="3"/>
+<circle cx="85.0" cy="440.0" r="5" fill="#70ad47"/>
+<circle cx="387.5" cy="434.2" r="5" fill="#70ad47"/>
+<circle cx="690.0" cy="425.3" r="5" fill="#70ad47"/>
+<text x="715" y="141" font-family="Arial" font-size="14" fill="#70ad47">P3 sparse2</text>
+<polyline points="85.0,440.0 387.5,432.2 690.0,428.2" fill="none" stroke="#8064a2" stroke-width="3"/>
+<circle cx="85.0" cy="440.0" r="5" fill="#8064a2"/>
+<circle cx="387.5" cy="432.2" r="5" fill="#8064a2"/>
+<circle cx="690.0" cy="428.2" r="5" fill="#8064a2"/>
+<text x="715" y="169" font-family="Arial" font-size="14" fill="#8064a2">P4 sparse4</text>
+<text x="387.5" y="495" text-anchor="middle" font-family="Arial" font-size="14">Perturbation strength</text><text transform="translate(25 247.5) rotate(-90)" text-anchor="middle" font-family="Arial" font-size="14">Balanced fragility score (lower is better)</text></svg>

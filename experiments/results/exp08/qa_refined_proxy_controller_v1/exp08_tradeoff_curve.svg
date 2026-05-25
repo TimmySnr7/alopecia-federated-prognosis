@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="560" viewBox="0 0 900 560">
+<rect width="100%" height="100%" fill="white"/>
+<text x="450.0" y="28" text-anchor="middle" font-family="Arial" font-size="22" font-weight="700">Experiment 08 QA-Accuracy Trade-off</text>
+<line x1="90" y1="55" x2="90" y2="475" stroke="#333"/>
+<line x1="90" y1="475" x2="680" y2="475" stroke="#333"/>
+<line x1="90" y1="475.0" x2="680" y2="475.0" stroke="#ddd"/>
+<text x="80" y="479.0" text-anchor="end" font-family="Arial" font-size="12">0.94</text>
+<line x1="90" y1="410.4" x2="680" y2="410.4" stroke="#ddd"/>
+<text x="80" y="414.4" text-anchor="end" font-family="Arial" font-size="12">0.95</text>
+<line x1="90" y1="345.8" x2="680" y2="345.8" stroke="#ddd"/>
+<text x="80" y="349.8" text-anchor="end" font-family="Arial" font-size="12">0.96</text>
+<line x1="90" y1="281.2" x2="680" y2="281.2" stroke="#ddd"/>
+<text x="80" y="285.2" text-anchor="end" font-family="Arial" font-size="12">0.97</text>
+<line x1="90" y1="216.5" x2="680" y2="216.5" stroke="#ddd"/>
+<text x="80" y="220.5" text-anchor="end" font-family="Arial" font-size="12">0.98</text>
+<line x1="90" y1="151.9" x2="680" y2="151.9" stroke="#ddd"/>
+<text x="80" y="155.9" text-anchor="end" font-family="Arial" font-size="12">0.99</text>
+<line x1="90" y1="87.3" x2="680" y2="87.3" stroke="#ddd"/>
+<text x="80" y="91.3" text-anchor="end" font-family="Arial" font-size="12">1.00</text>
+<line x1="90.0" y1="475" x2="90.0" y2="480" stroke="#333"/>
+<text x="90.0" y="497" text-anchor="middle" font-family="Arial" font-size="12">0.00000</text>
+<line x1="253.4" y1="475" x2="253.4" y2="480" stroke="#333"/>
+<text x="253.4" y="497" text-anchor="middle" font-family="Arial" font-size="12">0.00025</text>
+<line x1="416.7" y1="475" x2="416.7" y2="480" stroke="#333"/>
+<text x="416.7" y="497" text-anchor="middle" font-family="Arial" font-size="12">0.00050</text>
+<line x1="580.1" y1="475" x2="580.1" y2="480" stroke="#333"/>
+<text x="580.1" y="497" text-anchor="middle" font-family="Arial" font-size="12">0.00075</text>
+<line x1="743.5" y1="475" x2="743.5" y2="480" stroke="#333"/>
+<text x="743.5" y="497" text-anchor="middle" font-family="Arial" font-size="12">0.00100</text>
+<text x="385.0" y="534" text-anchor="middle" font-family="Arial" font-size="14">Test proxy L1 to reference (lower is better)</text>
+<text transform="translate(28 265.0) rotate(-90)" text-anchor="middle" font-family="Arial" font-size="14">Test monotonic fraction (higher is better)</text>
+<line x1="90" y1="87.3" x2="680" y2="87.3" stroke="#777" stroke-dasharray="5 5"/>
+<circle cx="279.1" cy="87.3" r="7" fill="#1f77b4"/>
+<text x="705" y="85" font-family="Arial" font-size="13" fill="#1f77b4">Sparse-2 ridge: L1=0.000289, mono=1.000</text>
+<circle cx="273.4" cy="87.3" r="7" fill="#2ca02c"/>
+<text x="705" y="113" font-family="Arial" font-size="13" fill="#2ca02c">Sparse-4 ridge: L1=0.000281, mono=1.000</text>
+<rect x="597.0" y="81.3" width="12" height="12" fill="#d62728"/>
+<text x="705" y="141" font-family="Arial" font-size="13" fill="#d62728">lambda 0.5: L1=0.000785, mono=1.000</text>
+<rect x="459.9" y="81.3" width="12" height="12" fill="#d62728"/>
+<text x="705" y="169" font-family="Arial" font-size="13" fill="#d62728">lambda 1.0: L1=0.000575, mono=1.000</text>
+<rect x="477.0" y="81.3" width="12" height="12" fill="#d62728"/>
+<text x="705" y="197" font-family="Arial" font-size="13" fill="#d62728">lambda 5.0: L1=0.000601, mono=1.000</text>
+<rect x="537.2" y="81.3" width="12" height="12" fill="#d62728"/>
+<text x="705" y="225" font-family="Arial" font-size="13" fill="#d62728">lambda 10.0: L1=0.000693, mono=1.000</text>
+</svg>
