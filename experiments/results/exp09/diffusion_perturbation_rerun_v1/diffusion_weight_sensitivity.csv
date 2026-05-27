@@ -1,0 +1,5 @@
+pipeline_id,weight_setting,alpha,beta,gamma,mean_fragility
+P2_diffusion_exp06_rerun,balanced,0.4,0.4,0.2,0.5718
+P2_diffusion_exp06_rerun,safety_heavy,0.25,0.25,0.5,0.6680892857142856
+P2_diffusion_exp06_rerun,qa_heavy,0.3,0.6,0.1,0.5421357142857143
+P2_diffusion_exp06_rerun,ordering_heavy,0.6,0.3,0.1,0.5372714285714286

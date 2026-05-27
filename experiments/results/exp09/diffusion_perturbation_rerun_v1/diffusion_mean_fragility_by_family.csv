@@ -1,0 +1,10 @@
+pipeline_id,perturbation_family,mean_fragility_balanced,mean_auto_pass_rate,mean_monotonic_fraction,mean_critical_error_rate
+P2_diffusion_exp06_rerun,brightness,0.5743333333333335,0.0,0.5,0.8333333333333334
+P2_diffusion_exp06_rerun,contrast,0.5385833333333333,0.0,0.53125,0.8333333333333334
+P2_diffusion_exp06_rerun,image_noise,0.4771666666666667,0.0,0.5833333333333334,0.6666666666666666
+P2_diffusion_exp06_rerun,mask_dilate,0.6791666666666666,0.0,0.3958333333333333,1.0
+P2_diffusion_exp06_rerun,mask_erode,0.55,0.0,0.4583333333333333,0.8333333333333334
+P2_diffusion_exp06_rerun,mask_shift,0.5205833333333334,0.0,0.5729166666666666,0.75
+P2_diffusion_exp06_rerun,none,0.5549999999999999,0.0,0.3125,0.5
+P2_diffusion_exp06_rerun,parameter_noise,0.6509999999999999,0.0,0.4375,1.0
+P2_diffusion_exp06_rerun,target_noise,0.6766666666666667,0.0,0.4375,1.0

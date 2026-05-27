@@ -17,8 +17,10 @@ This run evaluates pipeline fragility under mask, target, image-acquisition, and
 
 ## Headline
 
-Among the matched perturbation-tested pipelines, the lowest mean balanced fragility across all tested conditions is `P3_sparse2_ridge` at 0.0118, followed by `P4_sparse4_ridge` at 0.0157 and the deterministic proxy at 0.0319. The archived diffusion comparator is reported at 0.5509 as a high-fragility reference from Exp06, not as a fresh per-perturbation rerun.
+Among the matched perturbation-tested pipelines, the lowest mean balanced fragility across all tested conditions is `P3_sparse2_ridge` at 0.0118, followed by `P4_sparse4_ridge` at 0.0157 and the deterministic proxy at 0.0319. The matched Exp06 diffusion rerun remains high-fragility at 0.5718, with 0.0 auto-pass across the perturbation protocol.
 
 The main sparse-controller weakness is proxy-parameter noise. Mask shifts, target noise, erosion/dilation, and nominal conditions are stable; brightness, contrast, and image noise introduce small fragility increases.
 
 The sparse-versus-proxy comparison is protocol-sensitive because perturbations do not enter the deterministic proxy and ridge-controller pathways in the same way. The added protocol-sensitivity CSV should be used when discussing whether sparse2 is genuinely more robust than the proxy or simply benefits from regularised parameter prediction under this perturbation design.
+
+Matched diffusion perturbation rows were generated separately in `../diffusion_perturbation_rerun_v1/` and merged into this directory after review. The P2 critical-error component is a computational critical-risk heuristic and should be checked against the generated contact sheets before being treated as a final human semantic label.

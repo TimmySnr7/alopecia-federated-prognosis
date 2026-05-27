@@ -9,7 +9,7 @@ Assess whether the fragility score aligns with human face-validity ratings of al
 Use only:
 
 - `P1_proxy`
-- `P2_diffusion_archived_exp06`
+- `P2_diffusion_exp06_rerun`
 - `P4_sparse4_ridge`
 
 `P3_sparse2_ridge` is excluded from rater review to reduce burden; it remains the computational production candidate.
